@@ -2,6 +2,8 @@
 
 AutoRouter is a localhost-only, OpenAI-compatible semantic router. Clients send requests to the virtual model `auto`; deterministic rules select a configured 9Router model. For upstream 429, 502, 503, and 504 responses, AutoRouter retries once with the configured global fallback model.
 
+> 🇮🇩 **Panduan penggunaan Bahasa Indonesia:** lihat [`TUTORIAL-ID.md`](TUTORIAL-ID.md) untuk tutorial lengkap Open WebUI, OpenCode, n8n, routing, troubleshooting, dan keamanan.
+
 ## Requirements and setup
 
 - Ubuntu 24.04 / WSL2
