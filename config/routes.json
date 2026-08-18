@@ -1,0 +1,80 @@
+{
+  "virtualModel": "auto",
+  "virtualModels": {
+    "auto": {},
+    "code": { "route": "smart-code" },
+    "analysis": { "route": "smart-analysis" },
+    "fast": { "route": "fast-chat" },
+    "explore": { "route": "explore" },
+    "research": { "route": "web-research" }
+  },
+  "globalFallbackModel": "free-coding",
+  "fallbackPolicy": {
+    "statuses": [429, 502, 503, 504],
+    "availabilityErrorCodes": ["model_not_found", "model_unavailable", "provider_unavailable", "no_available_provider", "no_available_model", "capacity_exhausted"]
+  },
+  "defaultRoute": "fast-chat",
+  "ambiguousFallback": "smart-main",
+  "routes": {
+    "smart-code": {
+      "upstreamModel": "cx/gpt-5.6-sol",
+      "selectionPriority": ["cx/gpt-5.6-sol", "cx/gpt-5.5", "free-coding"],
+      "description": "Coding, debugging, refactoring, Git, APIs, tests and repositories",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": ["code", "coding", "debug", "debugging", "error", "exception", "typescript", "javascript", "python", "refactor", "git", "github", "api", "endpoint", "test", "repository", "repo", "function", "class", "compile", "stack trace", "pull request", "dockerfile", "sql", "perbaiki kode", "error kode", "build error", "unit test", "npm", "node.js"]
+    },
+    "web-research": {
+      "upstreamModel": "ag/gemini-3.6-flash-high",
+      "selectionPriority": ["ag/gemini-3.6-flash-high", "cx/gpt-5.6-sol", "free-coding"],
+      "description": "Current information, news, prices, releases, schedules and web research",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": ["latest", "today", "current", "news", "price", "prices", "release", "released", "schedule", "web research", "web search", "search the web", "look up", "recent", "this week", "this month", "breaking", "live", "updated", "current version", "current law", "berita hari ini", "berita terbaru", "berita terkini", "hari ini", "terbaru", "terkini", "saat ini", "update terbaru", "kabar terbaru", "cari di web", "cari web", "cari internet", "cari online", "riset web", "riset internet", "sumber terbaru", "informasi terbaru", "harga hari ini", "harga terbaru", "jadwal terbaru", "jadwal hari ini", "versi terbaru", "rilis terbaru", "peraturan terbaru", "undang-undang terbaru", "berita", "harga", "jadwal", "versi", "rilis", "regulasi", "peraturan", "cuaca", "skor", "pertandingan"]
+    },
+    "explore": {
+      "upstreamModel": "ag/gemini-3.6-flash-high",
+      "selectionPriority": ["ag/gemini-3.6-flash-high", "cx/gpt-5.6-sol", "free-coding"],
+      "description": "Fast codebase exploration and read/search tool usage",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": []
+    },
+    "vision": {
+      "upstreamModel": "gemini/gemini-3.7-flash",
+      "selectionPriority": ["gemini/gemini-3.7-flash", "ag/gemini-3.6-flash-high", "cx/gpt-5.6-sol", "free-coding"],
+      "description": "Image and multimodal requests",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": []
+    },
+    "smart-analysis": {
+      "upstreamModel": "cx/gpt-5.6-sol",
+      "selectionPriority": ["cx/gpt-5.6-sol", "cx/gpt-5.5", "ag/gemini-3.6-flash-high", "free-coding"],
+      "description": "Documents, accounting, financial reports, contracts and audit",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": ["pdf", "docx", "xlsx", "spreadsheet", "excel", "accounting", "financial statement", "financial report", "contract", "invoice", "purchase order", "po", "spk", "bast", "audit", "balance sheet", "cash flow", "income statement", "document analysis", "analisis laporan", "analisis dokumen", "laporan keuangan", "rekening koran", "neraca", "laba rugi", "arus kas", "jurnal akuntansi", "rekonsiliasi", "kontrak", "faktur"]
+    },
+    "smart-main": {
+      "upstreamModel": "cx/gpt-5.6-sol",
+      "selectionPriority": ["cx/gpt-5.6-sol", "cx/gpt-5.5", "ag/gemini-3.6-flash-high", "free-coding"],
+      "description": "Complex reasoning, planning, strategy and difficult comparisons",
+      "capabilities": { "vision": true, "tools": true },
+      "keywords": ["complex", "reasoning", "plan", "planning", "strategy", "strategies", "deeply", "in depth", "trade-off", "tradeoff", "compare", "comparison", "evaluate", "decision framework", "architecture", "bandingkan", "strategi", "secara mendalam", "analisis risiko"]
+    },
+    "fast-chat": {
+      "upstreamModel": "cx/gpt-5.6-luna",
+      "selectionPriority": ["cx/gpt-5.6-luna", "ag/gemini-3.6-flash-low", "ag/gemini-3.6-flash-medium", "free-coding"],
+      "description": "Simple explanations, translation, rewriting, summaries and casual questions",
+      "capabilities": { "vision": false, "tools": false },
+      "keywords": ["explain", "what is", "what does", "translate", "translation", "rewrite", "rephrase", "summarize", "summary", "hello", "hi", "casual", "meaning", "define", "jelaskan", "apa itu", "apa bedanya", "terjemahkan"]
+    }
+  },
+  "modelCapabilities": {
+    "cx/gpt-5.6-sol": { "vision": true, "tools": true },
+    "cx/gpt-5.5": { "vision": true, "tools": true },
+    "cx/gpt-5.6-luna": { "vision": false, "tools": false },
+    "ag/gemini-3.6-flash-high": { "vision": true, "tools": true },
+    "ag/gemini-3.6-flash-low": { "vision": false, "tools": false },
+    "ag/gemini-3.6-flash-medium": { "vision": false, "tools": false },
+    "gemini/gemini-3.7-flash": { "vision": true, "tools": true },
+    "free-coding": { "vision": false, "tools": true }
+  },
+  "precedence": ["vision", "smart-code", "web-research", "smart-analysis", "smart-main", "fast-chat"]
+}
