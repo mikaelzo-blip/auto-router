@@ -1,6 +1,6 @@
 {
   "name": "auto-router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Local OpenAI-compatible semantic router for 9Router",
   "type": "module",
