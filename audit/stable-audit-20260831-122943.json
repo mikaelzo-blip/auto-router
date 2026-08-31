@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-08-31T12:29:43.0485612+07:00",
+  "tests": "PASS",
+  "build": "PASS",
+  "readiness": {
+    "status": "ready",
+    "upstream": "ok",
+    "modelsDiscovered": 34,
+    "configuredModels": [
+      "ar-code",
+      "ar-research",
+      "ar-analysis",
+      "ar-fast"
+    ],
+    "missingModels": [],
+    "checkedAt": "2026-08-31T05:29:22.235Z"
+  },
+  "groundedResearch": {
+    "status": "PASS",
+    "latencySeconds": 4.89,
+    "provider": "antigravity"
+  },
+  "metrics": {
+    "service": "auto-router",
+    "mode": "production",
+    "uptimeSeconds": 79,
+    "process": {
+      "pid": 30664,
+      "rssMb": 70.7,
+      "heapUsedMb": 14.9
+    },
+    "requests": {
+      "total": 6,
+      "success": 6,
+      "error": 0,
+      "upstreamAttempts": 6,
+      "fallbackEvents": 0
+    },
+    "routes": {
+      "fast-chat": 1,
+      "smart-code": 2,
+      "web-research": 3
+    },
+    "statusCodes": {
+      "200": 6
+    },
+    "latency": {
+      "samples": 6,
+      "avgMs": 3450.5,
+      "p50Ms": 3089,
+      "p95Ms": 4886,
+      "maxMs": 4886
+    },
+    "readiness": {
+      "status": "ready",
+      "upstream": "ok",
+      "modelsDiscovered": 34,
+      "missingModels": [],
+      "checkedAt": "2026-08-31T05:29:22.235Z"
+    }
+  }
+}

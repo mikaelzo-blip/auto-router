@@ -13,6 +13,35 @@ export class UpstreamClient implements Classifier {
     return fetch(`${this.baseUrl}/chat/completions`, { method: "POST", headers: this.headers(), body: JSON.stringify(body), signal: combined });
   }
 
+  async search(body: unknown, signal?: AbortSignal): Promise<Response> {
+    const timeout = AbortSignal.timeout(
+      Math.max(this.timeoutMs, 20000)
+    );
+
+    const combined = signal
+      ? AbortSignal.any([signal, timeout])
+      : timeout;
+
+    return fetch(`${this.baseUrl}/search`, {
+      method: "POST",
+      headers: this.headers(),
+      body: JSON.stringify(body),
+      signal: combined
+    });
+  }
+  async responses(body: unknown, signal?: AbortSignal): Promise<Response> {
+    const timeout = AbortSignal.timeout(this.timeoutMs);
+    const combined = signal
+      ? AbortSignal.any([signal, timeout])
+      : timeout;
+
+    return fetch(`${this.baseUrl}/responses`, {
+      method: "POST",
+      headers: this.headers(),
+      body: JSON.stringify(body),
+      signal: combined
+    });
+  }
   async models(signal?: AbortSignal): Promise<Response> {
     const timeout = AbortSignal.timeout(this.timeoutMs);
     return fetch(`${this.baseUrl}/models`, { headers: this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {}, signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
@@ -50,3 +79,5 @@ export function sanitizedUpstreamError(status: number): { error: { message: stri
   if (status === 429) return { error: { message: "Upstream service is temporarily rate limited", type: "upstream_error", code: "upstream_rate_limited" } };
   return { error: { message: "Upstream service is unavailable", type: "upstream_error", code: "upstream_unavailable" } };
 }
+
+
