@@ -4,6 +4,7 @@ import type { AppConfig } from "./config.js";
 import { routeRequest, supportsRequirements } from "./router.js";
 import type { ChatCompletionRequest, ChatMessage } from "./types.js";
 import { sanitizedUpstreamError, UpstreamClient } from "./upstream.js";
+import { StreamLifecycleTracker, classifyUpstreamError, withStreamTimeouts } from "./reliability.js";
 
 const chatSchema = {
   type: "object",
@@ -59,10 +60,22 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const upstream = new UpstreamClient(
     config.upstreamBaseUrl,
     config.upstreamApiKey,
-    config.upstreamTimeoutMs,
+    {
+      connectTimeoutMs: config.connectTimeoutMs ?? config.upstreamTimeoutMs,
+      headerTimeoutMs: config.headerTimeoutMs ?? config.upstreamTimeoutMs,
+      firstByteTimeoutMs: config.firstByteTimeoutMs ?? config.upstreamTimeoutMs,
+      streamIdleTimeoutMs: config.streamIdleTimeoutMs ?? config.upstreamTimeoutMs
+    },
     config.classifierModel,
     config.classifierTimeoutMs
   );
+
+  const timeoutConfig = {
+    connectTimeoutMs: config.connectTimeoutMs ?? config.upstreamTimeoutMs,
+    headerTimeoutMs: config.headerTimeoutMs ?? config.upstreamTimeoutMs,
+    firstByteTimeoutMs: config.firstByteTimeoutMs ?? config.upstreamTimeoutMs,
+    streamIdleTimeoutMs: config.streamIdleTimeoutMs ?? config.upstreamTimeoutMs
+  };
 
   const startedAt = Date.now();
 
@@ -74,6 +87,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
     fallbackEvents: 0,
     routeCounts: {} as Record<string, number>,
     statusCounts: {} as Record<string, number>,
+    streamLifecycle: {} as Record<string, number>,
     latencySamples: [] as number[]
   };
 
@@ -286,6 +300,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       statusCodes: metrics.statusCounts,
 
       latency: latencyStats(),
+      streamLifecycle: metrics.streamLifecycle,
 
       readiness: readinessCache?.value
         ? {
@@ -736,13 +751,21 @@ export function buildApp(config: AppConfig): FastifyInstance {
             "keep-alive"
           );
 
-          return reply.send(
-            Readable.fromWeb(
-              response.body as
-                import("node:stream/web")
-                  .ReadableStream
-            )
+          const lifecycle = new StreamLifecycleTracker((state) => {
+            metrics.streamLifecycle[state] = (metrics.streamLifecycle[state] ?? 0) + 1;
+          });
+          const timedBody = withStreamTimeouts(
+            response.body as unknown as ReadableStream<Uint8Array>,
+            timeoutConfig,
+            lifecycle
           );
+          request.log.info(
+            { lifecycle: lifecycle.snapshot().state, route: decision.route },
+            "upstream stream started"
+          );
+          return reply.send(Readable.fromWeb(
+            timedBody as unknown as import("node:stream/web").ReadableStream
+          ));
         }
 
         const body =
@@ -757,7 +780,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         request.log.warn(
           {
             category:
-              upstreamErrorCategory(error),
+                          classifyUpstreamError(error),
             route: decision.route
           },
           "upstream request failed"
@@ -1150,12 +1173,21 @@ export function buildApp(config: AppConfig): FastifyInstance {
             "keep-alive"
           );
 
-          return reply.send(
-            Readable.fromWeb(
-              response.body as
-                import("node:stream/web").ReadableStream
-            )
+          const lifecycle = new StreamLifecycleTracker((state) => {
+            metrics.streamLifecycle[state] = (metrics.streamLifecycle[state] ?? 0) + 1;
+          });
+          const timedBody = withStreamTimeouts(
+            response.body as unknown as ReadableStream<Uint8Array>,
+            timeoutConfig,
+            lifecycle
           );
+          request.log.info(
+            { lifecycle: lifecycle.snapshot().state, route: decision.route },
+            "upstream responses stream started"
+          );
+          return reply.send(Readable.fromWeb(
+            timedBody as unknown as import("node:stream/web").ReadableStream
+          ));
         }
 
         const result =
@@ -1170,7 +1202,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         request.log.warn(
           {
             category:
-              upstreamErrorCategory(error),
+                          classifyUpstreamError(error),
             route: decision.route
           },
           "Responses API upstream request failed"
@@ -1398,27 +1430,6 @@ function publicUpstreamStatus(
   }
 
   return 502;
-}
-
-function upstreamErrorCategory(
-  error: unknown
-): string {
-
-  if (
-    error instanceof DOMException &&
-    error.name === "AbortError"
-  ) {
-    return "aborted";
-  }
-
-  if (
-    error instanceof Error &&
-    error.name === "TimeoutError"
-  ) {
-    return "timeout";
-  }
-
-  return "connection_failure";
 }
 
 async function shouldFallback(

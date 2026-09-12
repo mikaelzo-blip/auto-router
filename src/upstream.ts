@@ -1,74 +1,124 @@
 import type { Classifier } from "./router.js";
+import {
+  normalizeTimeoutConfig,
+  type TimeoutConfig,
+  UpstreamTimeoutError
+} from "./reliability.js";
 
 export class UpstreamClient implements Classifier {
-  constructor(private readonly baseUrl: string, private readonly apiKey: string | undefined, private readonly timeoutMs: number, private readonly classifierModel?: string, private readonly classifierTimeoutMs = 5000) {}
+  private readonly timeoutConfig: TimeoutConfig;
+
+  constructor(
+    private readonly baseUrl: string,
+    private readonly apiKey: string | undefined,
+    timeoutConfig: TimeoutConfig | number,
+    private readonly classifierModel?: string,
+    private readonly classifierTimeoutMs = 5000
+  ) {
+    this.timeoutConfig = typeof timeoutConfig === "number"
+      ? normalizeTimeoutConfig({
+          connectTimeoutMs: timeoutConfig,
+          headerTimeoutMs: timeoutConfig,
+          firstByteTimeoutMs: timeoutConfig,
+          streamIdleTimeoutMs: timeoutConfig
+        })
+      : normalizeTimeoutConfig(timeoutConfig);
+  }
 
   private headers(): Record<string, string> {
-    return { "content-type": "application/json", ...(this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {}) };
+    return {
+      "content-type": "application/json",
+      ...(this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {})
+    };
+  }
+
+  private async request(
+    path: string,
+    body: unknown | undefined,
+    signal: AbortSignal | undefined,
+    timeoutMs = this.timeoutConfig.headerTimeoutMs
+  ): Promise<Response> {
+    const controller = new AbortController();
+    let connectTimer: ReturnType<typeof setTimeout> | undefined;
+    let headerTimer: ReturnType<typeof setTimeout> | undefined;
+    let callerAbort: (() => void) | undefined;
+
+    const abort = (reason: Error) => {
+      if (!controller.signal.aborted) controller.abort(reason);
+    };
+
+    if (signal) {
+      callerAbort = () => abort(new Error("client_cancelled"));
+      if (signal.aborted) callerAbort();
+      else signal.addEventListener("abort", callerAbort, { once: true });
+    }
+
+    connectTimer = setTimeout(
+      () => abort(new UpstreamTimeoutError("connection_timeout")),
+      this.timeoutConfig.connectTimeoutMs
+    );
+    headerTimer = setTimeout(
+      () => abort(new UpstreamTimeoutError("header_timeout")),
+      timeoutMs
+    );
+
+    try {
+      const response = await fetch(`${this.baseUrl}${path}`, {
+        method: body === undefined ? "GET" : "POST",
+        headers: body === undefined
+          ? (this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {})
+          : this.headers(),
+        ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+        signal: controller.signal
+      });
+      return response;
+    } catch (error) {
+      if (controller.signal.reason instanceof Error) {
+        throw controller.signal.reason;
+      }
+      throw error;
+    } finally {
+      if (connectTimer !== undefined) clearTimeout(connectTimer);
+      if (headerTimer !== undefined) clearTimeout(headerTimer);
+      if (signal && callerAbort) signal.removeEventListener("abort", callerAbort);
+    }
   }
 
   async chat(body: unknown, signal?: AbortSignal): Promise<Response> {
-    const timeout = AbortSignal.timeout(this.timeoutMs);
-    const combined = signal ? AbortSignal.any([signal, timeout]) : timeout;
-    return fetch(`${this.baseUrl}/chat/completions`, { method: "POST", headers: this.headers(), body: JSON.stringify(body), signal: combined });
+    return this.request("/chat/completions", body, signal);
   }
 
   async search(body: unknown, signal?: AbortSignal): Promise<Response> {
-    const timeout = AbortSignal.timeout(
-      Math.max(this.timeoutMs, 20000)
-    );
-
-    const combined = signal
-      ? AbortSignal.any([signal, timeout])
-      : timeout;
-
-    return fetch(`${this.baseUrl}/search`, {
-      method: "POST",
-      headers: this.headers(),
-      body: JSON.stringify(body),
-      signal: combined
-    });
+    return this.request("/search", body, signal, Math.max(this.timeoutConfig.headerTimeoutMs, 20_000));
   }
+
   async responses(body: unknown, signal?: AbortSignal): Promise<Response> {
-    const timeout = AbortSignal.timeout(this.timeoutMs);
-    const combined = signal
-      ? AbortSignal.any([signal, timeout])
-      : timeout;
-
-    return fetch(`${this.baseUrl}/responses`, {
-      method: "POST",
-      headers: this.headers(),
-      body: JSON.stringify(body),
-      signal: combined
-    });
+    return this.request("/responses", body, signal);
   }
+
   async models(signal?: AbortSignal): Promise<Response> {
-    const timeout = AbortSignal.timeout(this.timeoutMs);
-    return fetch(`${this.baseUrl}/models`, { headers: this.apiKey ? { authorization: `Bearer ${this.apiKey}` } : {}, signal: signal ? AbortSignal.any([signal, timeout]) : timeout });
+    return this.request("/models", undefined, signal);
   }
 
   async classify(text: string, allowedRoutes: string[]): Promise<string | undefined> {
     if (!this.classifierModel) return undefined;
     try {
-      const response = await fetch(`${this.baseUrl}/chat/completions`, {
-        method: "POST",
-        headers: this.headers(),
-        signal: AbortSignal.timeout(this.classifierTimeoutMs),
-        body: JSON.stringify({
-          model: this.classifierModel,
-          temperature: 0,
-          max_tokens: 20,
-          messages: [
-            { role: "system", content: `Return exactly one route name from: ${allowedRoutes.join(", ")}. No explanation.` },
-            { role: "user", content: text.slice(0, 4000) }
-          ]
-        })
-      });
+      const response = await this.request("/chat/completions", {
+        model: this.classifierModel,
+        temperature: 0,
+        max_tokens: 20,
+        messages: [
+          { role: "system", content: `Return exactly one route name from: ${allowedRoutes.join(", ")}. No explanation.` },
+          { role: "user", content: text.slice(0, 4000) }
+        ]
+      }, undefined, this.classifierTimeoutMs);
       if (!response.ok) return undefined;
       const data = await response.json() as { choices?: Array<{ message?: { content?: string } }> };
       const answer = data.choices?.[0]?.message?.content?.trim().toLowerCase();
       return allowedRoutes.find((route) => answer === route);
-    } catch { return undefined; }
+    } catch {
+      return undefined;
+    }
   }
 }
 
@@ -79,5 +129,3 @@ export function sanitizedUpstreamError(status: number): { error: { message: stri
   if (status === 429) return { error: { message: "Upstream service is temporarily rate limited", type: "upstream_error", code: "upstream_rate_limited" } };
   return { error: { message: "Upstream service is unavailable", type: "upstream_error", code: "upstream_unavailable" } };
 }
-
-

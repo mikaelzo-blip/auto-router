@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { RoutingConfig } from "./types.js";
+import { normalizeTimeoutConfig, validateTimeoutConfig } from "./reliability.js";
 
 export interface AppConfig {
   host: string;
@@ -10,6 +11,10 @@ export interface AppConfig {
   classifierModel?: string;
   classifierTimeoutMs: number;
   upstreamTimeoutMs: number;
+  connectTimeoutMs?: number;
+  headerTimeoutMs?: number;
+  firstByteTimeoutMs?: number;
+  streamIdleTimeoutMs?: number;
   logLevel: string;
   routing: RoutingConfig;
 }
@@ -24,6 +29,13 @@ export async function loadConfig(): Promise<AppConfig> {
   const path = resolve(process.env.ROUTING_CONFIG ?? "./config/routes.json");
   const routing = JSON.parse(await readFile(path, "utf8")) as RoutingConfig;
   validateRoutingConfig(routing);
+  const timeoutConfig = normalizeTimeoutConfig({
+    connectTimeoutMs: integer(process.env.UPSTREAM_CONNECT_TIMEOUT_MS, 10_000),
+    headerTimeoutMs: integer(process.env.UPSTREAM_HEADER_TIMEOUT_MS, 30_000),
+    firstByteTimeoutMs: integer(process.env.UPSTREAM_FIRST_BYTE_TIMEOUT_MS, 60_000),
+    streamIdleTimeoutMs: integer(process.env.UPSTREAM_STREAM_IDLE_TIMEOUT_MS, 30_000)
+  });
+  validateTimeoutConfig(timeoutConfig);
   const host = process.env.HOST ?? "127.0.0.1";
   if (host !== "127.0.0.1" && host !== "localhost") {
     throw new Error("HOST must be 127.0.0.1 or localhost; AutoRouter is localhost-only");
@@ -40,7 +52,11 @@ export async function loadConfig(): Promise<AppConfig> {
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,
     classifierTimeoutMs: integer(process.env.CLASSIFIER_TIMEOUT_MS, 5000),
-    upstreamTimeoutMs: integer(process.env.UPSTREAM_TIMEOUT_MS, 120000),
+    upstreamTimeoutMs: timeoutConfig.headerTimeoutMs,
+    connectTimeoutMs: timeoutConfig.connectTimeoutMs,
+    headerTimeoutMs: timeoutConfig.headerTimeoutMs,
+    firstByteTimeoutMs: timeoutConfig.firstByteTimeoutMs,
+    streamIdleTimeoutMs: timeoutConfig.streamIdleTimeoutMs,
     logLevel: process.env.LOG_LEVEL ?? "info",
     routing
   };
