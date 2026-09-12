@@ -2,6 +2,8 @@ import { Readable } from "node:stream";
 import Fastify, { type FastifyError, type FastifyInstance } from "fastify";
 import type { AppConfig } from "./config.js";
 import { routeRequest, supportsRequirements } from "./router.js";
+import { createSessionStore, routeShadow, type ShadowRequest } from "./shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "./shadow-profiles.js";
 import type { ChatCompletionRequest, ChatMessage } from "./types.js";
 import { sanitizedUpstreamError, UpstreamClient } from "./upstream.js";
 import { StreamLifecycleTracker, classifyUpstreamError, withStreamTimeouts } from "./reliability.js";
@@ -97,6 +99,33 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
   const MAX_LATENCY_SAMPLES = 200;
   const READINESS_CACHE_MS = 15_000;
+  const shadowStore = createSessionStore(15 * 60_000);
+  const shadowProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
+
+  function computeShadow(body: ChatCompletionRequest, sessionId = "anonymous") {
+    const latestUser = [...body.messages].reverse().find((message) => message.role === "user");
+    const currentIntent = typeof latestUser?.content === "string" ? latestUser.content : undefined;
+    const recentMessages = body.messages.slice(-3);
+    const recentFailure = recentMessages.some((message) => message.role === "tool" && /fail|error|reject/i.test(String(message.content)))
+      ? "recent tool failure"
+      : undefined;
+    const recentTestOutcome = recentMessages.some((message) => /tests? (passed|green)|build passed/i.test(String(message.content)))
+      ? "passed"
+      : recentMessages.some((message) => /tests? (failed|red)|build failed/i.test(String(message.content)))
+        ? "failed"
+        : undefined;
+    const shadowRequest: ShadowRequest = {
+      sessionId,
+      messages: body.messages,
+      currentIntent,
+      recentFailure,
+      recentTestOutcome,
+      hasVisionInput: Boolean(body.messages.some((message) => Array.isArray(message.content) && message.content.some((part) => part && typeof part === "object" && ["image_url", "input_image", "image"].includes(String((part as { type?: unknown }).type))))),
+      toolsProvided: Boolean(body.tools?.length || body.functions?.length),
+      policy: "balanced"
+    };
+    return routeShadow(shadowRequest, shadowProfiles, shadowStore);
+  }
 
   function configuredUpstreams(): string[] {
     const models: string[] = [];
@@ -350,13 +379,24 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       try {
-        return await routeRequest(
+        const actual = await routeRequest(
           request.body,
           config.routing,
           config.classifierModel
             ? upstream
             : undefined
         );
+        let shadowV2;
+        try {
+          shadowV2 = computeShadow(request.body, request.headers["x-session-id"]?.toString());
+        } catch {
+          shadowV2 = { error: "shadow routing unavailable" };
+        }
+        return {
+          ...actual,
+          actual: { route: actual.route, upstreamModel: actual.upstreamModel },
+          shadowV2
+        };
       } catch (error) {
         return reply.code(400).send(
           openAiError(
@@ -444,6 +484,11 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      try {
+        computeShadow(request.body, request.headers["x-session-id"]?.toString());
+      } catch (error) {
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
+      }
 
       // Automatic grounded search hanya untuk virtual model "auto".
       //
@@ -1035,6 +1080,11 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      try {
+        computeShadow(routingRequest, request.headers["x-session-id"]?.toString());
+      } catch (error) {
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
+      }
 
       const candidates = uniqueModels(
         config.routing.routes[

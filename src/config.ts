@@ -2,6 +2,15 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { RoutingConfig } from "./types.js";
 import { normalizeTimeoutConfig, validateTimeoutConfig } from "./reliability.js";
+import { validateProfileRegistry, type ExecutionProfile } from "./shadow-router.js";
+
+async function loadShadowProfiles(): Promise<ExecutionProfile[]> {
+  const path = resolve(process.env.SHADOW_PROFILE_CONFIG ?? "./config/shadow-profiles.json");
+  const payload = JSON.parse(await readFile(path, "utf8")) as { profiles?: ExecutionProfile[] };
+  if (!payload.profiles) throw new Error("Invalid shadow profile config");
+  validateProfileRegistry(payload.profiles);
+  return payload.profiles;
+}
 
 export interface AppConfig {
   host: string;
@@ -17,6 +26,7 @@ export interface AppConfig {
   streamIdleTimeoutMs?: number;
   logLevel: string;
   routing: RoutingConfig;
+  shadowProfiles?: ExecutionProfile[];
 }
 
 const integer = (value: string | undefined, fallback: number): number => {
@@ -36,6 +46,7 @@ export async function loadConfig(): Promise<AppConfig> {
     streamIdleTimeoutMs: integer(process.env.UPSTREAM_STREAM_IDLE_TIMEOUT_MS, 30_000)
   });
   validateTimeoutConfig(timeoutConfig);
+  const shadowProfiles = await loadShadowProfiles();
   const host = process.env.HOST ?? "127.0.0.1";
   if (host !== "127.0.0.1" && host !== "localhost") {
     throw new Error("HOST must be 127.0.0.1 or localhost; AutoRouter is localhost-only");
@@ -58,7 +69,8 @@ export async function loadConfig(): Promise<AppConfig> {
     firstByteTimeoutMs: timeoutConfig.firstByteTimeoutMs,
     streamIdleTimeoutMs: timeoutConfig.streamIdleTimeoutMs,
     logLevel: process.env.LOG_LEVEL ?? "info",
-    routing
+    routing,
+    shadowProfiles
   };
 }
 

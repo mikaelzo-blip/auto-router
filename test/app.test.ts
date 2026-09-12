@@ -95,6 +95,12 @@ describe("API", () => {
     expect(json.route).toBe(route);
     expect(json.upstreamModel)
       .toBe(routing.routes[route]!.upstreamModel);
+    expect(json.shadowV2).toMatchObject({
+      policy: "balanced",
+      selectedProfile: expect.any(String),
+      alternatives: expect.any(Array),
+      requiredCapabilities: expect.any(Object)
+    });
   });
 
   it.each([
