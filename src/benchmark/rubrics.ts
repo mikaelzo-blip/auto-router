@@ -293,6 +293,343 @@ function evaluateCaseSpecificInvariants(
       });
       break;
     }
+
+    case "hard-01-pg-concurrency": {
+      const usesRowLock = /select.*for update|for update|nowait/i.test(output);
+      const checksBalance = /stock\s*-\s*reserved\s*>=|check|defensive/i.test(output);
+      const handlesSerialization = /40001|serialization|retry|backoff/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:pessimistic_locking",
+        passed: usesRowLock,
+        reason: usesRowLock ? "Uses SELECT FOR UPDATE / NOWAIT pessimistic row locking" : "Missing row lock"
+      });
+      dimensions.push({
+        name: "correctness:defensive_balance_check",
+        passed: checksBalance,
+        reason: checksBalance ? "Enforces defensive inventory reservation check" : "Missing stock calculation guard"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:serialization_retry",
+        passed: handlesSerialization,
+        reason: handlesSerialization ? "Handles serialization failure 40001 with retry" : "Missing 40001 retry loop"
+      });
+      break;
+    }
+
+    case "hard-02-deadlock-prevention": {
+      const sortsKeys = /sort|order|least.*greatest|<|>|comparator/i.test(output);
+      const usesRowLock = /for update|select.*for update/i.test(output);
+      const checksBalance = /balance.*<|insufficient|balance\s*>=|drop below/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:deterministic_resource_ordering",
+        passed: sortsKeys,
+        reason: sortsKeys ? "Sorts account IDs to establish deterministic lock order" : "Missing resource key sorting"
+      });
+      dimensions.push({
+        name: "correctness:pessimistic_row_locking",
+        passed: usesRowLock,
+        reason: usesRowLock ? "Locks rows in sorted order using FOR UPDATE" : "Missing FOR UPDATE"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:negative_balance_guard",
+        passed: checksBalance,
+        reason: checksBalance ? "Guards against negative account balance" : "Missing negative balance check"
+      });
+      break;
+    }
+
+    case "hard-03-double-spend-idempotency": {
+      const uniqueConstraint = /unique|primary key|constraint/i.test(output);
+      const atomicInsert = /on conflict|select.*for update|insert.*ignore/i.test(output);
+      const returnsCached = /cache|return|original|previously|already processed/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:unique_idempotency_key",
+        passed: uniqueConstraint,
+        reason: uniqueConstraint ? "Enforces unique constraint on idempotency key" : "Missing unique constraint"
+      });
+      dimensions.push({
+        name: "correctness:atomic_state_transition",
+        passed: atomicInsert,
+        reason: atomicInsert ? "Uses atomic ON CONFLICT or row lock for transition" : "Missing atomic conflict handling"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:no_reexecution_side_effects",
+        passed: returnsCached,
+        reason: returnsCached ? "Returns cached original result without re-executing" : "Missing cached result return"
+      });
+      break;
+    }
+
+    case "hard-04-distributed-consistency": {
+      const explainsRace = /race condition|concurrent|pre-commit|before commit|uncommitted/i.test(output);
+      const discussesRemediation = /outbox|cdc|post-commit|lease|tombstone|transactional/i.test(output);
+      const versionFencing = /fencing|version|monotonic|timestamp|vector/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:race_window_analysis",
+        passed: explainsRace,
+        reason: explainsRace ? "Explains race condition of pre-commit cache invalidation" : "Missing race analysis"
+      });
+      dimensions.push({
+        name: "critical_invariant:post_commit_or_outbox",
+        passed: discussesRemediation,
+        reason: discussesRemediation ? "Details transactional outbox or post-commit cache invalidation" : "Missing remediation pattern"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:version_fencing",
+        passed: versionFencing,
+        reason: versionFencing ? "Applies fencing tokens or version vectors against stale overwrites" : "Missing fencing token strategy"
+      });
+      break;
+    }
+
+    case "hard-05-race-condition-debug": {
+      const explainsRace = /max.*race|read committed|concurrent|duplicate/i.test(output);
+      const rejectsNaive = /serializable|retry|without retry|deadlock|conflict/i.test(output);
+      const providesSolution = /sequence|for update|counter table|row lock/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:race_condition_window",
+        passed: explainsRace,
+        reason: explainsRace ? "Explains why MAX()+1 fails under read committed isolation" : "Missing race explanation"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:reject_unhandled_serializable",
+        passed: rejectsNaive,
+        reason: rejectsNaive ? "Notes that serializable isolation requires application retry" : "Missed serializable retry requirement"
+      });
+      dimensions.push({
+        name: "critical_invariant:atomic_counter_or_sequence",
+        passed: providesSolution,
+        reason: providesSolution ? "Proposes sequence or locked counter row" : "Missing production solution"
+      });
+      break;
+    }
+
+    case "hard-06-multifile-stream-debug": {
+      const explainsAbort = /abort|controller|signal|upstream/i.test(output);
+      const writesHook = /req\.raw\.on\(['"]close['"]|req\.on\(['"]close['"]|reader\.cancel/i.test(output);
+      const listenerCleanup = /listener|maxlistener|remove|clean/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:upstream_abort_propagation",
+        passed: explainsAbort,
+        reason: explainsAbort ? "Explains need to signal upstream AbortController on client disconnect" : "Missing abort propagation analysis"
+      });
+      dimensions.push({
+        name: "correctness:cleanup_hook_implementation",
+        passed: writesHook,
+        reason: writesHook ? "Hooks close event to controller.abort and reader cleanup" : "Missing cleanup implementation"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:event_listener_leak_prevention",
+        passed: listenerCleanup,
+        reason: listenerCleanup ? "Addresses listener cleanup and MaxListenersExceededWarning" : "Missing listener leak prevention"
+      });
+      break;
+    }
+
+    case "hard-07-security-auth-boundary": {
+      const identifiesVuln = /spoof|impersonat|forge|header|trust/i.test(output);
+      const explainsFailClosed = /fail-closed|untrusted|privilege|escalat/i.test(output);
+      const enforces401 = /401|unauthorized|reject|deny/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:header_spoofing_vulnerability",
+        passed: identifiesVuln,
+        reason: identifiesVuln ? "Identifies caller-controlled header impersonation vulnerability" : "Missing vulnerability identification"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:reject_header_fallback",
+        passed: explainsFailClosed,
+        reason: explainsFailClosed ? "Explains violation of fail-closed principle" : "Missing fail-closed explanation"
+      });
+      dimensions.push({
+        name: "correctness:strict_401_rejection",
+        passed: enforces401,
+        reason: enforces401 ? "Returns 401 Unauthorized for missing/invalid auth" : "Missing 401 rejection"
+      });
+      break;
+    }
+
+    case "hard-08-zerodowntime-migration": {
+      const dualWrite = /dual[- ]write/i.test(output);
+      const keysetPagination = /keyset|id\s*>|seek|batch/i.test(output);
+      const readSwitch = /read[- ]switch|read.*fallback|checksum|validate/i.test(output);
+      const contractPhase = /drop|contract|remove.*column/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:dual_write_phase",
+        passed: dualWrite,
+        reason: dualWrite ? "Specifies dual-write phase maintaining sync" : "Missing dual-write phase"
+      });
+      dimensions.push({
+        name: "correctness:batched_keyset_backfill",
+        passed: keysetPagination,
+        reason: keysetPagination ? "Uses keyset pagination for batched historical backfill" : "Missing keyset backfill"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:safe_read_switch_and_contract",
+        passed: readSwitch && contractPhase,
+        reason: (readSwitch && contractPhase) ? "Includes read-switch validation and column drop contract" : "Missing read-switch or drop phase"
+      });
+      break;
+    }
+
+    case "hard-09-financial-ledger-integrity": {
+      const balanceInvariant = /sum.*debit.*sum.*credit|debit.*==.*credit|sum.*=.*0|zero/i.test(output);
+      const appendOnly = /append[- ]only|immutable|reversal|compensat/i.test(output);
+      const validationMechanism = /trigger|constraint|check|rule/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:double_entry_balance",
+        passed: balanceInvariant,
+        reason: balanceInvariant ? "Formulates double-entry balance invariant (debits == credits)" : "Missing balance invariant"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:immutable_append_only",
+        passed: appendOnly,
+        reason: appendOnly ? "Requires immutable append-only ledger with compensating reversals" : "Missing append-only immutability"
+      });
+      dimensions.push({
+        name: "correctness:balance_validation_constraint",
+        passed: validationMechanism,
+        reason: validationMechanism ? "Implements transaction balance verification constraint/trigger" : "Missing constraint/trigger"
+      });
+      break;
+    }
+
+    case "hard-10-arch-tradeoff-analysis": {
+      const footprint = /embedded|zero[- ]dependency|daemon|external|process/i.test(output);
+      const concurrency = /concurrency|single[- ]writer|write.*latency|memory/i.test(output);
+      const recommendation = /recommend|sqlite|verdict|conclusion|prefer/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:deployment_footprint_analysis",
+        passed: footprint,
+        reason: footprint ? "Compares embedded single-binary vs external daemon lifecycle" : "Missing deployment footprint comparison"
+      });
+      dimensions.push({
+        name: "critical_invariant:concurrency_latency_tradeoffs",
+        passed: concurrency,
+        reason: concurrency ? "Evaluates WAL single-writer vs in-memory Redis latency" : "Missing concurrency analysis"
+      });
+      dimensions.push({
+        name: "recommendation_quality:clear_architectural_verdict",
+        passed: recommendation,
+        reason: recommendation ? "Provides actionable recommendation for local agent proxy" : "Missing clear recommendation"
+      });
+      break;
+    }
+
+    case "hard-11-retry-side-effect-safety": {
+      const streamSafety = /pre[- ]stream.*mid[- ]stream|before.*bytes|first chunk|forbidden/i.test(output);
+      const midstreamRisks = /duplicate.*tool|corrupt|framing|side effect/i.test(output);
+      const jitterFormula = /jitter|random|exponential|backoff/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:stream_safety_boundary",
+        passed: streamSafety,
+        reason: streamSafety ? "Distinguishes pre-stream fallback from forbidden mid-stream replay" : "Missing stream safety boundary"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:duplicate_side_effects",
+        passed: midstreamRisks,
+        reason: midstreamRisks ? "Identifies duplicate tool call and stream corruption risks" : "Missing side effect risk analysis"
+      });
+      dimensions.push({
+        name: "correctness:jittered_exponential_backoff",
+        passed: jitterFormula,
+        reason: jitterFormula ? "Designs jittered exponential backoff formula" : "Missing jittered backoff formula"
+      });
+      break;
+    }
+
+    case "hard-12-test-failure-diagnosis": {
+      const loopExplanation = /infinite.*loop|runAllTimers|recursive|unmocked/i.test(output);
+      const mismatch = /fake timer.*fetch|native.*fetch|abortsignal/i.test(output);
+      const fixProvided = /advanceTimersByTime|mock|useRealTimers/i.test(output);
+      dimensions.push({
+        name: "reasoning_completeness:infinite_timer_loop_root_cause",
+        passed: loopExplanation,
+        reason: loopExplanation ? "Explains infinite timer loop caused by runAllTimersAsync" : "Missing infinite loop explanation"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:fake_timer_network_mismatch",
+        passed: mismatch,
+        reason: mismatch ? "Explains mismatch between fake timers and unmocked network fetch" : "Missing fake timer mismatch analysis"
+      });
+      dimensions.push({
+        name: "correctness:idiomatic_vitest_remediation",
+        passed: fixProvided,
+        reason: fixProvided ? "Provides correct fix: mock fetch, advance discretely, restore real timers" : "Missing idiomatic Vitest fix"
+      });
+      break;
+    }
+
+    case "hard-13-algorithmic-reasoning": {
+      const bitwiseMask = /&|\(n\s*-\s*1\)|power[- ]of[- ]two|modulo/i.test(output);
+      const memoryOrder = /acquire|release|memory order|barrier/i.test(output);
+      const falseSharing = /false sharing|cache line|64|pad/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:bitwise_masking_index",
+        passed: bitwiseMask,
+        reason: bitwiseMask ? "Explains power-of-two bitwise indexing & (N - 1)" : "Missing bitwise indexing explanation"
+      });
+      dimensions.push({
+        name: "correctness:acquire_release_memory_ordering",
+        passed: memoryOrder,
+        reason: memoryOrder ? "Specifies acquire/release memory semantics for head/tail" : "Missing memory ordering analysis"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:false_sharing_padding",
+        passed: falseSharing,
+        reason: falseSharing ? "Explains false sharing and 64-byte cache-line padding" : "Missing false sharing explanation"
+      });
+      break;
+    }
+
+    case "hard-14-complex-typescript": {
+      const definesUnion = /RouteTarget\s*=|type\s*RouteTarget/i.test(output) && /'model'|'tier'|'fallback'/i.test(output);
+      const exhaustiveCheck = /never|assertNever|exhaustive/i.test(output);
+      const mappedType = /RequireDeepReadonly|readonly\s*\[/i.test(output);
+      dimensions.push({
+        name: "correctness:discriminated_union_definition",
+        passed: definesUnion,
+        reason: definesUnion ? "Defines discriminated union RouteTarget with type discriminant" : "Missing discriminated union"
+      });
+      dimensions.push({
+        name: "critical_invariant:compile_time_exhaustiveness_never",
+        passed: exhaustiveCheck,
+        reason: exhaustiveCheck ? "Enforces compile-time exhaustiveness checking using never" : "Missing never exhaustiveness assertion"
+      });
+      dimensions.push({
+        name: "instruction_adherence:deep_readonly_mapped_type",
+        passed: mappedType,
+        reason: mappedType ? "Implements recursive RequireDeepReadonly mapped type" : "Missing deep readonly mapped type"
+      });
+      break;
+    }
+
+    case "hard-15-repository-rollout-planning": {
+      const portIsolation = /20200.*20201|20201.*20200/i.test(output);
+      const gates = /probe|readiness|health|gate/i.test(output);
+      const rollbackMech = /ROUTER_MODE|legacy|rollback|port/i.test(output);
+      const untouchedInvariant = /untouched|zero downtime|not replace|parallel/i.test(output);
+      dimensions.push({
+        name: "critical_invariant:canary_port_isolation",
+        passed: portIsolation,
+        reason: portIsolation ? "Enforces port isolation (stable 20200 vs canary 20201)" : "Missing port isolation"
+      });
+      dimensions.push({
+        name: "reasoning_completeness:readiness_gates",
+        passed: gates,
+        reason: gates ? "Defines health probe and soak readiness gates" : "Missing readiness gates"
+      });
+      dimensions.push({
+        name: "correctness:instant_rollback_mechanism",
+        passed: rollbackMech,
+        reason: rollbackMech ? "Details instant configuration rollback via ROUTER_MODE=legacy" : "Missing instant rollback mechanism"
+      });
+      dimensions.push({
+        name: "unsafe_alternative_rejection:stable_process_untouched",
+        passed: untouchedInvariant,
+        reason: untouchedInvariant ? "Guarantees stable port 20200 process remains running and untouched" : "Missing untouched process invariant"
+      });
+      break;
+    }
   }
 }
 

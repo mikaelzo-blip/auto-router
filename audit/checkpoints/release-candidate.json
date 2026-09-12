@@ -1,0 +1,134 @@
+{
+  "checkpoint": "CP4.1",
+  "name": "Release Candidate Verification & GPT-5.6 Sol Challenger Benchmark",
+  "status": "VERIFIED_CANDIDATE",
+  "verdict": "RELEASE CANDIDATE READY",
+  "timestamp": "2026-09-12T13:30:00Z",
+  "lineage": {
+    "cp1Head": "1dd8d4924c520f32ea2559ec1161d9ebfec87be7",
+    "cp2Head": "d9fc9147e62a348b64e0310fa096dfc33c39c878",
+    "cp3Head": "32953fdae6660de9b8015a89f6c58ac734afbe36",
+    "cp4Head": "303f9f1499cdeb1fd487dc1b6fd242a18dbc05d4",
+    "cp4_1Head": "PENDING_COMMIT"
+  },
+  "canaryTelemetryReconciliation": {
+    "sessionsObserved": 25,
+    "iterationsObserved": 101,
+    "totalModelAttempts": 101,
+    "successfulModelAttempts": 97,
+    "failedModelAttempts": 4,
+    "modelAttemptSuccessRate": "96.0%",
+    "totalFinalRequests": 101,
+    "successfulFinalRequests": 97,
+    "failedFinalRequests": 4,
+    "finalRequestSuccessRate": "96.0%",
+    "failuresBreakdown": {
+      "qualityFailure": 3,
+      "timeout": 4,
+      "http429": 0,
+      "http5xx": 0,
+      "providerUnavailable": 0,
+      "toolFailure": 1,
+      "otherInfrastructureFailure": 0
+    },
+    "escalations": {
+      "qualityEscalations": 2,
+      "riskEscalations": 2,
+      "totalSemanticEscalations": 4,
+      "successfulQualityEscalations": 2,
+      "successfulEscalationRate": "100.0%",
+      "legacyHeaderTagReference": {
+        "taggedTurns": 7,
+        "successfulTaggedTurns": 5,
+        "legacyReportRate": "71.4%"
+      }
+    },
+    "cheapEligibility": {
+      "cheapEligibleTurns": 54,
+      "cheapSelectedTurns": 21,
+      "cheapEligibleButNotSelected": 33,
+      "nonSelectionReasons": {
+        "codeTaskCapabilityRequirement": 31,
+        "researchTaskCapabilityRequirement": 1,
+        "analysisTaskCapabilityRequirement": 1
+      },
+      "behaviorVerified": "INTENTIONAL_PREVENTS_CODE_DEGRADATION"
+    },
+    "switchesAndOscillations": {
+      "totalSwitches": 34,
+      "switchesPerSession": 1.36,
+      "justifiedReturnSwitches": 12,
+      "harmfulOscillations": 0,
+      "behaviorVerified": "INTENTIONAL_MATERIAL_TASK_CHANGES"
+    }
+  },
+  "solBenchmark": {
+    "candidate": "cx/gpt-5.6-sol",
+    "hardCasesEvaluated": 15,
+    "solExecutions": 15,
+    "solSuccessfulExecutions": 9,
+    "solQualityFailures": 1,
+    "solTimeouts": 5,
+    "solSuccessRate": "60.0%",
+    "solTimeoutRate": "33.3%",
+    "solAverageLatencyMs": 44035,
+    "solMedianLatencyMs": 45007,
+    "solP95LatencyMs": 65682,
+    "solAverageTTFBMs": 40659
+  },
+  "baselineComparisons": {
+    "geminiHigh": {
+      "modelId": "ag/gemini-3.8-flash-high",
+      "executions": 15,
+      "successfulExecutions": 14,
+      "qualityFailures": 1,
+      "timeouts": 0,
+      "successRate": "93.3%",
+      "timeoutRate": "0.0%",
+      "averageLatencyMs": 19473,
+      "medianLatencyMs": 19655,
+      "p95LatencyMs": 26145,
+      "averageTTFBMs": 4519
+    },
+    "terra": {
+      "modelId": "cx/gpt-5.6-terra",
+      "executions": 15,
+      "successfulExecutions": 14,
+      "qualityFailures": 1,
+      "timeouts": 0,
+      "successRate": "93.3%",
+      "timeoutRate": "0.0%",
+      "averageLatencyMs": 25585,
+      "medianLatencyMs": 25213,
+      "p95LatencyMs": 41892,
+      "averageTTFBMs": 29460
+    }
+  },
+  "solAcceptanceEvaluation": {
+    "outcome": "OUTCOME_D_EXCLUDE_FROM_DEFAULT_ROUTING",
+    "classification": "ESCALATION_ONLY_CONDITIONAL_OR_EXCLUDED",
+    "rationale": "Sol is dominated by Gemini High and Terra on reliability and latency (60.0% success rate vs 93.3%; 33.3% timeout rate under 75s deadline; 44.0s average latency vs 19.5s for Gemini High and 25.6s for Terra). It must not serve default routing. If enabled, it is restricted strictly to repeated quality failures on Gemini High or explicit extreme reasoning requirements."
+  },
+  "finalExecutionProfiles": {
+    "cheap": { "id": "gemini-flash-low", "model": "ag/gemini-3.8-flash-low", "enabled": true },
+    "balanced": { "id": "gemini-flash-medium", "model": "ag/gemini-3.8-flash-medium", "enabled": true },
+    "strong": { "id": "gemini-flash-high", "model": "ag/gemini-3.8-flash-high", "enabled": true },
+    "resilience": { "id": "terra", "model": "cx/gpt-5.6-terra", "enabled": true },
+    "heavyReasoning": { "id": "sol", "model": "cx/gpt-5.6-sol", "enabled": false, "status": "EXCLUDED_FROM_DEFAULT_ROUTING" },
+    "specialistReview": { "id": "luna-review", "model": "cx/gpt-5.6-luna-review", "enabled": true, "status": "EXPERIMENTAL_OPTIONAL" },
+    "frontier": { "status": "UNASSIGNED", "mandatory": false },
+    "astra": { "id": "astra", "model": "cx/gpt-6-astra", "enabled": false, "status": "DISABLED" }
+  },
+  "operationalGates": {
+    "frontierFreeRouting": "VERIFIED_SAFE",
+    "providerDiversity": "VERIFIED_SAFE",
+    "specialistReviewOptionality": "VERIFIED_SAFE",
+    "streamSafety": "VERIFIED_SAFE",
+    "rollbackVerified": "VERIFIED_SAFE"
+  },
+  "releaseRecommendation": {
+    "decision": "RELEASE CANDIDATE READY",
+    "nextStep": "AWAIT_EXPLICIT_USER_AUTHORIZATION_BEFORE_ANY_PRODUCTION_CUTOVER",
+    "productionPort20200": "UNTOUCHED_AND_RUNNING"
+  }
+}

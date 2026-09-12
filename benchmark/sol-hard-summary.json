@@ -1,0 +1,53 @@
+{
+  "ag/gemini-3.8-flash-high": {
+    "executions": 15,
+    "successfulExecutions": 14,
+    "qualityFailures": 1,
+    "timeouts": 0,
+    "httpFailures": 0,
+    "toolFailures": 0,
+    "averageLatencyMs": 19473,
+    "medianLatencyMs": 19655,
+    "p95LatencyMs": 26145,
+    "averageTTFBMs": 4519,
+    "totalInputTokens": 32224,
+    "totalOutputTokens": 73090,
+    "totalReasoningTokens": 34872,
+    "successRate": "93.3%",
+    "timeoutRate": "0.0%"
+  },
+  "cx/gpt-5.6-terra": {
+    "executions": 15,
+    "successfulExecutions": 14,
+    "qualityFailures": 1,
+    "timeouts": 0,
+    "httpFailures": 0,
+    "toolFailures": 0,
+    "averageLatencyMs": 25585,
+    "medianLatencyMs": 25213,
+    "p95LatencyMs": 41892,
+    "averageTTFBMs": 29460,
+    "totalInputTokens": 39330,
+    "totalOutputTokens": 18796,
+    "totalReasoningTokens": 0,
+    "successRate": "93.3%",
+    "timeoutRate": "0.0%"
+  },
+  "cx/gpt-5.6-sol": {
+    "executions": 15,
+    "successfulExecutions": 9,
+    "qualityFailures": 1,
+    "timeouts": 5,
+    "httpFailures": 0,
+    "toolFailures": 0,
+    "averageLatencyMs": 44035,
+    "medianLatencyMs": 45007,
+    "p95LatencyMs": 65682,
+    "averageTTFBMs": 40659,
+    "totalInputTokens": 26246,
+    "totalOutputTokens": 13398,
+    "totalReasoningTokens": 0,
+    "successRate": "60.0%",
+    "timeoutRate": "33.3%"
+  }
+}

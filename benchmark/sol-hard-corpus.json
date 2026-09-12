@@ -1,0 +1,251 @@
+[
+  {
+    "caseId": "hard-01-pg-concurrency",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "PostgreSQL transaction concurrency & row locking",
+    "expectedFloor": "strong",
+    "prompt": "In PostgreSQL, write a TypeScript/SQL function reserveInventory(tx, itemId, qty) that safely reserves quantity from an inventory table (id UUID, stock INT, reserved INT) under high concurrent transactions.\nExplain:\n1. Why a simple SELECT stock, reserved ... WHERE id = $1 followed by application logic and UPDATE allows overselling under READ COMMITTED isolation.\n2. Provide the exact SQL query using pessimistic row locking with SELECT ... FOR UPDATE (or FOR UPDATE NOWAIT) and defensive WHERE stock - reserved >= $2.\n3. Explain how to handle serialization failures (SQLSTATE 40001) or lock acquisition timeouts with a bounded jittered retry loop.",
+    "rubric": {
+      "type": "database_concurrency",
+      "mustContain": ["FOR UPDATE", "40001", "retry"],
+      "mustNotContain": ["dirty read"],
+      "keyCriteria": [
+        "Explains race condition in read committed isolation where another transaction updates stock between SELECT and UPDATE",
+        "Uses SELECT ... FOR UPDATE or atomic UPDATE with balance check",
+        "Includes defensive stock - reserved >= qty check",
+        "Specifies handling for serialization failure 40001 or lock timeout with bounded retry"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-02-deadlock-prevention",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Deadlock prevention in concurrent transfers",
+    "expectedFloor": "strong",
+    "prompt": "Write a TypeScript/Node.js service function transferFunds(tx, fromAccountId: string, toAccountId: string, amount: number) that transfers funds between two bank accounts (id, balance).\nExplain:\n1. How concurrent transfers between the same two accounts in reverse order (A -> B and B -> A) cause a PostgreSQL deadlock (SQLSTATE 40P01).\n2. Implement the standard deterministic resource ordering pattern to acquire row locks so that deadlocks are mathematically impossible.\n3. State the exact locking order condition (e.g. lexicographical/UUID sorting) and verify that balances never drop below zero.",
+    "rubric": {
+      "type": "deadlock_prevention",
+      "mustContain": ["sort", "40P01", "FOR UPDATE"],
+      "keyCriteria": [
+        "Explains circular wait deadlock condition when locking in reverse order",
+        "Implements deterministic resource ordering by sorting account IDs prior to lock acquisition",
+        "Locks both rows with SELECT FOR UPDATE in sorted order",
+        "Enforces non-negative balance constraint before completing transfer"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-03-double-spend-idempotency",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Idempotency & double-spend prevention in payment processing",
+    "expectedFloor": "strong",
+    "prompt": "Design a webhook payment processing endpoint that prevents double-spending when upstream payment gateways deliver duplicate or concurrent webhook events for the same payment_id.\n1. Specify the database schema requirements for the idempotency record, including primary keys, unique constraints, and transaction statuses (pending, processed, failed).\n2. Describe the atomic state transition pattern using PostgreSQL INSERT ... ON CONFLICT (payment_id) DO NOTHING or SELECT FOR UPDATE.\n3. Explain how to safely return the original processing result to redundant duplicate webhooks without re-executing ledger mutations or external side effects.",
+    "rubric": {
+      "type": "idempotency_double_spend",
+      "mustContain": ["ON CONFLICT", "unique", "idempotency"],
+      "keyCriteria": [
+        "Defines idempotency table with unique constraint on payment/idempotency key",
+        "Uses atomic insert/conflict or locked row to prevent concurrent processing",
+        "Caches and returns original response on duplicate delivery without re-executing side effects"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-04-distributed-consistency",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Distributed state consistency & cache invalidation",
+    "expectedFloor": "strong",
+    "prompt": "A distributed service uses Redis to cache user authorization permissions stored in PostgreSQL. Under concurrent permission updates, callers observe stale permissions because Redis is invalidated before the PostgreSQL transaction commits.\n1. Explain the exact race condition where invalidating Redis pre-commit causes a concurrent reader to repopulate Redis with stale data from the uncommitted state.\n2. Contrast two robust remediation strategies: Transactional Outbox pattern with CDC vs post-commit cache invalidation with a brief lease/tombstone.\n3. Explain how fencing tokens or monotonic version numbers prevent an older asynchronous invalidation from overwriting a newer cache state.",
+    "rubric": {
+      "type": "distributed_consistency",
+      "mustContain": ["post-commit", "race condition", "fencing token"],
+      "keyCriteria": [
+        "Explains race condition when cache is invalidated prior to DB transaction commit",
+        "Contrasts transactional outbox/CDC with post-commit invalidation or cache lease",
+        "Explains fencing tokens or monotonic version counters to reject stale cache overwrites"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-05-race-condition-debug",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Sequence allocation race condition in invoice generator",
+    "expectedFloor": "strong",
+    "prompt": "An invoicing service generates sequential invoice numbers using SELECT MAX(seq_number) + 1 FROM invoices WHERE tenant_id = $1. Under concurrent load, multiple workers generate duplicate sequence numbers, violating a unique constraint.\n1. Explain why SELECT MAX(...) + 1 fails under READ COMMITTED isolation even if wrapped in a transaction block.\n2. Reject the naive proposal of setting transaction isolation to SERIALIZABLE without application retry loops.\n3. Provide two production-grade solutions: a PostgreSQL sequence per tenant or a dedicated tenant_sequences (tenant_id, last_seq) table locked with SELECT FOR UPDATE.",
+    "rubric": {
+      "type": "race_condition_debugging",
+      "mustContain": ["SELECT FOR UPDATE", "MAX", "sequence"],
+      "keyCriteria": [
+        "Explains why SELECT MAX()+1 has an inherent race window under read committed isolation",
+        "Rejects naive serializable isolation without retry handling",
+        "Provides robust solution using dedicated sequence counter with SELECT FOR UPDATE or native sequence"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-06-multifile-stream-debug",
+    "category": "F. DEBUGGING",
+    "name": "Multi-file streaming proxy memory leak and socket cleanup",
+    "expectedFloor": "strong",
+    "prompt": "A reverse proxy built with Fastify and Node.js streams LLM responses via Server-Sent Events (SSE). When clients cancel requests or disconnect abruptly, server memory steadily climbs until an OOM crash.\n1. Identify the root cause across both the HTTP handler and upstream fetch: why listening to req.raw.on('close') alone fails if the upstream AbortController is not signaled.\n2. Write the exact cleanup hook to propagate client cancellation to the upstream fetch signal and destroy the SSE stream reader.\n3. Explain how to detect and prevent event listener leaks (e.g. MaxListenersExceededWarning) when reusable connections or transformers attach listeners per chunk.",
+    "rubric": {
+      "type": "streaming_memory_leak",
+      "mustContain": ["AbortController", "close", "listener"],
+      "keyCriteria": [
+        "Identifies failure to abort upstream fetch on client disconnect",
+        "Writes cleanup handler hooking req.raw.on('close') to controller.abort() and reader.cancel()",
+        "Addresses event listener cleanup to prevent MaxListenersExceededWarning"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-07-security-auth-boundary",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "name": "Security & RBAC boundary reasoning with header spoofing",
+    "expectedFloor": "strong",
+    "prompt": "Audit this proposed authentication & RBAC middleware for an API gateway:\n```ts\nexport async function authMiddleware(req: FastifyRequest, reply: FastifyReply) {\n  const token = req.headers['authorization']?.replace('Bearer ', '');\n  const user = token ? await verifyJwt(token) : null;\n  const actorId = user?.id || (req.headers['x-user-id'] as string);\n  const role = user?.role || (req.headers['x-role'] as string) || 'viewer';\n  req.user = { id: actorId, role };\n}\n```\n1. Identify the critical security vulnerability that allows arbitrary caller impersonation and privilege escalation.\n2. Explain why fallback to caller-controlled headers (X-User-ID, X-Role) violates the fail-closed security principle.\n3. Rewrite the middleware to enforce strict token authentication, fail-closed denial on invalid/missing tokens, and strip untrusted downstream headers.",
+    "rubric": {
+      "type": "security_auth_boundary",
+      "mustContain": ["fail-closed", "impersonat", "401"],
+      "mustNotContain": ["req.headers['x-user-id']"],
+      "keyCriteria": [
+        "Identifies vulnerability: untrusted caller can forge X-User-ID and X-Role headers to escalate privileges",
+        "Explains violation of fail-closed security",
+        "Rewrites middleware to reject unauthenticated requests with 401 and forbid header fallback"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-08-zerodowntime-migration",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Zero-downtime database migration for column rename/re-type",
+    "expectedFloor": "strong",
+    "prompt": "A high-throughput production PostgreSQL database needs to migrate a user_settings table column from preferences: JSON (text-based JSON) to preferences: JSONB without downtime or table locking.\nDetail the 5-phase zero-downtime expand-and-contract migration strategy:\n1. Expand phase: adding preferences_v2 JSONB as a nullable column.\n2. Dual-write phase: updating application code to write to both columns while reading from the old column.\n3. Backfill phase: backfilling historical records in batches using keyset pagination (WHERE id > $last_id ORDER BY id LIMIT 1000) without table locks.\n4. Read-switch phase: validating checksums and switching reads to preferences_v2 with fallback.\n5. Contract phase: removing dual-write and dropping the old column.",
+    "rubric": {
+      "type": "zerodowntime_migration",
+      "mustContain": ["dual-write", "backfill", "keyset pagination"],
+      "keyCriteria": [
+        "Covers expand phase with nullable column",
+        "Covers dual-write phase maintaining sync",
+        "Covers batched backfill with keyset pagination (avoiding OFFSET)",
+        "Covers read-switch with verification and contract phase"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-09-financial-ledger-integrity",
+    "category": "I. ANALYSIS",
+    "name": "Financial ledger double-entry reconciliation & invariants",
+    "expectedFloor": "strong",
+    "prompt": "Analyze this financial ledger schema and settlement transaction:\nAn accounting system records ledger entries: ledger_entries (id, account_id, entry_type ENUM('DEBIT', 'CREDIT'), amount_cents BIGINT, currency VARCHAR(3), transaction_id UUID).\n1. Formulate the fundamental double-entry balance invariant that must hold for every transaction_id: SUM(DEBIT) - SUM(CREDIT) == 0 within the same currency.\n2. Explain why ledger entries must be strictly append-only (no UPDATE or DELETE permitted) and how corrections must be modeled via compensating entries (reversals).\n3. Write a PostgreSQL constraint or trigger validation query that rejects any transaction whose debits and credits do not balance.",
+    "rubric": {
+      "type": "financial_ledger_integrity",
+      "mustContain": ["DEBIT", "CREDIT", "append-only"],
+      "mustNotContain": ["DELETE FROM ledger_entries"],
+      "keyCriteria": [
+        "Formulates double-entry balance invariant: sum of debits equals sum of credits per transaction",
+        "Mandates append-only immutability with compensating reversal entries",
+        "Implements transaction balance verification constraint or trigger"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-10-arch-tradeoff-analysis",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+    "expectedFloor": "strong",
+    "prompt": "Evaluate an architectural trade-off for a local model router daemon: storing session state and rate-limiting counters in embedded SQLite (in WAL mode) versus a local Redis instance.\nAnalyze:\n1. Operational complexity and deployment footprint (zero-dependency embedded single-binary vs external daemon lifecycle).\n2. Concurrency and write latency characteristics (WAL single-writer concurrency vs in-memory Redis event loop).\n3. Crash recovery, data durability, and process restart persistence.\n4. Provide a definitive recommendation for a local desktop coding-agent proxy handling up to 100 requests/minute.",
+    "rubric": {
+      "type": "arch_tradeoff_analysis",
+      "mustContain": ["WAL", "Redis", "recommendation"],
+      "keyCriteria": [
+        "Compares deployment footprint (embedded zero-dependency vs external daemon)",
+        "Compares concurrency and write characteristics (SQLite WAL single-writer vs Redis memory speed)",
+        "Compares crash recovery and data persistence",
+        "Delivers clear recommendation for local desktop agent proxy (SQLite WAL preferred for zero-daemon simplicity)"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-11-retry-side-effect-safety",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Retry and side-effect safety in streaming proxy",
+    "expectedFloor": "strong",
+    "prompt": "When an upstream LLM provider returns an HTTP error or disconnects during request execution, the router evaluates whether to retry the request or fall back to an alternative model.\n1. Formulate the fundamental stream-safety invariant: why pre-stream fallback (before any bytes or headers are sent to the client) is safe, but mid-stream fallback (after first SSE chunk is emitted) is strictly forbidden.\n2. Explain the catastrophic failure mode of mid-stream fallback: duplicate responses, corrupted JSON/SSE stream, and duplicated tool invocation side effects.\n3. Design an exponential backoff retry policy with full jitter for pre-stream 429/503 errors, including maximum attempt bounds and backoff formula.",
+    "rubric": {
+      "type": "retry_side_effect_safety",
+      "mustContain": ["pre-stream", "mid-stream", "jitter"],
+      "mustNotContain": ["retry mid-stream", "replay after first chunk"],
+      "keyCriteria": [
+        "Formulates invariant: pre-stream fallback allowed, mid-stream fallback strictly forbidden",
+        "Explains mid-stream failure: duplicate tool calls, broken SSE framing, hallucinated concatenation",
+        "Designs exponential backoff with full jitter formula (e.g. min(maxDelay, base * 2^attempt) * random())"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-12-test-failure-diagnosis",
+    "category": "F. DEBUGGING",
+    "name": "Difficult test-failure diagnosis: hanging Vitest async suites",
+    "expectedFloor": "strong",
+    "prompt": "In a TypeScript Vitest test suite testing an HTTP client with retries, the test command vitest run hangs indefinitely and never exits, timing out after 10 minutes in CI.\n```ts\nit('retries on network error', async () => {\n  vi.useFakeTimers();\n  const promise = client.fetchWithRetry('http://example.com');\n  await vi.runAllTimersAsync();\n  await expect(promise).rejects.toThrow('Max retries reached');\n});\n```\n1. Identify why vi.runAllTimersAsync() with an unmocked network fetch or recursive timer causes an infinite timer loop.\n2. Explain why fake timers interact poorly with real network calls or native fetch AbortSignals in Node.js.\n3. Provide the minimal, idiomatic Vitest fix: mocking globalThis.fetch, advancing timers by discrete intervals (vi.advanceTimersByTimeAsync), and restoring real timers in afterEach.",
+    "rubric": {
+      "type": "test_failure_diagnosis",
+      "mustContain": ["useRealTimers", "mock", "advanceTimersByTime"],
+      "keyCriteria": [
+        "Identifies infinite loop caused by runAllTimersAsync continuously advancing recurring timer/retries",
+        "Explains mismatch between fake timers and unmocked network calls",
+        "Provides solution: mock fetch, use advanceTimersByTimeAsync, restore timers with vi.useRealTimers()"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-13-algorithmic-reasoning",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Algorithmic reasoning: lock-free ring buffer memory ordering",
+    "expectedFloor": "strong",
+    "prompt": "Design a high-throughput Single-Producer Single-Consumer (SPSC) lock-free ring buffer in TypeScript/C++ with a power-of-two capacity N.\n1. Explain why power-of-two sizing allows replacing expensive modulo % operations with bitwise & (N - 1).\n2. Explain the memory ordering requirements for the head (write pointer) and tail (read pointer): why producer updates need release semantics and consumer reads need acquire semantics.\n3. Explain false sharing and how cache-line padding (64 bytes) between head and tail prevents CPU cache ping-pong in multi-core processors.",
+    "rubric": {
+      "type": "algorithmic_reasoning",
+      "mustContain": ["false sharing", "64", "acquire", "release"],
+      "keyCriteria": [
+        "Explains fast bitwise wrap-around index calculation index & (N - 1) for power-of-two capacity",
+        "Explains acquire-release memory barrier semantics preventing out-of-order memory visibility",
+        "Explains false sharing when head and tail share a 64-byte L1 cache line, requiring padding"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-14-complex-typescript",
+    "category": "B. SIMPLE CODE / COMPLEX TYPESCRIPT",
+    "name": "Complex TypeScript correctness: exhaustive discriminated unions & mapped types",
+    "expectedFloor": "strong",
+    "prompt": "Write TypeScript utility types for a type-safe model routing configuration:\n1. Define a discriminated union type RouteTarget = { type: 'model'; modelId: string } | { type: 'tier'; tier: 'cheap' | 'balanced' | 'strong' } | { type: 'fallback'; targets: RouteTarget[] }.\n2. Write an exhaustive evaluator function resolveTarget(target: RouteTarget): string that handles all union variants and uses the never type in the default branch to ensure compile-time exhaustiveness checking.\n3. Write a mapped type RequireDeepReadonly<T> that recursively marks all properties, nested objects, and arrays as readonly.",
+    "rubric": {
+      "type": "complex_typescript",
+      "mustContain": ["never", "readonly", "switch"],
+      "keyCriteria": [
+        "Defines recursive discriminated union RouteTarget with type discriminant",
+        "Implements switch statement with exhaustiveness assertion using never",
+        "Implements recursive mapped type RequireDeepReadonly<T> covering objects and arrays"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-15-repository-rollout-planning",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "name": "Tool-oriented repository planning: canary release and instant rollback",
+    "expectedFloor": "strong",
+    "prompt": "Draft an operational deployment and rollback plan for releasing AutoRouter V2 onto a production server that currently runs stable AutoRouter V1 on port 20200.\nDetail:\n1. Canary port isolation: running V2 on port 20201 in parallel with stable V1 on port 20200 with zero shared mutable state.\n2. Health probe and soak verification gates before any traffic shift.\n3. Instant zero-downtime rollback mechanism using environment variable ROUTER_MODE=legacy and reverse-proxy upstream port switching.\n4. Explicit rollback invariants: why the stable port 20200 process must remain untouched and running until full canary soak sign-off.",
+    "rubric": {
+      "type": "rollout_planning",
+      "mustContain": ["20200", "20201", "ROUTER_MODE", "rollback"],
+      "keyCriteria": [
+        "Enforces port isolation (stable 20200 vs canary 20201)",
+        "Defines health probe and soak readiness gates",
+        "Specifies instant configuration rollback via ROUTER_MODE=legacy or port toggle",
+        "Guarantees stable port 20200 is untouched and running throughout canary validation"
+      ]
+    }
+  }
+]

@@ -26,11 +26,15 @@ export interface ShadowRequest {
   history?: string[];
   recentToolOutcome?: "success" | "failure";
   recentFailure?: string;
+  recentFailureCount?: number;
+  failureType?: "quality" | "infrastructure" | "timeout" | "429" | "5xx";
   recentTestOutcome?: "passed" | "failed";
   hasVisionInput?: boolean;
   toolsProvided?: boolean;
   policy: Policy;
   riskHint?: Risk;
+  requiresExtremeReasoning?: boolean;
+  unavailableProviders?: string[];
 }
 
 export interface ShadowDecision {
@@ -104,7 +108,7 @@ function classify(request: ShadowRequest): ShadowTaskType {
 }
 function complexity(request: ShadowRequest): Complexity {
   const text = words(textOf(request));
-  if (/linearizable|race condition|concurr|distributed|architecture|security invariant|financial ledger|lock-free|critical/.test(text)) return "high";
+  if (/linearizable|race condition|concurr|deadlock|distributed|architecture|security invariant|financial ledger|lock-free|critical/.test(text)) return "high";
   if (request.recentFailure || request.recentTestOutcome === "failed") return "high";
   if (/step by step|trade.?off|in depth|deeply|multiple files|migration/.test(text)) return "medium";
   if (text.trim().length < 40 && !/implement|debug|prove|design/.test(text)) return "trivial";
@@ -139,15 +143,14 @@ export function validateProfileRegistry(profiles: ExecutionProfile[]): void {
   }
 }
 
-export function validateProfileCoverage(profiles: ExecutionProfile[]): void {
+export function validateProfileCoverage(profiles: ExecutionProfile[], requiredTiers: QualityTier[] = ["cheap", "balanced", "strong"]): void {
   const allTasks: ShadowTaskType[] = ["general", "transformation", "code", "analysis", "research", "multimodal"];
-  const allTiers: QualityTier[] = ["cheap", "balanced", "strong", "frontier"];
   const missing: string[] = [];
 
   for (const task of allTasks) {
     for (const tools of [false, true]) {
       for (const vision of [false, true]) {
-        for (const tier of allTiers) {
+        for (const tier of requiredTiers) {
           const tierIndex = tiers.indexOf(tier);
           const hasMatch = profiles.some(
             (p) =>
@@ -180,24 +183,47 @@ export function routeShadow(request: ShadowRequest, profiles: ExecutionProfile[]
   const minimumQualityTier = floor(level, risk, request);
   const requiredCapabilities = { tools: Boolean(request.toolsProvided || /inspect|read files?|write files?|run tests?|search (the )?repo|execute|patch|implement/.test(words(textOf(request)))), vision: Boolean(request.hasVisionInput) };
   const minimumIndex = tiers.indexOf(minimumQualityTier);
-  let eligible = profiles.filter((p) => p.enabled && p.taskFit.includes(taskType) && (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision) && tiers.indexOf(p.qualityTier) >= minimumIndex);
+
+  const enabledProfiles = profiles.filter((p) => {
+    if (!p.enabled) return false;
+    if (request.unavailableProviders?.some((prov) => p.model.startsWith(`${prov}/`))) return false;
+    return true;
+  });
+
+  const isReviewTask = /\b(review|audit|critique|pr review)\b/i.test(textOf(request));
+  const previous = store?.get(request.sessionId);
+  const isInfraFailure = request.failureType === "infrastructure" || request.failureType === "timeout" || request.failureType === "429" || request.failureType === "5xx";
+  const solEligible = !isInfraFailure && (level !== "trivial" && level !== "low") && Boolean(
+    request.requiresExtremeReasoning ||
+    (request.recentFailureCount !== undefined && request.recentFailureCount >= 2) ||
+    (previous?.currentExecutionProfile === "gemini-flash-high" && (request.recentTestOutcome === "failed" || Boolean(request.recentFailure))) ||
+    (/extreme reasoning|critical invariant|formal proof|deep verification/.test(textOf(request).toLowerCase()) && level === "high")
+  );
+
+  const candidateProfiles = enabledProfiles.filter((p) => {
+    if (p.id === "sol" && !solEligible) return false;
+    if (p.id === "luna-review" && !isReviewTask) return false;
+    return true;
+  });
+
+  let eligible = candidateProfiles.filter((p) => p.taskFit.includes(taskType) && (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision) && tiers.indexOf(p.qualityTier) >= minimumIndex);
   let fallbackEngaged = false;
   let fallbackReason: string | undefined;
 
   if (!eligible.length) {
     fallbackEngaged = true;
     // 1. Try relaxing taskFit while respecting hard capabilities and minimum quality tier
-    eligible = profiles.filter((p) => p.enabled && (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision) && tiers.indexOf(p.qualityTier) >= minimumIndex);
+    eligible = candidateProfiles.filter((p) => (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision) && tiers.indexOf(p.qualityTier) >= minimumIndex);
     if (eligible.length > 0) {
       fallbackReason = `relaxed taskFit [${taskType}] to capability-compatible profiles meeting ${minimumQualityTier} tier`;
     } else {
       // 2. Try relaxing quality floor while strictly maintaining hard capabilities
-      eligible = profiles.filter((p) => p.enabled && (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision));
+      eligible = candidateProfiles.filter((p) => (!requiredCapabilities.tools || p.hardCapabilities.tools) && (!requiredCapabilities.vision || p.hardCapabilities.vision));
       if (eligible.length > 0) {
         fallbackReason = `relaxed minimum quality tier [${minimumQualityTier}] to satisfy hard capabilities`;
       } else {
         // 3. Fallback to any enabled profile
-        eligible = profiles.filter((p) => p.enabled);
+        eligible = candidateProfiles;
         if (eligible.length > 0) {
           fallbackReason = "relaxed hard capabilities to best available enabled profile";
         } else {
@@ -207,9 +233,18 @@ export function routeShadow(request: ShadowRequest, profiles: ExecutionProfile[]
     }
   }
   const desiredTier = tierForPolicy(minimumQualityTier, request.policy);
-  const ranked = [...eligible].sort((a, b) => Math.abs(tiers.indexOf(a.qualityTier) - tiers.indexOf(desiredTier)) - Math.abs(tiers.indexOf(b.qualityTier) - tiers.indexOf(desiredTier)) || costRank(b, request.policy) - costRank(a, request.policy));
-  const previous = store?.get(request.sessionId);
-  const failureEscalates = Boolean(request.recentFailure || request.recentToolOutcome === "failure" || request.recentTestOutcome === "failed");
+  const ranked = [...eligible].sort((a, b) => {
+    if (solEligible) {
+      if (a.id === "sol" && b.id !== "sol") return -1;
+      if (b.id === "sol" && a.id !== "sol") return 1;
+    }
+    if (isReviewTask) {
+      if (a.id === "luna-review" && b.id !== "luna-review") return -1;
+      if (b.id === "luna-review" && a.id !== "luna-review") return 1;
+    }
+    return Math.abs(tiers.indexOf(a.qualityTier) - tiers.indexOf(desiredTier)) - Math.abs(tiers.indexOf(b.qualityTier) - tiers.indexOf(desiredTier)) || costRank(b, request.policy) - costRank(a, request.policy);
+  });
+  const failureEscalates = !isInfraFailure && Boolean(request.recentFailure || request.recentToolOutcome === "failure" || request.recentTestOutcome === "failed");
   const initialSelection = ranked[0]!;
   const previousCandidate = previous ? eligible.find((profile) => profile.id === previous.currentExecutionProfile) : undefined;
   const materiallyChanged = level === "high" || risk !== "low" || failureEscalates || Boolean(previous && previous.currentTaskType !== taskType);
@@ -225,7 +260,7 @@ export function routeShadow(request: ShadowRequest, profiles: ExecutionProfile[]
   }
   if (store) store.set(request.sessionId, { currentExecutionProfile: selectedProfile, currentTaskType: taskType, currentQualityTier: tiers[Math.max(minimumIndex, tiers.indexOf(desiredTier))]!, lastSwitchReason: switchReason, recentFailureCount: request.recentFailure ? 1 : 0, lastSeenAt: Date.now() });
   const reasons = [taskType !== "general" ? `latest intent classified as ${taskType}` : "latest intent is routine", `complexity is ${level}`, `risk is ${risk}`, `minimum quality is ${minimumQualityTier}`, "pipeline: capability, health, classification, complexity, risk, quality floor, candidate pool, policy, hysteresis, ranking"];
-  if (request.recentFailure) reasons.push("recent failure recommends escalation");
+  if (request.recentFailure && !isInfraFailure) reasons.push("recent failure recommends escalation");
   if (request.recentTestOutcome === "passed") reasons.push("recent passing verification permits de-escalation");
   if (fallbackEngaged && fallbackReason) reasons.push(`fallback: ${fallbackReason}`);
   return {
