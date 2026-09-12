@@ -1,0 +1,129 @@
+{
+  "sessionsObserved": 25,
+  "iterationsObserved": 101,
+  "profileDistribution": {
+    "gemini-flash-medium": 33,
+    "gemini-flash-low": 21,
+    "gemini-flash-high": 40,
+    "astra": 2,
+    "terra": 3,
+    "luna-review": 2
+  },
+  "modelDistribution": {
+    "ag/gemini-3.8-flash-medium": 33,
+    "ag/gemini-3.8-flash-low": 21,
+    "ag/gemini-3.8-flash-high": 40,
+    "cx/gpt-6-astra": 2,
+    "cx/gpt-5.6-terra": 3,
+    "cx/gpt-5.6-luna-review": 2
+  },
+  "tierDistribution": {
+    "cheap": 54,
+    "strong": 45,
+    "frontier": 2
+  },
+  "switchesPerSession": 1.36,
+  "totalSwitches": 34,
+  "escalationRate": 4,
+  "successfulEscalationRate": 71.4,
+  "totalEscalations": 4,
+  "totalDeEscalations": 1,
+  "totalOscillations": 12,
+  "cheapMetrics": {
+    "cheap_total_records": 54,
+    "cheap_first_attempt_success": 98.1,
+    "cheap_to_balanced_escalations": 8,
+    "cheap_to_strong_escalations": 2
+  },
+  "latencyByModelMs": {
+    "ag/gemini-3.8-flash-medium": {
+      "count": 33,
+      "avg": 6294,
+      "min": 2329,
+      "max": 14115
+    },
+    "ag/gemini-3.8-flash-low": {
+      "count": 21,
+      "avg": 4109,
+      "min": 1461,
+      "max": 7125
+    },
+    "ag/gemini-3.8-flash-high": {
+      "count": 40,
+      "avg": 17893,
+      "min": 2874,
+      "max": 45013
+    },
+    "cx/gpt-6-astra": {
+      "count": 2,
+      "avg": 45010,
+      "min": 45009,
+      "max": 45011
+    },
+    "cx/gpt-5.6-terra": {
+      "count": 3,
+      "avg": 19471,
+      "min": 7222,
+      "max": 28045
+    },
+    "cx/gpt-5.6-luna-review": {
+      "count": 2,
+      "avg": 5718,
+      "min": 5300,
+      "max": 6135
+    }
+  },
+  "ttfbByModelMs": {
+    "ag/gemini-3.8-flash-medium": {
+      "avg": 3316,
+      "min": 1089,
+      "max": 5854
+    },
+    "ag/gemini-3.8-flash-low": {
+      "avg": 2086,
+      "min": 1074,
+      "max": 4369
+    },
+    "ag/gemini-3.8-flash-high": {
+      "avg": 4790,
+      "min": 2803,
+      "max": 11727
+    },
+    "cx/gpt-6-astra": {
+      "avg": 5808,
+      "min": 5353,
+      "max": 6262
+    },
+    "cx/gpt-5.6-terra": {
+      "avg": 3028,
+      "min": 2271,
+      "max": 3413
+    },
+    "cx/gpt-5.6-luna-review": {
+      "avg": 2872,
+      "min": 2231,
+      "max": 3513
+    }
+  },
+  "timeoutRateByModel": {
+    "ag/gemini-3.8-flash-medium": "0.0%",
+    "ag/gemini-3.8-flash-low": "0.0%",
+    "ag/gemini-3.8-flash-high": "5.0%",
+    "cx/gpt-6-astra": "100.0%",
+    "cx/gpt-5.6-terra": "0.0%",
+    "cx/gpt-5.6-luna-review": "0.0%"
+  },
+  "failureRateByModel": {
+    "ag/gemini-3.8-flash-medium": "0.0%",
+    "ag/gemini-3.8-flash-low": "0.0%",
+    "ag/gemini-3.8-flash-high": "0.0%",
+    "cx/gpt-6-astra": "0.0%",
+    "cx/gpt-5.6-terra": "0.0%",
+    "cx/gpt-5.6-luna-review": "0.0%"
+  },
+  "frontierUsage": {
+    "frontierRequests": 2,
+    "frontierRate": "2.0%",
+    "astraSelections": 2
+  }
+}
