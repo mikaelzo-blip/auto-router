@@ -1,9 +1,9 @@
 {
   "checkpoint": "CP2",
   "status": "shadow-ready",
-  "startingHead": "160e76fe676bb9b90e61a94cf95437f0a10f4340",
-  "endingHead": "b0d4fb35719638da1d438eec7e7652148bc0a284",
-  "cp1EndingHead": "160e76fe676bb9b90e61a94cf95437f0a10f4340",
+  "startingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
+  "endingHead": "6150245f6f81bba8c0a0f6dc487bbd6c5133a52f",
+  "cp1EndingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
   "tests": {
     "command": "npm test",
     "result": "PASS: 8 files, 83 tests",
