@@ -172,8 +172,11 @@ export function withStreamTimeouts(
       } catch (error) {
         fail(
           error instanceof Error
-            ? new UpstreamFailureError("mid_stream_failure", error.message)
-            : new UpstreamFailureError("mid_stream_failure"),
+            ? new UpstreamFailureError(
+                firstByte ? "pre_stream_failure" : "mid_stream_failure",
+                error.message
+              )
+            : new UpstreamFailureError(firstByte ? "pre_stream_failure" : "mid_stream_failure"),
           controller
         );
       }

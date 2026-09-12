@@ -121,6 +121,39 @@ describe("reliability foundation", () => {
     });
   });
 
+  it("distinguishes pre-stream and mid-stream failures", async () => {
+    const preTracker = new StreamLifecycleTracker();
+    const preSource = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.error(new Error("headers failed"));
+      }
+    });
+    const preReader = withStreamTimeouts(preSource, {
+      firstByteTimeoutMs: 100,
+      streamIdleTimeoutMs: 100
+    }, preTracker).getReader();
+    const preRead = preReader.read().then(() => undefined, error => error);
+    await expect(preRead).resolves.toMatchObject({ code: "pre_stream_failure" });
+
+    const midTracker = new StreamLifecycleTracker();
+    let midController!: ReadableStreamDefaultController<Uint8Array>;
+    const midSource = new ReadableStream<Uint8Array>({
+      start(controller) {
+        midController = controller;
+      }
+    });
+    const midReader = withStreamTimeouts(midSource, {
+      firstByteTimeoutMs: 100,
+      streamIdleTimeoutMs: 100
+    }, midTracker).getReader();
+    const first = midReader.read();
+    midController.enqueue(new Uint8Array([1]));
+    await expect(first).resolves.toMatchObject({ done: false });
+    const midRead = midReader.read().then(() => undefined, error => error);
+    midController.error(new Error("stream failed"));
+    await expect(midRead).resolves.toMatchObject({ code: "mid_stream_failure" });
+  });
+
   it("uses structured timeout taxonomy", () => {
     const error = new UpstreamTimeoutError("stream_idle_timeout");
 
