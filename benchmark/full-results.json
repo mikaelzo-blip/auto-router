@@ -834,5 +834,350 @@
     "passed": false,
     "error": "Timeout (20s)",
     "elapsed": 20005
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 2987,
+    "promptTokens": 2111,
+    "completionTokens": 1098,
+    "reasoningTokens": 0,
+    "contentSnippet": "### 1. Why Read Committed Isolation Fails\n\nUnder the default **Read Committed** isolation level, each statement inside a transaction sees a snapshot o"
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": true,
+    "issues": [],
+    "elapsed": 4420,
+    "promptTokens": 2111,
+    "completionTokens": 2031,
+    "reasoningTokens": 1175,
+    "contentSnippet": "### 1. Why `READ COMMITTED` Fails to Prevent Duplicates\n\nUnder PostgreSQL's default `READ COMMITTED` isolation level:\n\n1. **MVCC and Non-Blocking Read"
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20008
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": false,
+    "issues": [
+      "Missing: \"FOR UPDATE\""
+    ],
+    "elapsed": 19027,
+    "promptTokens": 2585,
+    "completionTokens": 881,
+    "reasoningTokens": 0,
+    "contentSnippet": "`READ COMMITTED` only guarantees that each statement sees committed data at the time that statement begins. It does not make this multi-statement sequ"
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20013
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 7877,
+    "promptTokens": 2079,
+    "completionTokens": 2315,
+    "reasoningTokens": 0,
+    "contentSnippet": "### 1. Mid-Stream Replay During Partial Token Delivery\n\n#### Architectural Hazard\nIf an upstream connection drops, times out, or emits an HTTP 5xx err"
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": true,
+    "issues": [],
+    "elapsed": 5695,
+    "promptTokens": 2079,
+    "completionTokens": 3197,
+    "reasoningTokens": 1387,
+    "contentSnippet": "### 1. Mid-Stream Replay During Partial Token Delivery\n\n#### Architectural Hazard\nUnlike idempotent REST calls, Large Language Model (LLM) streaming r"
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": false,
+    "issues": [
+      "Missing: \"replay\"",
+      "Missing: \"leak\""
+    ],
+    "elapsed": 4175,
+    "promptTokens": 2559,
+    "completionTokens": 143,
+    "reasoningTokens": 0,
+    "contentSnippet": "I can perform this review, but I need the reverse proxy’s design or implementation first. Please provide the relevant repository/path, architecture do"
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20016
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20007
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 3927,
+    "promptTokens": 2062,
+    "completionTokens": 2975,
+    "reasoningTokens": 0,
+    "contentSnippet": "### Architectural Evaluation: SQLite (WAL) vs. External Redis\n\nIn a local-first architecture hosting 1–10 agent instances, state management must balan"
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": true,
+    "issues": [],
+    "elapsed": 4466,
+    "promptTokens": 2062,
+    "completionTokens": 3697,
+    "reasoningTokens": 1694,
+    "contentSnippet": "In a local-first AI router servicing 1–10 local agent instances, the choice between **embedded SQLite (WAL mode)** and an **external Redis instance** "
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20000
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20015
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20012
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 3447,
+    "promptTokens": 2349,
+    "completionTokens": 696,
+    "reasoningTokens": 123,
+    "contentSnippet": "Here is the reconciliation of the two settlement logs:\n\n---\n\n### **(a) Matched Transactions**\nTransactions where the gross amount matches the internal"
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": true,
+    "issues": [],
+    "elapsed": 3543,
+    "promptTokens": 2349,
+    "completionTokens": 1504,
+    "reasoningTokens": 868,
+    "contentSnippet": "Here is the reconciliation breakdown between the Payment Processor log and the Internal Ledger:\n\n---\n\n### **(a) Matched Transactions**\nTransactions wh"
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20012
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": true,
+    "issues": [],
+    "elapsed": 14612,
+    "promptTokens": 2759,
+    "completionTokens": 489,
+    "reasoningTokens": 0,
+    "contentSnippet": "**Reconciliation Results**\n\n**Matched transactions**\n- `TXN_101` ↔ `ORD_A`: gross $100.00, fee $2.50 — matched.\n- `TXN_102` ↔ `ORD_B`: gross $250.00 —"
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20009
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 1040,
+    "promptTokens": 2192,
+    "completionTokens": 316,
+    "reasoningTokens": 0,
+    "contentSnippet": "Based on the provided incident log and SLA terms, here are the calculations:\n\n### 1. Total Billable Downtime Minutes\n* **Incident 1:** 45 minutes (Uns"
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": false,
+    "issues": [
+      "Missing: \"99.722%\""
+    ],
+    "elapsed": 3094,
+    "promptTokens": 2192,
+    "completionTokens": 1213,
+    "reasoningTokens": 844,
+    "contentSnippet": "Here are the calculations based on the provided SLA terms:\n\n### 1. Total Billable Downtime Minutes\n* **Incident 1 (Unscheduled API Outage):** 45 minut"
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": true,
+    "issues": [],
+    "elapsed": 4529,
+    "promptTokens": 2658,
+    "completionTokens": 171,
+    "reasoningTokens": 0,
+    "contentSnippet": "1. **Total billable downtime:** 120 minutes  \n   - Excluded scheduled maintenance: 120 minutes  \n   - Billable incidents: 45 + 75 = 120 minutes\n\n2. **"
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": true,
+    "issues": [],
+    "elapsed": 4069,
+    "promptTokens": 2658,
+    "completionTokens": 131,
+    "reasoningTokens": 0,
+    "contentSnippet": "- Total billable downtime: `120 minutes` (`45 + 75`; scheduled maintenance is excluded)\n- Exact uptime: `99.722%` (`(43,200 - 120) / 43,200 × 100`)\n- "
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": true,
+    "issues": [],
+    "elapsed": 6267,
+    "promptTokens": 2658,
+    "completionTokens": 130,
+    "reasoningTokens": 0,
+    "contentSnippet": "1. **Total billable downtime:** 45 + 75 = **120 minutes**. The 120 minutes of scheduled maintenance are excluded.\n\n2. **Uptime percentage:**\n   \\[\n   "
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-low",
+    "passed": true,
+    "issues": [],
+    "elapsed": 3813,
+    "promptTokens": 2086,
+    "completionTokens": 3452,
+    "reasoningTokens": 0,
+    "contentSnippet": "### 1. Connection Setup & Transport Overhead\n\n| Metric / Dimension | Server-Sent Events (SSE) | WebSockets (WS) | gRPC-Web |\n| :--- | :--- | :--- | :-"
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "expectedFloor": "strong",
+    "model": "ag/gemini-3.8-flash-medium",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20010
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-luna",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20012
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-5.6-terra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20006
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "expectedFloor": "strong",
+    "model": "cx/gpt-6-astra",
+    "passed": false,
+    "error": "Timeout (20s)",
+    "elapsed": 20005
   }
 ]

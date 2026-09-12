@@ -1,0 +1,474 @@
+{
+  "totalCases": 20,
+  "tierDistribution": {
+    "cheap": 14,
+    "balanced": 1,
+    "strong": 5,
+    "frontier": 0
+  },
+  "frontierUsageRate": "0.0%",
+  "cheapBalancedRate": "75.0%",
+  "legacyRouteDistribution": {
+    "fast-chat": 5,
+    "smart-code": 12,
+    "smart-analysis": 1,
+    "smart-main": 2
+  },
+  "comparisons": [
+    {
+      "caseId": "case-a1",
+      "category": "A. SIMPLE / TRANSFORMATION",
+      "name": "Rewrite git commit message",
+      "expectedFloor": "cheap",
+      "legacy": {
+        "route": "fast-chat",
+        "upstreamModel": "ar-fast"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-a2",
+      "category": "A. SIMPLE / TRANSFORMATION",
+      "name": "Summarize server log error",
+      "expectedFloor": "cheap",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-b1",
+      "category": "B. SIMPLE CODE",
+      "name": "Fix TypeScript optional parameter null check",
+      "expectedFloor": "cheap",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-b2",
+      "category": "B. SIMPLE CODE",
+      "name": "Validate ISO 8601 UTC timestamp helper",
+      "expectedFloor": "cheap",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-c1",
+      "category": "C. REPOSITORY EXPLORATION",
+      "name": "Locate timeout configurations in repository",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "fast-chat",
+        "upstreamModel": "ar-fast"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-c2",
+      "category": "C. REPOSITORY EXPLORATION",
+      "name": "Trace routing fallback path",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-d1",
+      "category": "D. NORMAL IMPLEMENTATION",
+      "name": "Token bucket rate limiter in TypeScript",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-d2",
+      "category": "D. NORMAL IMPLEMENTATION",
+      "name": "TTL bounded Map cache in TypeScript",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-e1",
+      "category": "E. MULTI-FILE REFACTOR",
+      "name": "Structured logger abstraction refactor",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-e2",
+      "category": "E. MULTI-FILE REFACTOR",
+      "name": "Extract routing configuration validation",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-f1",
+      "category": "F. DEBUGGING",
+      "name": "Diagnose unhandled client disconnect in SSE stream",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "fast-chat",
+        "upstreamModel": "ar-fast"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-f2",
+      "category": "F. DEBUGGING",
+      "name": "Diagnose vitest hanging test suite",
+      "expectedFloor": "balanced",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-g1",
+      "category": "G. HARD SOFTWARE REASONING",
+      "name": "PostgreSQL transfer deadlock prevention",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "high",
+        "risk": "high",
+        "qualityTier": "strong",
+        "selectedProfile": "luna",
+        "alternatives": [
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-g2",
+      "category": "G. HARD SOFTWARE REASONING",
+      "name": "Distributed webhook idempotency & retry semantics",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "fast-chat",
+        "upstreamModel": "ar-fast"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "high",
+        "qualityTier": "strong",
+        "selectedProfile": "luna",
+        "alternatives": [
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-g3",
+      "category": "G. HARD SOFTWARE REASONING",
+      "name": "Sequence allocation race condition in invoice generator",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-analysis",
+        "upstreamModel": "ar-analysis"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "high",
+        "risk": "high",
+        "qualityTier": "strong",
+        "selectedProfile": "luna",
+        "alternatives": [
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-h1",
+      "category": "H. ARCHITECTURE / REVIEW",
+      "name": "Security and safety review of streaming proxy",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "high",
+        "risk": "low",
+        "qualityTier": "strong",
+        "selectedProfile": "luna",
+        "alternatives": [
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-h2",
+      "category": "H. ARCHITECTURE / REVIEW",
+      "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-main",
+        "upstreamModel": "ar-analysis"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "medium",
+        "risk": "medium",
+        "qualityTier": "balanced",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-i1",
+      "category": "I. ANALYSIS",
+      "name": "Financial reconciliation of transaction logs",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "fast-chat",
+        "upstreamModel": "ar-fast"
+      },
+      "v2": {
+        "taskType": "analysis",
+        "complexity": "low",
+        "risk": "high",
+        "qualityTier": "strong",
+        "selectedProfile": "luna",
+        "alternatives": [
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "EXACT"
+    },
+    {
+      "caseId": "case-i2",
+      "category": "I. ANALYSIS",
+      "name": "Contractual SLA downtime calculation & penalty tiers",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-code",
+        "upstreamModel": "ar-code"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "medium",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    },
+    {
+      "caseId": "case-j1",
+      "category": "J. RESEARCH / SYNTHESIS",
+      "name": "Streaming protocols comparison for LLM agent clients",
+      "expectedFloor": "strong",
+      "legacy": {
+        "route": "smart-main",
+        "upstreamModel": "ar-analysis"
+      },
+      "v2": {
+        "taskType": "code",
+        "complexity": "low",
+        "risk": "low",
+        "qualityTier": "cheap",
+        "selectedProfile": "gemini-flash-medium",
+        "alternatives": [
+          "luna",
+          "terra",
+          "astra"
+        ]
+      },
+      "alignment": "COMPATIBLE"
+    }
+  ]
+}

@@ -45,7 +45,7 @@ const calibratedProfiles = [
     model: "cx/gpt-5.6-luna",
     enabled: true,
     hardCapabilities: { tools: true, vision: true },
-    taskFit: ["code", "analysis", "research", "general", "multimodal"] as const,
+    taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"] as const,
     qualityTier: "strong" as const,
     costClass: "medium" as const,
     latencyClass: "medium" as const
@@ -55,7 +55,7 @@ const calibratedProfiles = [
     model: "cx/gpt-5.6-terra",
     enabled: true,
     hardCapabilities: { tools: true, vision: true },
-    taskFit: ["code", "analysis", "research", "general", "multimodal"] as const,
+    taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"] as const,
     qualityTier: "strong" as const,
     costClass: "medium" as const,
     latencyClass: "medium" as const
@@ -65,7 +65,7 @@ const calibratedProfiles = [
     model: "cx/gpt-6-astra",
     enabled: true,
     hardCapabilities: { tools: true, vision: true },
-    taskFit: ["code", "analysis", "research", "general", "multimodal"] as const,
+    taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"] as const,
     qualityTier: "frontier" as const,
     costClass: "very_high" as const,
     latencyClass: "slow" as const

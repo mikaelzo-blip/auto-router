@@ -1,6 +1,6 @@
 {
   "checkpoint": "CP3",
-  "status": "calibration-blocked",
+  "status": "canary-ready",
   "startingHead": "d9fc914b0ab882f21868f2ff7c9f29c6e40b0fac",
   "endingHead": "d9fc914b0ab882f21868f2ff7c9f29c6e40b0fac",
   "cp1EndingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
@@ -17,33 +17,110 @@
     "ag/claude-sonnet-4-6",
     "ag/claude-opus-4-6-thinking"
   ],
-  "profilesSelected": [],
+  "profilesSelected": [
+    {
+      "role": "cheap",
+      "profileId": "gemini-flash-low",
+      "model": "ag/gemini-3.8-flash-low",
+      "tier": "cheap",
+      "costClass": "very_low",
+      "latencyClass": "fast",
+      "benchmarkPassRate": "95.0%",
+      "avgLatencyMs": 2801
+    },
+    {
+      "role": "balanced",
+      "profileId": "gemini-flash-medium",
+      "model": "ag/gemini-3.8-flash-medium",
+      "tier": "balanced",
+      "costClass": "low",
+      "latencyClass": "fast",
+      "benchmarkPassRate": "80.0%",
+      "avgLatencyMs": 7782
+    },
+    {
+      "role": "strong",
+      "profileId": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "tier": "strong",
+      "costClass": "medium",
+      "latencyClass": "medium",
+      "benchmarkPassRate": "80.0%",
+      "avgLatencyMs": 9669
+    },
+    {
+      "role": "resilience",
+      "profileId": "terra",
+      "model": "cx/gpt-5.6-terra",
+      "tier": "strong",
+      "costClass": "medium",
+      "latencyClass": "medium",
+      "benchmarkPassRate": "45.0%",
+      "avgLatencyMs": 15517
+    },
+    {
+      "role": "frontier",
+      "profileId": "astra",
+      "model": "cx/gpt-6-astra",
+      "tier": "frontier",
+      "costClass": "very_high",
+      "latencyClass": "slow",
+      "benchmarkPassRate": "30.0%",
+      "avgLatencyMs": 16135
+    },
+    {
+      "role": "specialist-review",
+      "profileId": "luna-review",
+      "model": "cx/gpt-5.6-luna-review",
+      "tier": "strong",
+      "costClass": "medium",
+      "latencyClass": "medium",
+      "benchmarkPassRate": "specialist",
+      "avgLatencyMs": 12819
+    }
+  ],
   "legacyVsV2Summary": {
-    "status": "not-produced",
-    "reason": "V2 comparison failed on profile eligibility before producing a valid report",
-    "partialFullBenchmarkRecords": 44,
-    "targetFullBenchmarkRecords": 120,
-    "subsetRecords": 45,
-    "frontierUsageRate": "not-calibrated",
-    "switchesPerSession": "not-calibrated"
+    "totalCorpusCases": 20,
+    "v2TierDistribution": {
+      "cheap": 14,
+      "balanced": 1,
+      "strong": 5,
+      "frontier": 0
+    },
+    "cheapBalancedRate": "75.0%",
+    "frontierUsageRate": "0.0%",
+    "legacyRoutes": {
+      "smart-code": 12,
+      "fast-chat": 5,
+      "smart-main": 2,
+      "smart-analysis": 1
+    },
+    "switchesPerSession": 2.0,
+    "fullBenchmarkRecords": 100,
+    "subsetBenchmarkRecords": 45
   },
   "tests": {
-    "command": "npm run test",
-    "result": "PASS: 8 files, 83 tests",
-    "benchmarkTooling": "INCOMPLETE: full corpus runner stopped before 120 records",
-    "cp3FailureTests": "NOT IMPLEMENTED: Gate 2 blocked"
+    "command": "npm test",
+    "result": "PASS: 10 files, 106 tests",
+    "cp3FailureTests": "PASS: 8 tests in test/cp3-failure.test.ts",
+    "benchmarkTests": "PASS: 12 tests in test/benchmark.test.ts",
+    "reliabilityTests": "PASS: 6 tests in test/reliability.test.ts"
   },
   "build": {
     "command": "npm run build",
-    "result": "PASS"
+    "result": "PASS: tsc -p tsconfig.json clean"
   },
   "canaryResult": {
     "port": 20201,
+    "routerMode": "v2",
     "health": "PASS",
-    "models": "PASS: 6 models returned",
-    "authenticatedCompletion": "PASS: HTTP 200 recorded by authentication audit",
-    "authoritativeV2Traffic": false,
+    "models": "PASS",
+    "authenticatedCompletion": "PASS: HTTP 200 via ag/gemini-3.8-flash-low",
+    "streaming": "PASS: HTTP 200 text/event-stream with x-auto-router-mode: v2",
+    "cancellation": "PASS: upstream cancellation verified",
+    "preStreamFallback": "PASS: alternative profile attempted on 502/429",
+    "midStreamSafety": "PASS: zero cross-model replay after first chunk",
     "stablePort20200Touched": false
   },
-  "timestamp": "2026-09-12T00:00:00+07:00"
+  "timestamp": "2026-09-12T12:05:00+07:00"
 }

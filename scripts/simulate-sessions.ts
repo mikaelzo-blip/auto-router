@@ -1,128 +1,273 @@
-import { createSessionStore, routeShadow, type ShadowRequest } from "../src/shadow-router.js";
+import { createSessionStore, routeShadow, type ShadowRequest, type ExecutionProfile } from "../src/shadow-router.js";
 import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
 
-interface Turn {
+export interface SessionTurn {
+  step: string;
   intent: string;
   extra?: Partial<ShadowRequest>;
 }
 
-interface SessionScenario {
+export interface SessionTrajectory {
+  id: string;
   name: string;
+  description: string;
   sessionId: string;
-  turns: Turn[];
+  turns: SessionTurn[];
 }
 
-const scenarios: SessionScenario[] = [
+export const CANONICAL_TRAJECTORIES: SessionTrajectory[] = [
   {
-    name: "Scenario 1: Routine Feature Implementation (High Stickiness)",
-    sessionId: "session-routine-1",
+    id: "trajectory-a",
+    name: "Trajectory A: End-to-End Bugfix & Delivery Cycle",
+    description: "repo exploration -> implementation -> failing test -> diagnosis -> passing test -> docs",
+    sessionId: "hermes-session-traj-a",
     turns: [
-      { intent: "Inspect repository structure for auth middleware" },
-      { intent: "Read auth.ts and locate the token verification function" },
-      { intent: "Implement role-based authorization check in auth.ts" },
-      { intent: "Run npm test on auth.test.ts" }
-    ]
-  },
-  {
-    name: "Scenario 2: Failure Escalation & Passing De-escalation",
-    sessionId: "session-escalation-2",
-    turns: [
-      { intent: "Implement concurrent account balance transfer endpoint" },
       {
-        intent: "Debug the race condition after tests failed",
-        extra: { recentTestOutcome: "failed", recentFailure: "Deadlock detected in concurrent transfer" }
+        step: "repo exploration",
+        intent: "Inspect repository structure and locate auth middleware in src/middleware/"
       },
-      { intent: "Fix the deadlock using SELECT FOR UPDATE with ascending ID lock ordering", extra: { riskHint: "high" } },
-      { intent: "Run the concurrent transfer test suite again", extra: { recentTestOutcome: "passed" } },
-      { intent: "Add JSDoc documentation to the transfer function" }
+      {
+        step: "implementation",
+        intent: "Implement role-based authorization check in src/middleware/auth.ts"
+      },
+      {
+        step: "failing test",
+        intent: "Run test suite on auth middleware after test failure",
+        extra: {
+          recentTestOutcome: "failed",
+          recentFailure: "AssertionError: expected 403 but got 200 on missing role"
+        }
+      },
+      {
+        step: "diagnosis",
+        intent: "Diagnose why role check allowed unauthenticated access and fix permission guard",
+        extra: {
+          recentFailure: "AssertionError: expected 403 but got 200 on missing role"
+        }
+      },
+      {
+        step: "passing test",
+        intent: "Rerun test suite after fixing permission guard",
+        extra: {
+          recentTestOutcome: "passed"
+        }
+      },
+      {
+        step: "docs",
+        intent: "Add JSDoc documentation and usage notes to auth middleware"
+      }
     ]
   },
   {
-    name: "Scenario 3: Critical Security & Financial Risk",
-    sessionId: "session-security-3",
+    id: "trajectory-b",
+    name: "Trajectory B: Routine Follow-up to Unrelated Hard Task",
+    description: "simple task -> simple follow-up -> unrelated hard task",
+    sessionId: "hermes-session-traj-b",
     turns: [
-      { intent: "Examine security boundary in payment webhook receiver" },
-      { intent: "Analyze distributed double-spend race condition with critical financial risk", extra: { riskHint: "high" } },
-      { intent: "Continue auditing state machine transitions and retry semantics", extra: { riskHint: "high" } }
+      {
+        step: "simple task",
+        intent: "Explain what an HTTP 502 status code means in plain terms"
+      },
+      {
+        step: "simple follow-up",
+        intent: "Summarize the explanation in one short sentence"
+      },
+      {
+        step: "unrelated hard task",
+        intent: "Prove that a concurrent lock-free queue with FAA is linearizable under arbitrary thread interleavings",
+        extra: {
+          riskHint: "high"
+        }
+      }
     ]
   },
   {
-    name: "Scenario 4: Multi-turn Routine Refactoring",
-    sessionId: "session-refactor-4",
+    id: "trajectory-c",
+    name: "Trajectory C: Hard Reasoning to Resolution & Routine Follow-up",
+    description: "hard task -> resolved hard reasoning -> routine follow-up",
+    sessionId: "hermes-session-traj-c",
     turns: [
-      { intent: "Format code and fix indentation in routes.ts" },
-      { intent: "Rename helper function in routes.ts" },
-      { intent: "Update import paths across 3 files" },
-      { intent: "Check for any unused imports" },
-      { intent: "Add comments explaining the changes" }
+      {
+        step: "hard task",
+        intent: "Audit distributed payment webhook idempotency with critical financial double-spend risk",
+        extra: {
+          riskHint: "high"
+        }
+      },
+      {
+        step: "resolved hard reasoning",
+        intent: "Implement strict database transaction with unique constraint on (provider, idempotency_key) and verified state machine",
+        extra: {
+          riskHint: "high"
+        }
+      },
+      {
+        step: "routine follow-up",
+        intent: "Format the migration SQL file and fix table indentation",
+        extra: {
+          recentTestOutcome: "passed"
+        }
+      }
     ]
   }
 ];
 
-export function runSessionSimulation(profiles = DEFAULT_SHADOW_PROFILES) {
+export interface TurnEvaluationDetail {
+  turn: number;
+  step: string;
+  intent: string;
+  taskType: string;
+  complexity: string;
+  risk: string;
+  tier: string;
+  currentProfile?: string;
+  selectedProfile: string;
+  switched: boolean;
+  switchReason: string;
+  escalation: boolean;
+  deEscalation: boolean;
+}
+
+export interface TrajectoryResult {
+  trajectoryId: string;
+  name: string;
+  turnsCount: number;
+  switchesCount: number;
+  escalationCount: number;
+  deEscalationCount: number;
+  stickinessRate: number; // 0.0 - 1.0 (proportion of turns retaining existing profile when appropriate)
+  turns: TurnEvaluationDetail[];
+}
+
+export interface SimulationSummary {
+  totalTrajectories: number;
+  totalTurns: number;
+  totalSwitches: number;
+  switchesPerSession: number;
+  switchesPerTurn: number;
+  totalEscalations: number;
+  totalDeEscalations: number;
+  overallStickinessRate: number;
+  trajectories: TrajectoryResult[];
+}
+
+export function runSessionSimulation(
+  profiles: ExecutionProfile[] = DEFAULT_SHADOW_PROFILES,
+  trajectories: SessionTrajectory[] = CANONICAL_TRAJECTORIES
+): SimulationSummary {
   const store = createSessionStore(300_000);
-  const results = [];
+  const results: TrajectoryResult[] = [];
+
   let totalSwitches = 0;
   let totalTurns = 0;
+  let totalEscalations = 0;
+  let totalDeEscalations = 0;
 
-  for (const s of scenarios) {
-    let sessionSwitches = 0;
-    const turnDetails = [];
+  for (const traj of trajectories) {
+    let trajSwitches = 0;
+    let trajEscalations = 0;
+    let trajDeEscalations = 0;
+    const turnDetails: TurnEvaluationDetail[] = [];
 
-    for (let i = 0; i < s.turns.length; i++) {
-      const t = s.turns[i]!;
+    for (let i = 0; i < traj.turns.length; i++) {
+      const turn = traj.turns[i]!;
       totalTurns++;
+
       const req: ShadowRequest = {
-        sessionId: s.sessionId,
-        messages: [{ role: "user", content: t.intent }],
+        sessionId: traj.sessionId,
+        messages: [{ role: "user", content: turn.intent }],
         policy: "balanced",
-        ...t.extra
+        ...turn.extra
       };
 
       const decision = routeShadow(req, profiles, store);
-      if (decision.switchRecommended && decision.currentProfile && decision.currentProfile !== decision.selectedProfile) {
-        sessionSwitches++;
+      const hasPriorProfile = Boolean(decision.currentProfile);
+      const didSwitch = Boolean(
+        hasPriorProfile && decision.currentProfile !== decision.selectedProfile
+      );
+
+      const isEscalation = decision.switchReason === "quality_escalation" || decision.switchReason === "risk_increase";
+      const isDeEscalation = decision.switchReason === "de_escalation";
+
+      if (didSwitch) {
+        trajSwitches++;
         totalSwitches++;
+      }
+      if (isEscalation && didSwitch) {
+        trajEscalations++;
+        totalEscalations++;
+      }
+      if (isDeEscalation && didSwitch) {
+        trajDeEscalations++;
+        totalDeEscalations++;
       }
 
       turnDetails.push({
         turn: i + 1,
-        intent: t.intent.slice(0, 50),
+        step: turn.step,
+        intent: turn.intent.slice(0, 60),
         taskType: decision.taskType,
         complexity: decision.complexity,
+        risk: decision.risk,
         tier: decision.minimumQualityTier,
-        current: decision.currentProfile,
-        selected: decision.selectedProfile,
-        switched: decision.switchRecommended && decision.currentProfile !== decision.selectedProfile,
-        reason: decision.switchReason
+        currentProfile: decision.currentProfile,
+        selectedProfile: decision.selectedProfile,
+        switched: didSwitch,
+        switchReason: decision.switchReason,
+        escalation: isEscalation,
+        deEscalation: isDeEscalation
       });
     }
 
+    // Stickiness: proportion of eligible follow-up turns where profile stayed sticky
+    const followUpTurns = traj.turns.length - 1;
+    const stickyTurns = followUpTurns - trajSwitches;
+    const stickinessRate = followUpTurns > 0 ? +(Math.max(0, stickyTurns) / followUpTurns).toFixed(3) : 1.0;
+
     results.push({
-      scenario: s.name,
-      turns: s.turns.length,
-      switches: sessionSwitches,
-      switchesPerTurn: +(sessionSwitches / s.turns.length).toFixed(3),
-      details: turnDetails
+      trajectoryId: traj.id,
+      name: traj.name,
+      turnsCount: traj.turns.length,
+      switchesCount: trajSwitches,
+      escalationCount: trajEscalations,
+      deEscalationCount: trajDeEscalations,
+      stickinessRate,
+      turns: turnDetails
     });
   }
 
-  const switchesPerSession = +(totalSwitches / scenarios.length).toFixed(2);
+  const switchesPerSession = +(totalSwitches / trajectories.length).toFixed(2);
   const switchesPerTurn = +(totalSwitches / totalTurns).toFixed(3);
+  const totalFollowUpTurns = totalTurns - trajectories.length;
+  const overallStickinessRate =
+    totalFollowUpTurns > 0 ? +((totalFollowUpTurns - totalSwitches) / totalFollowUpTurns).toFixed(3) : 1.0;
 
   return {
-    scenarios: results,
+    totalTrajectories: trajectories.length,
     totalTurns,
     totalSwitches,
     switchesPerSession,
-    switchesPerTurn
+    switchesPerTurn,
+    totalEscalations,
+    totalDeEscalations,
+    overallStickinessRate,
+    trajectories: results
   };
 }
 
 if (process.argv[1]?.includes("simulate-sessions")) {
   const sim = runSessionSimulation();
-  console.log("=== MULTI-TURN SESSION STICKINESS SIMULATION ===");
-  console.log(`Total Scenarios: ${scenarios.length} | Total Turns: ${sim.totalTurns} | Total Switches: ${sim.totalSwitches}`);
+  console.log("=== MULTI-TURN SESSION SIMULATION REPORT ===");
+  console.log(`Trajectories: ${sim.totalTrajectories} | Turns: ${sim.totalTurns} | Total Switches: ${sim.totalSwitches}`);
   console.log(`Switches per Session: ${sim.switchesPerSession} | Switches per Turn: ${sim.switchesPerTurn}`);
-  console.log(JSON.stringify(sim, null, 2));
+  console.log(`Escalations: ${sim.totalEscalations} | De-escalations: ${sim.totalDeEscalations}`);
+  console.log(`Overall Stickiness Rate: ${(sim.overallStickinessRate * 100).toFixed(1)}%`);
+  console.log("\nTrajectory Breakdown:");
+  for (const t of sim.trajectories) {
+    console.log(`\n[${t.trajectoryId}] ${t.name} (Turns: ${t.turnsCount}, Switches: ${t.switchesCount}, Stickiness: ${(t.stickinessRate * 100).toFixed(1)}%)`);
+    for (const turn of t.turns) {
+      const switchStr = turn.switched ? `SWITCHED -> ${turn.selectedProfile} (${turn.switchReason})` : `STICKY [${turn.selectedProfile}]`;
+      console.log(`  Turn ${turn.turn} [${turn.step.padEnd(22)}]: ${switchStr}`);
+    }
+  }
 }

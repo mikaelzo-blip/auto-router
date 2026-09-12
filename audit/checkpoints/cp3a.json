@@ -1,0 +1,126 @@
+{
+  "checkpoint": "CP3A",
+  "status": "harness-repaired-ready-for-calibration",
+  "startingHead": "d9fc914b0ab882f21868f2ff7c9f29c6e40b0fac",
+  "blockedEvidenceCommit": "a603b573d9ecf801648a7fa9539352668b556f08",
+  "cp1EndingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
+  "cp2EndingHead": "6150245f6f81bba8c0a0f6dc487bbd6c5133a52f",
+  "requestPath": {
+    "autoRouterPort": 20201,
+    "autoRouterModelsBehavior": "Intentionally exposes only 6 AutoRouter virtual models (auto, code, analysis, fast, explore, research). Rejects concrete models with HTTP 400 invalid_model.",
+    "upstreamGatewayPort": 20128,
+    "upstreamGatewayModelsBehavior": "Exposes complete concrete inventory (39 models discovered). Accepts and executes concrete model IDs.",
+    "benchmarkExecutionEndpoint": "http://127.0.0.1:20128/v1/chat/completions"
+  },
+  "profileCoverage": {
+    "status": "repaired",
+    "caseG3Fix": "Refined classify() so concurrency, SQL, and code keywords take precedence over casual transformation substrings; updated riskOf() for financial/invoice risks; expanded strong/frontier taskFit to include transformation.",
+    "registryValidation": "Added validateProfileCoverage() to verify that each supported routing class and hard-capability combination has at least one valid execution path across all quality tiers.",
+    "structuredFallback": "Replaced runtime exception with structured fallback decision (fallbackEngaged: true, fallbackReason), preserving system availability and explicit observability."
+  },
+  "failureTaxonomy": {
+    "categories": [
+      "QUALITY_FAILURE",
+      "INFRA_TIMEOUT",
+      "HTTP_429",
+      "HTTP_5XX",
+      "AUTH_FAILURE",
+      "MODEL_UNAVAILABLE",
+      "TOOL_FAILURE",
+      "HARNESS_ERROR",
+      "INVALID_RESPONSE"
+    ],
+    "metricsReported": [
+      "operational_success_rate",
+      "quality_success_rate_when_executed"
+    ]
+  },
+  "resumeAndTimeoutIsolation": {
+    "unitKeyFormat": "caseId::modelId::attempt",
+    "immediatePersistence": true,
+    "timeoutIsolation": "Bounded per-request AbortSignal.timeout; records INFRA_TIMEOUT and elapsedMs without halting runner",
+    "cliFlags": [
+      "--resume",
+      "--model",
+      "--case",
+      "--category",
+      "--attempts",
+      "--timeout",
+      "--judge",
+      "--output"
+    ]
+  },
+  "rebuiltRubrics": {
+    "codeInvariants": "Deterministic validation, null-safety guards, capacity clamping, ISO format & calendar validation",
+    "reasoningDimensions": [
+      "required_invariant_identified",
+      "unsafe_behavior_rejected",
+      "failure_boundary_identified",
+      "tradeoff_analysis_concrete_mitigation"
+    ],
+    "secondaryJudgeRule": "Candidate model cannot judge itself; fixed judge used strictly as secondary signal with judge model, rubric, decision, and reason persisted."
+  },
+  "primaryCandidateSet": [
+    "ag/gemini-3.8-flash-low",
+    "ag/gemini-3.8-flash-medium",
+    "ag/gemini-3.8-flash-high",
+    "cx/gpt-5.6-luna",
+    "cx/gpt-5.6-sol",
+    "cx/gpt-5.6-terra",
+    "cx/gpt-6-astra",
+    "ag/claude-sonnet-4-6",
+    "ag/claude-opus-4-6-thinking"
+  ],
+  "reviewVariants": {
+    "status": "EXCLUDED",
+    "evidence": "Catalog metadata shows identical context windows, capabilities, and parameters to base models; completion probe demonstrates identical behavior without distinct architectural execution profile."
+  },
+  "legacyVsV2Summary": {
+    "status": "COMPLETED",
+    "totalCases": 20,
+    "tierDistribution": {
+      "cheap": 14,
+      "balanced": 1,
+      "strong": 5,
+      "frontier": 0
+    },
+    "frontierUsageRate": "0.0%",
+    "cheapBalancedRate": "75.0%",
+    "legacyRouteDistribution": {
+      "fast-chat": 5,
+      "smart-code": 12,
+      "smart-analysis": 1,
+      "smart-main": 2
+    },
+    "artifactPath": "benchmark/legacy-vs-v2-comparison.json"
+  },
+  "multiTurnSimulation": {
+    "totalTrajectories": 3,
+    "totalTurns": 12,
+    "totalSwitches": 6,
+    "switchesPerSession": 2.0,
+    "switchesPerTurn": 0.5,
+    "totalEscalations": 3,
+    "totalDeEscalations": 1,
+    "overallStickinessRate": 0.333
+  },
+  "tests": {
+    "command": "npm run test",
+    "result": "PASS: 9 files, 98 tests",
+    "cp1Regression": "PASS",
+    "cp2Regression": "PASS",
+    "cp3aSuite": "PASS: test/benchmark.test.ts (12 tests)"
+  },
+  "build": {
+    "command": "npm run build",
+    "result": "PASS: tsc -p tsconfig.json"
+  },
+  "safetyGating": {
+    "v2CutoverImplemented": false,
+    "finalProductionProfilesSelected": false,
+    "stablePort20200Touched": false,
+    "canaryPort20201AuthoritativeServing": false
+  },
+  "verdict": "CP3A READY FOR FULL CALIBRATION",
+  "timestamp": "2026-09-12T05:00:00+07:00"
+}

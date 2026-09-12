@@ -484,8 +484,9 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      let shadowResult: ReturnType<typeof computeShadow> | undefined;
       try {
-        computeShadow(request.body, request.headers["x-session-id"]?.toString());
+        shadowResult = computeShadow(request.body, request.headers["x-session-id"]?.toString());
       } catch (error) {
         request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
       }
@@ -635,12 +636,8 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const forwarded = {
-        ...request.body,
-        model: decision.upstreamModel
-      };
-
-      const candidates = uniqueModels(
+      let selectedModel = decision.upstreamModel;
+      let selectionCandidates = uniqueModels(
         config.routing.routes[
           decision.route
         ]?.selectionPriority ?? [
@@ -653,6 +650,24 @@ export function buildApp(config: AppConfig): FastifyInstance {
           decision.requirements
         )
       );
+
+      if (config.routerMode === "v2" && shadowResult) {
+        const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
+        if (profile) {
+          selectedModel = profile.model;
+          const altModels = shadowResult.alternatives
+            .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
+            .filter((m): m is string => Boolean(m));
+          selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+        }
+      }
+
+      const forwarded = {
+        ...request.body,
+        model: selectedModel
+      };
+
+      const candidates = selectionCandidates;
 
       if (candidates.length === 0) {
         return reply.code(400).send(
@@ -768,6 +783,31 @@ export function buildApp(config: AppConfig): FastifyInstance {
           "x-auto-router-route",
           decision.route
         );
+
+        reply.header(
+          "x-auto-router-model",
+          selectedModel
+        );
+
+        reply.header(
+          "x-auto-router-mode",
+          config.routerMode
+        );
+
+        if (config.routerMode === "v2" && shadowResult) {
+          reply.header(
+            "x-auto-router-profile",
+            shadowResult.selectedProfile
+          );
+          reply.header(
+            "x-auto-router-tier",
+            shadowResult.minimumQualityTier
+          );
+          reply.header(
+            "x-auto-router-switch-reason",
+            shadowResult.switchReason
+          );
+        }
 
         const contentType =
           response.headers.get(

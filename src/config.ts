@@ -2,19 +2,21 @@ import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import type { RoutingConfig } from "./types.js";
 import { normalizeTimeoutConfig, validateTimeoutConfig } from "./reliability.js";
-import { validateProfileRegistry, type ExecutionProfile } from "./shadow-router.js";
+import { validateProfileRegistry, validateProfileCoverage, type ExecutionProfile } from "./shadow-router.js";
 
 async function loadShadowProfiles(): Promise<ExecutionProfile[]> {
   const path = resolve(process.env.SHADOW_PROFILE_CONFIG ?? "./config/shadow-profiles.json");
   const payload = JSON.parse(await readFile(path, "utf8")) as { profiles?: ExecutionProfile[] };
   if (!payload.profiles) throw new Error("Invalid shadow profile config");
   validateProfileRegistry(payload.profiles);
+  validateProfileCoverage(payload.profiles);
   return payload.profiles;
 }
 
 export interface AppConfig {
   host: string;
   port: number;
+  routerMode: "legacy" | "shadow" | "v2";
   upstreamBaseUrl: string;
   upstreamApiKey?: string;
   classifierModel?: string;
@@ -56,9 +58,15 @@ export async function loadConfig(): Promise<AppConfig> {
   if (!["127.0.0.1", "localhost"].includes(upstream.hostname)) {
     throw new Error("UPSTREAM_BASE_URL must point to localhost");
   }
+  const modeRaw = (process.env.ROUTER_MODE ?? "legacy").toLowerCase();
+  if (!["legacy", "shadow", "v2"].includes(modeRaw)) {
+    throw new Error(`Invalid ROUTER_MODE: ${process.env.ROUTER_MODE}. Must be legacy, shadow, or v2`);
+  }
+  const routerMode = modeRaw as "legacy" | "shadow" | "v2";
   return {
     host,
     port: integer(process.env.PORT, 20200),
+    routerMode,
     upstreamBaseUrl,
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,

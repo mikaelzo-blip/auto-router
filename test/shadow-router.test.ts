@@ -3,6 +3,7 @@ import {
   createSessionStore,
   routeShadow,
   validateProfileRegistry,
+  validateProfileCoverage,
   type ExecutionProfile,
   type ShadowRequest
 } from "../src/shadow-router.js";
@@ -66,5 +67,45 @@ describe("CP2 shadow router", () => {
   });
   it("rejects malformed registries", () => {
     expect(() => validateProfileRegistry([{ ...profiles[0]!, qualityTier: "unknown" as never }])).toThrow();
+  });
+
+  it("routes case-g3 concurrency prompt without throwing and selects strong tier", () => {
+    const prompt = "An accounting service generates human-readable invoice numbers in the format 'INV-2026-0001'. The developer wrote: `SELECT MAX(num) FROM invoices WHERE year = 2026; num = num + 1; INSERT INTO invoices ...`. Under high concurrent load, duplicate key errors occur.\n1. Explain why standard read committed transaction isolation fails to prevent duplicates here.\n2. Provide two robust PostgreSQL solutions: one using native sequences and one using a dedicated counter row with row-level locking.";
+    const result = routeShadow(base(prompt), profiles);
+    expect(result.taskType).toBe("code");
+    expect(result.minimumQualityTier).toBe("strong");
+    expect(result.selectedProfile).toBe("strong");
+    expect(result.fallbackEngaged).toBeUndefined();
+  });
+
+  it("validates profile coverage across all tasks, capabilities, and tiers", () => {
+    // profiles fixture lacks transformation on strong and frontier
+    expect(() => validateProfileCoverage(profiles)).toThrow(/Profile registry has coverage gaps/);
+
+    const fullProfiles: ExecutionProfile[] = [
+      { id: "cheap", model: "m-cheap", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" },
+      { id: "balanced", model: "m-balanced", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "balanced", costClass: "low", latencyClass: "fast" },
+      { id: "strong", model: "m-strong", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "strong", costClass: "medium", latencyClass: "medium" },
+      { id: "frontier", model: "m-frontier", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "frontier", costClass: "very_high", latencyClass: "slow" }
+    ];
+    expect(() => validateProfileCoverage(fullProfiles)).not.toThrow();
+  });
+
+  it("engages structured fallback instead of throwing when no candidate strictly matches", () => {
+    const constrainedProfiles: ExecutionProfile[] = [
+      { id: "text-cheap", model: "m1", enabled: true, hardCapabilities: { tools: false, vision: false }, taskFit: ["general"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" }
+    ];
+    // Request requires tools and code taskType, but only text-cheap is available
+    const decision = routeShadow({
+      sessionId: "test-fallback",
+      messages: [{ role: "user", content: "inspect code and run tests" }],
+      toolsProvided: true,
+      policy: "balanced"
+    }, constrainedProfiles);
+
+    expect(decision.selectedProfile).toBe("text-cheap");
+    expect(decision.fallbackEngaged).toBe(true);
+    expect(decision.fallbackReason).toBeDefined();
+    expect(decision.explanation).toContain("fallback:");
   });
 });
