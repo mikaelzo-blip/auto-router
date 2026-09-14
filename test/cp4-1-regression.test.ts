@@ -228,6 +228,126 @@ describe("CP4.1 Release Verification & Sol Challenger Regressions", () => {
   });
 
   describe("9. Specialist Review optionality", () => {
+    it("declares general, resilience, and specialist profile classes", () => {
+      const classes = Object.fromEntries(
+        DEFAULT_SHADOW_PROFILES.map((profile) => [profile.id, profile.profileClass])
+      );
+
+      expect(classes["gemini-flash-low"]).toBe("general");
+      expect(classes["gemini-flash-medium"]).toBe("general");
+      expect(classes["gemini-flash-high"]).toBe("general");
+      expect(classes.terra).toBe("resilience");
+      expect(classes["luna-review"]).toBe("specialist");
+    });
+
+    it("does not treat implementation of audit logging as specialist review", () => {
+      const decision = routeShadow(
+        baseReq("Implement financial audit logging"),
+        DEFAULT_SHADOW_PROFILES
+      );
+
+      expect(decision.taskType).toBe("code");
+      expect(decision.risk).toBe("high");
+      expect(decision.selectedProfile).toBe("gemini-flash-high");
+      expect(decision.alternatives).not.toContain("luna-review");
+    });
+
+    it.each([
+      "The code review comments are resolved; implement the fix",
+      "Review comments are resolved; implement the fix",
+      "I do not need a security review; implement the authentication middleware",
+      "I don't need a code review; implement the authentication middleware",
+      "I don’t need a code review; implement the authentication middleware",
+      "I wouldn’t request a security audit; implement the fix",
+      "Audit logs are already enabled; implement retention controls",
+      "Review comments mention a race condition; implement the fix",
+      "Audit logs show repeated failures",
+      "Review status remains blocked",
+      "Review feedback has been addressed",
+      "Audit report is available in Jira",
+      "Review is complete; please deploy the release",
+      "Audit was finished yesterday",
+      "Review has finished; merge the PR",
+      "Skip code review and proceed with merge",
+      "Avoid code review for this hotfix"
+    ])("does not infer specialist intent from review context: %s", (content) => {
+      const decision = routeShadow(baseReq(content), DEFAULT_SHADOW_PROFILES);
+
+      expect(decision.specialistIntent).toBeUndefined();
+      expect(decision.selectedProfile).not.toBe("luna-review");
+    });
+
+    it("does not carry specialist intent over from an earlier user turn", () => {
+      const decision = routeShadow(
+        {
+          ...baseReq("implement the fix"),
+          messages: [
+            { role: "user", content: "Review this function for correctness" },
+            { role: "assistant", content: "The review is complete" },
+            { role: "user", content: "implement the fix" }
+          ]
+        },
+        DEFAULT_SHADOW_PROFILES
+      );
+
+      expect(decision.specialistIntent).toBeUndefined();
+      expect(decision.selectedProfile).not.toBe("luna-review");
+    });
+
+    it.each([
+      "Give this function a security review",
+      "Provide a code audit of this middleware",
+      "I would like a code review of this function",
+      "Perform an independent review of this function",
+      "Carry out an audit of this function",
+      "Could you audit the authentication middleware for security flaws?",
+      "Review this function for correctness",
+      "Please review this function for correctness",
+      "Kindly review the implementation for flaws",
+      "Please perform a code review of this middleware",
+      "Could you please review this patch?",
+      "Can you please review this pull request?",
+      "I need a code review of this module",
+      "We need a security audit of the authentication flow",
+      "I want a review of this pull request",
+      "Review the diff after addressing review comments"
+    ])("preserves explicit specialist intent: %s", (content) => {
+      const decision = routeShadow(baseReq(content), DEFAULT_SHADOW_PROFILES);
+
+      expect(decision.specialistIntent).toBe("review");
+      expect(decision.selectedProfile).toBe("luna-review");
+    });
+
+    it("lets explicit specialist intent override same-tier session hysteresis", () => {
+      const store = createSessionStore(60_000);
+      const sessionId = "specialist-hysteresis";
+      const first = routeShadow(
+        baseReq("Debug a critical race condition in this function", { sessionId }),
+        DEFAULT_SHADOW_PROFILES,
+        store
+      );
+      const review = routeShadow(
+        baseReq("Review this function for correctness", { sessionId }),
+        DEFAULT_SHADOW_PROFILES,
+        store
+      );
+
+      expect(first.selectedProfile).toBe("gemini-flash-high");
+      expect(review.specialistIntent).toBe("review");
+      expect(review.selectedProfile).toBe("luna-review");
+      expect(review.switchRecommended).toBe(true);
+    });
+
+    it("routes explicit conversational audit requests to luna-review", () => {
+      const decision = routeShadow(
+        baseReq("Could you audit the authentication middleware for security flaws?"),
+        DEFAULT_SHADOW_PROFILES
+      );
+
+      expect(decision.specialistIntent).toBe("review");
+      expect(decision.selectedProfile).toBe("luna-review");
+    });
+
     it("routes review tasks to luna-review when available", () => {
       const decision = routeShadow(
         baseReq("Perform security audit and code review of authentication middleware"),

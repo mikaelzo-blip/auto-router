@@ -64,6 +64,7 @@ export interface QuotaDecision {
   snapshotAgeMs: number;
   stale: boolean;
   selectionEffect: string;
+  decisionReason?: string;
   candidateStates: Record<string, CandidateQuotaState>;
   hypotheticalProfile?: string;
   hypotheticalModel?: string;

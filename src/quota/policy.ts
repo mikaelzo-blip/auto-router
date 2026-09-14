@@ -1,4 +1,4 @@
-import type { ExecutionProfile, QualityTier, ShadowTaskType, Complexity, Risk } from "../shadow-router.js";
+import type { ExecutionProfile, QualityTier, ShadowTaskType, Complexity, Risk, SpecialistIntent } from "../shadow-router.js";
 import type {
   CandidateQuotaState,
   CandidateQuotaStatus,
@@ -12,6 +12,8 @@ import type {
 import type { QuotaCooldownTracker } from "./cooldown.js";
 
 const TIERS: QualityTier[] = ["cheap", "balanced", "strong", "frontier"];
+const RESILIENCE_LOW_TIER_MIN_REMAINING = 0.50;
+const RESILIENCE_LOW_TIER_MIN_HEADROOM_GAIN = 0.25;
 
 export const DEFAULT_QUOTA_THRESHOLDS: QuotaThresholds = {
   healthyMin: 0.30, // > 30%
@@ -175,6 +177,7 @@ export function evaluateCandidateQuota(
 
 export interface FilterRankOptions {
   taskType: ShadowTaskType;
+  specialistIntent?: SpecialistIntent;
   complexity: Complexity;
   risk: Risk;
   minimumQualityTier: QualityTier;
@@ -191,6 +194,7 @@ export interface FilterRankOptions {
 export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionProfile[] {
   const {
     taskType,
+    specialistIntent,
     complexity,
     risk,
     minimumQualityTier,
@@ -205,7 +209,13 @@ export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionPro
   } = options;
 
   // RULE 1: Enabled profiles only. Sol, Astra, Claude NEVER enabled if enabled: false!
-  const enabled = profiles.filter((p) => p.enabled);
+  const enabled = profiles.filter((profile) => {
+    if (!profile.enabled) return false;
+    if (profile.profileClass === "specialist") {
+      return specialistIntent === "review" && profile.taskFit.includes(taskType);
+    }
+    return true;
+  });
 
   // RULE 2: Hard capabilities
   const capFiltered = enabled.filter((p) => {
@@ -248,6 +258,22 @@ export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionPro
     risk === "low";
 
   const isHighRiskOrStrong = complexity === "high" || complexity === "critical" || risk !== "low" || minimumQualityTier === "strong" || minimumQualityTier === "frontier";
+  const isLowerTierWork = !isHighRiskOrStrong && minTierIndex <= TIERS.indexOf("balanced");
+  const standardProfile = standardSelectedProfile
+    ? tierFiltered.find((profile) => profile.id === standardSelectedProfile)
+    : undefined;
+  const standardState = standardProfile ? candidateStates.get(standardProfile.id) : undefined;
+
+  if (isLowerTierWork && standardProfile && standardState && standardState.status !== "exhausted") {
+    const standardRemaining = standardState.effectiveRemainingRatio;
+    available = available.filter((profile) => {
+      if (profile.id === standardProfile.id || profile.profileClass !== "resilience") return true;
+      const state = candidateStates.get(profile.id)!;
+      return state.status === "healthy" &&
+        state.effectiveRemainingRatio >= RESILIENCE_LOW_TIER_MIN_REMAINING &&
+        state.effectiveRemainingRatio - standardRemaining >= RESILIENCE_LOW_TIER_MIN_HEADROOM_GAIN;
+    });
+  }
 
   if (isRoutine) {
     // Routine tasks should avoid reserve quota candidates if any healthy or conserve alternative exists
@@ -316,6 +342,7 @@ export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionPro
 export interface ResolveQuotaDecisionOptions {
   standardSelectedProfile?: string;
   taskType: ShadowTaskType;
+  specialistIntent?: SpecialistIntent;
   complexity: Complexity;
   risk: Risk;
   minimumQualityTier: QualityTier;
@@ -337,6 +364,7 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
   const {
     standardSelectedProfile,
     taskType,
+    specialistIntent,
     complexity,
     risk,
     minimumQualityTier,
@@ -387,6 +415,7 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
   // Filter and rank using quota-aware logic
   const quotaRanked = filterAndRankWithQuota({
     taskType,
+    specialistIntent,
     complexity,
     risk,
     minimumQualityTier,
@@ -410,10 +439,14 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
   let wouldSwitch = false;
   let switchReason = "none";
   let selectionEffect = "normal";
+  let decisionReason: string | undefined;
 
   const isRoutine = (taskType === "general" || taskType === "transformation") &&
     (complexity === "trivial" || complexity === "low" || complexity === "medium") &&
     risk === "low";
+  const isLowerTierWork = complexity !== "high" && complexity !== "critical" &&
+    risk === "low" &&
+    (minimumQualityTier === "cheap" || minimumQualityTier === "balanced");
 
   if (!hypotheticalProfile) {
     // All candidates exhausted!
@@ -436,9 +469,20 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
       selectionEffect = "quota_optimized";
     }
   } else if (stdState?.status === "reserve") {
-    selectionEffect = isRoutine ? "no_beneficial_switch_available" : "preserved_for_strong_task_in_reserve";
+    if (isLowerTierWork) {
+      selectionEffect = "no_beneficial_alternative";
+      decisionReason = "reserve_consumed_for_lack_of_valid_alternative";
+    } else {
+      selectionEffect = "reserved_quota_consumed";
+      decisionReason = "reserved_quota_consumed_for_high_value_task";
+    }
   } else if (stdState?.status === "conserve") {
-    selectionEffect = isRoutine ? "no_beneficial_switch_available" : "preserved_for_strong_task";
+    if (isLowerTierWork) {
+      selectionEffect = "no_beneficial_alternative";
+      decisionReason = "conserve_quota_consumed_for_lack_of_valid_alternative";
+    } else {
+      selectionEffect = "preserved_for_strong_task";
+    }
   }
 
   if (quotaPolicy === "shadow") {
@@ -450,6 +494,7 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
       snapshotAgeMs,
       stale: snapshot.stale,
       selectionEffect,
+      ...(decisionReason ? { decisionReason } : {}),
       candidateStates,
       selectedProfile: standardSelectedProfile,
       selectedModel: stdProfileObj?.model,
@@ -471,6 +516,7 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
     snapshotAgeMs,
     stale: snapshot.stale,
     selectionEffect,
+    ...(decisionReason ? { decisionReason } : {}),
     candidateStates,
     selectedProfile: hypotheticalProfile,
     selectedModel: hypotheticalModel,

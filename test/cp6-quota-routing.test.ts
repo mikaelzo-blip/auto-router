@@ -6,7 +6,7 @@ import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
 import { QuotaCooldownTracker, classify429 } from "../src/quota/cooldown.js";
 import { determineAutoReasoning } from "../src/reasoning.js";
 
-describe("CP6 Quota-Aware Availability Routing (32 Acceptance Tests)", () => {
+describe("CP6 Quota-Aware Availability Routing (34 Acceptance Tests)", () => {
   let syntheticQuota: SyntheticQuotaSource;
 
   function makeTestConfig(overrides: Partial<AppConfig> = {}): AppConfig {
@@ -898,6 +898,73 @@ describe("CP6 Quota-Aware Availability Routing (32 Acceptance Tests)", () => {
     expect(raw).not.toContain("mikaelzo1998@gmail.com");
     expect(raw).not.toContain("sk-");
     expect(raw).not.toContain("b59bebec");
+    await app.close();
+  });
+
+  it("33. explicit review intent remains eligible through quota ranking", async () => {
+    const app = buildApp(makeTestConfig({ quotaPolicy: "auto" }));
+    const res = await app.inject({
+      method: "POST",
+      url: "/debug/route",
+      headers: { "content-type": "application/json" },
+      payload: {
+        model: "auto",
+        messages: [{ role: "user", content: "Perform a security review of this authentication middleware" }]
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body.shadowV2.specialistIntent).toBe("review");
+    expect(body.selectedProfile).toBe("luna-review");
+    expect(body.quota.candidateStates["luna-review"].status).toBe("healthy");
+    await app.close();
+  });
+
+  it("34. debug metadata explains reserve consumption without a beneficial alternative", async () => {
+    syntheticQuota.setBucket({
+      id: "gemini_weekly",
+      provider: "antigravity",
+      scope: "weekly",
+      used: 907.52421,
+      limit: 1000,
+      remaining: 92.47579,
+      remainingRatio: 0.09247579,
+      resetAt: "2026-09-18T00:00:00.000Z",
+      observedAt: new Date().toISOString(),
+      stale: false
+    });
+    syntheticQuota.setBucket({
+      id: "codex_weekly",
+      provider: "codex",
+      scope: "weekly",
+      used: 78,
+      limit: 100,
+      remaining: 22,
+      remainingRatio: 0.22,
+      resetAt: "2026-09-19T08:00:00.000Z",
+      observedAt: new Date().toISOString(),
+      stale: false
+    });
+
+    const app = buildApp(makeTestConfig({ quotaPolicy: "shadow" }));
+    const res = await app.inject({
+      method: "POST",
+      url: "/debug/route",
+      headers: { "content-type": "application/json" },
+      payload: {
+        model: "auto",
+        messages: [{ role: "user", content: "Translate this sentence" }]
+      }
+    });
+
+    expect(res.statusCode).toBe(200);
+    const body = res.json();
+    expect(body.selectedProfile).toBe("gemini-flash-low");
+    expect(body.quota.hypotheticalProfile).toBe("gemini-flash-low");
+    expect(body.quota.wouldSwitch).toBe(false);
+    expect(body.quota.selectionEffect).toBe("no_beneficial_alternative");
+    expect(body.quota.decisionReason).toBe("reserve_consumed_for_lack_of_valid_alternative");
     await app.close();
   });
 });

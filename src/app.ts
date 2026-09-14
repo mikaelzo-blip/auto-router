@@ -452,6 +452,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         const quotaDecision = resolveQuotaDecision({
           standardSelectedProfile: shadowV2 && typeof shadowV2 === "object" && "selectedProfile" in shadowV2 ? (shadowV2 as any).selectedProfile : undefined,
           taskType: reasoningContext.taskType ?? "general",
+          specialistIntent: shadowV2 && typeof shadowV2 === "object" && "specialistIntent" in shadowV2 ? (shadowV2 as any).specialistIntent : undefined,
           complexity: reasoningContext.complexity ?? "medium",
           risk: reasoningContext.risk ?? "low",
           minimumQualityTier: shadowV2 && typeof shadowV2 === "object" && "minimumQualityTier" in shadowV2 ? (shadowV2 as any).minimumQualityTier : "cheap",
@@ -484,6 +485,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             snapshotAgeMs: quotaDecision.snapshotAgeMs,
             stale: quotaDecision.stale,
             selectionEffect: quotaDecision.selectionEffect,
+            decisionReason: quotaDecision.decisionReason,
             hypotheticalProfile: quotaDecision.hypotheticalProfile,
             hypotheticalModel: quotaDecision.hypotheticalModel,
             wouldSwitch: quotaDecision.wouldSwitch,
@@ -777,6 +779,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         quotaDecision = resolveQuotaDecision({
           standardSelectedProfile: shadowResult.selectedProfile,
           taskType: shadowResult.taskType,
+          specialistIntent: shadowResult.specialistIntent,
           complexity: shadowResult.complexity,
           risk: shadowResult.risk,
           minimumQualityTier: shadowResult.minimumQualityTier,
@@ -803,6 +806,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             selectedModel = profile.model;
             const quotaRanked = filterAndRankWithQuota({
               taskType: shadowResult.taskType,
+              specialistIntent: shadowResult.specialistIntent,
               complexity: shadowResult.complexity,
               risk: shadowResult.risk,
               minimumQualityTier: shadowResult.minimumQualityTier,
@@ -1443,6 +1447,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         quotaDecision = resolveQuotaDecision({
           standardSelectedProfile: shadowResult.selectedProfile,
           taskType: shadowResult.taskType,
+          specialistIntent: shadowResult.specialistIntent,
           complexity: shadowResult.complexity,
           risk: shadowResult.risk,
           minimumQualityTier: shadowResult.minimumQualityTier,
@@ -1469,6 +1474,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             selectedModel = profile.model;
             const quotaRanked = filterAndRankWithQuota({
               taskType: shadowResult.taskType,
+              specialistIntent: shadowResult.specialistIntent,
               complexity: shadowResult.complexity,
               risk: shadowResult.risk,
               minimumQualityTier: shadowResult.minimumQualityTier,

@@ -9,10 +9,10 @@ import {
 } from "../src/shadow-router.js";
 
 const profiles: ExecutionProfile[] = [
-  { id: "cheap", model: "synthetic-cheap", enabled: true, hardCapabilities: { tools: false, vision: false }, taskFit: ["general", "transformation"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" },
-  { id: "balanced", model: "synthetic-balanced", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "code", "analysis", "research", "transformation", "multimodal"], qualityTier: "balanced", costClass: "low", latencyClass: "medium" },
-  { id: "strong", model: "synthetic-strong", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["code", "analysis", "research", "general", "multimodal"], qualityTier: "strong", costClass: "high", latencyClass: "slow" },
-  { id: "frontier", model: "synthetic-frontier", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["code", "analysis", "research", "general", "multimodal"], qualityTier: "frontier", costClass: "very_high", latencyClass: "slow" }
+  { id: "cheap", model: "synthetic-cheap", enabled: true, profileClass: "general", hardCapabilities: { tools: false, vision: false }, taskFit: ["general", "transformation"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" },
+  { id: "balanced", model: "synthetic-balanced", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "code", "analysis", "research", "transformation", "multimodal"], qualityTier: "balanced", costClass: "low", latencyClass: "medium" },
+  { id: "strong", model: "synthetic-strong", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["code", "analysis", "research", "general", "multimodal"], qualityTier: "strong", costClass: "high", latencyClass: "slow" },
+  { id: "frontier", model: "synthetic-frontier", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["code", "analysis", "research", "general", "multimodal"], qualityTier: "frontier", costClass: "very_high", latencyClass: "slow" }
 ];
 let sessionCounter = 0;
 const base = (content: string, extra: Partial<ShadowRequest> = {}): ShadowRequest => ({ sessionId: "session-" + ++sessionCounter, messages: [{ role: "user", content }], policy: "balanced", ...extra });
@@ -83,17 +83,34 @@ describe("CP2 shadow router", () => {
     expect(() => validateProfileCoverage(profiles)).toThrow(/Profile registry has coverage gaps/);
 
     const fullProfiles: ExecutionProfile[] = [
-      { id: "cheap", model: "m-cheap", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" },
-      { id: "balanced", model: "m-balanced", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "balanced", costClass: "low", latencyClass: "fast" },
-      { id: "strong", model: "m-strong", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "strong", costClass: "medium", latencyClass: "medium" },
-      { id: "frontier", model: "m-frontier", enabled: true, hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "frontier", costClass: "very_high", latencyClass: "slow" }
+      { id: "cheap", model: "m-cheap", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" },
+      { id: "balanced", model: "m-balanced", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "balanced", costClass: "low", latencyClass: "fast" },
+      { id: "strong", model: "m-strong", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "strong", costClass: "medium", latencyClass: "medium" },
+      { id: "frontier", model: "m-frontier", enabled: true, profileClass: "general", hardCapabilities: { tools: true, vision: true }, taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"], qualityTier: "frontier", costClass: "very_high", latencyClass: "slow" }
     ];
     expect(() => validateProfileCoverage(fullProfiles)).not.toThrow();
   });
 
+  it("excludes specialist profiles from generic coverage", () => {
+    const universalProfile: ExecutionProfile = {
+      id: "universal",
+      model: "m-universal",
+      enabled: true,
+      profileClass: "specialist",
+      hardCapabilities: { tools: true, vision: true },
+      taskFit: ["general", "transformation", "code", "analysis", "research", "multimodal"],
+      qualityTier: "strong",
+      costClass: "medium",
+      latencyClass: "medium"
+    };
+
+    expect(() => validateProfileCoverage([universalProfile])).toThrow(/Profile registry has coverage gaps/);
+    expect(() => validateProfileCoverage([{ ...universalProfile, profileClass: "resilience" }])).not.toThrow();
+  });
+
   it("engages structured fallback instead of throwing when no candidate strictly matches", () => {
     const constrainedProfiles: ExecutionProfile[] = [
-      { id: "text-cheap", model: "m1", enabled: true, hardCapabilities: { tools: false, vision: false }, taskFit: ["general"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" }
+      { id: "text-cheap", model: "m1", enabled: true, profileClass: "general", hardCapabilities: { tools: false, vision: false }, taskFit: ["general"], qualityTier: "cheap", costClass: "very_low", latencyClass: "fast" }
     ];
     // Request requires tools and code taskType, but only text-cheap is available
     const decision = routeShadow({

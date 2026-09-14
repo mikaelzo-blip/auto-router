@@ -137,199 +137,205 @@ export class NineRouterQuotaSource implements QuotaSource {
       providerHealth.codex = "unavailable";
     }
 
-    // Fetch usage for active Antigravity connections
+    // Fetch usage for active Antigravity and Codex connections concurrently
     let agFetchSuccess = false;
-    for (const conn of activeAgConnections) {
-      try {
-        const signal = AbortSignal.timeout(this.timeoutMs);
-        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
-        if (!res.ok) continue;
-        const usage = await res.json() as {
-          quotas?: Record<string, {
-            used?: number;
-            total?: number;
-            remaining?: number;
-            remainingPercentage?: number;
-            resetAt?: string | null;
-            unlimited?: boolean;
-            displayName?: string;
-          }>;
-        };
+    let cxFetchSuccess = false;
 
-        if (usage.quotas) {
-          agFetchSuccess = true;
+    await Promise.all([
+      ...activeAgConnections.map(async (conn) => {
+        try {
+          const signal = AbortSignal.timeout(this.timeoutMs);
+          const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
+          if (!res.ok) return;
+          const usage = await res.json() as {
+            quotas?: Record<string, {
+              used?: number;
+              total?: number;
+              remaining?: number;
+              remainingPercentage?: number;
+              resetAt?: string | null;
+              unlimited?: boolean;
+              displayName?: string;
+            }>;
+          };
 
-          // 1. Group Gemini Flash / Pro models (excluding image)
-          const geminiEntries = Object.entries(usage.quotas)
-            .filter(([key]) => key.startsWith("gemini-") && !key.includes("image"));
+          if (usage.quotas) {
+            agFetchSuccess = true;
 
-          if (geminiEntries.length > 0) {
-            const minGeminiEntry = geminiEntries.reduce((min, curr) => {
-              const minRatio = min[1].remainingPercentage !== undefined
-                ? min[1].remainingPercentage / 100
-                : (min[1].remaining !== undefined && (min[1].total ?? 1000) > 0)
-                  ? min[1].remaining / (min[1].total ?? 1000)
+            // 1. Group Gemini Flash / Pro models (excluding image)
+            const geminiEntries = Object.entries(usage.quotas)
+              .filter(([key]) => key.startsWith("gemini-") && !key.includes("image"));
+
+            if (geminiEntries.length > 0) {
+              const minGeminiEntry = geminiEntries.reduce((min, curr) => {
+                const minRatio = min[1].remainingPercentage !== undefined
+                  ? min[1].remainingPercentage / 100
+                  : (min[1].remaining !== undefined && (min[1].total ?? 1000) > 0)
+                    ? min[1].remaining / (min[1].total ?? 1000)
+                    : 1.0;
+                const currRatio = curr[1].remainingPercentage !== undefined
+                  ? curr[1].remainingPercentage / 100
+                  : (curr[1].remaining !== undefined && (curr[1].total ?? 1000) > 0)
+                    ? curr[1].remaining / (curr[1].total ?? 1000)
+                    : 1.0;
+                return currRatio < minRatio ? curr : min;
+              });
+
+              const q = minGeminiEntry[1];
+              const limit = q.total ?? 1000;
+              const used = q.used ?? 0;
+              let ratio = q.remainingPercentage !== undefined
+                ? q.remainingPercentage / 100
+                : q.remaining !== undefined && limit > 0
+                  ? q.remaining / limit
                   : 1.0;
-              const currRatio = curr[1].remainingPercentage !== undefined
-                ? curr[1].remainingPercentage / 100
-                : (curr[1].remaining !== undefined && (curr[1].total ?? 1000) > 0)
-                  ? curr[1].remaining / (curr[1].total ?? 1000)
-                  : 1.0;
-              return currRatio < minRatio ? curr : min;
-            });
+              ratio = Math.max(0, Math.min(1, ratio));
+              const remaining = q.remaining ?? Math.round(limit * ratio);
 
-            const q = minGeminiEntry[1];
-            const limit = q.total ?? 1000;
-            const used = q.used ?? 0;
-            let ratio = q.remainingPercentage !== undefined
-              ? q.remainingPercentage / 100
-              : q.remaining !== undefined && limit > 0
-                ? q.remaining / limit
-                : 1.0;
-            ratio = Math.max(0, Math.min(1, ratio));
-            const remaining = q.remaining ?? Math.round(limit * ratio);
-
-            const existing = buckets["gemini_flash_pro"];
-            if (!existing || ratio > existing.remainingRatio) {
-              buckets["gemini_flash_pro"] = {
-                id: "gemini_flash_pro",
-                provider: "antigravity",
-                scope: "model_shared",
-                used,
-                limit,
-                remaining,
-                remainingRatio: ratio,
-                resetAt: q.resetAt ?? null,
-                observedAt: observedAtIso,
-                stale: false
-              };
+              const existing = buckets["gemini_flash_pro"];
+              if (!existing || ratio > existing.remainingRatio) {
+                buckets["gemini_flash_pro"] = {
+                  id: "gemini_flash_pro",
+                  provider: "antigravity",
+                  scope: "model_shared",
+                  used,
+                  limit,
+                  remaining,
+                  remainingRatio: ratio,
+                  resetAt: q.resetAt ?? null,
+                  observedAt: observedAtIso,
+                  stale: false
+                };
+              }
             }
-          }
 
-          // 2. Weekly quota bucket
-          const weekly = usage.quotas["gemini_weekly"] ?? usage.quotas["gemini-3.8-flash-high"];
-          if (weekly) {
-            const limit = weekly.total ?? 1000;
-            const used = weekly.used ?? 0;
-            let ratio = weekly.remainingPercentage !== undefined
-              ? weekly.remainingPercentage / 100
-              : weekly.remaining !== undefined && limit > 0
-                ? weekly.remaining / limit
-                : 1.0;
-            ratio = Math.max(0, Math.min(1, ratio));
-            const remaining = weekly.remaining ?? Math.round(limit * ratio);
+            // 2. Weekly quota bucket
+            const weekly = usage.quotas["gemini_weekly"] ?? usage.quotas["gemini-3.8-flash-high"];
+            if (weekly) {
+              const limit = weekly.total ?? 1000;
+              const used = weekly.used ?? 0;
+              let ratio = weekly.remainingPercentage !== undefined
+                ? weekly.remainingPercentage / 100
+                : weekly.remaining !== undefined && limit > 0
+                  ? weekly.remaining / limit
+                  : 1.0;
+              ratio = Math.max(0, Math.min(1, ratio));
+              const remaining = weekly.remaining ?? Math.round(limit * ratio);
 
-            const existing = buckets["gemini_weekly"];
-            if (!existing || ratio > existing.remainingRatio) {
+              const existing = buckets["gemini_weekly"];
+              if (!existing || ratio > existing.remainingRatio) {
+                buckets["gemini_weekly"] = {
+                  id: "gemini_weekly",
+                  provider: "antigravity",
+                  scope: "weekly",
+                  used,
+                  limit,
+                  remaining,
+                  remainingRatio: ratio,
+                  resetAt: weekly.resetAt ?? null,
+                  observedAt: observedAtIso,
+                  stale: false
+                };
+              }
+            }
+
+            // Ensure bidirectional presence if only one was parsed
+            if (!buckets["gemini_weekly"] && buckets["gemini_flash_pro"]) {
+              const b = buckets["gemini_flash_pro"]!;
               buckets["gemini_weekly"] = {
+                ...b,
                 id: "gemini_weekly",
-                provider: "antigravity",
-                scope: "weekly",
-                used,
-                limit,
-                remaining,
-                remainingRatio: ratio,
-                resetAt: weekly.resetAt ?? null,
-                observedAt: observedAtIso,
-                stale: false
+                scope: "weekly"
+              };
+            } else if (!buckets["gemini_flash_pro"] && buckets["gemini_weekly"]) {
+              const b = buckets["gemini_weekly"]!;
+              buckets["gemini_flash_pro"] = {
+                ...b,
+                id: "gemini_flash_pro",
+                scope: "model_shared"
               };
             }
           }
-
-          // Ensure bidirectional presence if only one was parsed
-          if (!buckets["gemini_weekly"] && buckets["gemini_flash_pro"]) {
-            const b = buckets["gemini_flash_pro"]!;
-            buckets["gemini_weekly"] = {
-              ...b,
-              id: "gemini_weekly",
-              scope: "weekly"
-            };
-          } else if (!buckets["gemini_flash_pro"] && buckets["gemini_weekly"]) {
-            const b = buckets["gemini_weekly"]!;
-            buckets["gemini_flash_pro"] = {
-              ...b,
-              id: "gemini_flash_pro",
-              scope: "model_shared"
-            };
-          }
+        } catch {
+          // Individual connection failure caught
         }
-      } catch {
-        // Individual connection failure caught; agFetchSuccess tracks overall status
-      }
-    }
+      }),
+      ...activeCxConnections.map(async (conn) => {
+        try {
+          const signal = AbortSignal.timeout(this.timeoutMs);
+          const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
+          if (!res.ok) return;
+          const usage = await res.json() as {
+            limitReached?: boolean;
+            quotas?: {
+              session?: { used?: number; total?: number; remaining?: number; resetAt?: string | null };
+              weekly?: { used?: number; total?: number; remaining?: number; resetAt?: string | null };
+            };
+          };
+
+          if (usage.quotas) {
+            cxFetchSuccess = true;
+            if (usage.quotas.session) {
+              const q = usage.quotas.session;
+              const limit = q.total ?? 100;
+              const used = q.used ?? 0;
+              let remaining = usage.limitReached ? 0 : (q.remaining ?? (limit - used));
+              let ratio = limit > 0 ? remaining / limit : 1.0;
+              ratio = Math.max(0, Math.min(1, ratio));
+
+              const existing = buckets["codex_session"];
+              if (!existing || ratio > existing.remainingRatio) {
+                buckets["codex_session"] = {
+                  id: "codex_session",
+                  provider: "codex",
+                  scope: "session",
+                  used,
+                  limit,
+                  remaining,
+                  remainingRatio: ratio,
+                  resetAt: q.resetAt ?? null,
+                  observedAt: observedAtIso,
+                  stale: false
+                };
+              }
+            }
+
+            if (usage.quotas.weekly) {
+              const q = usage.quotas.weekly;
+              const limit = q.total ?? 100;
+              const used = q.used ?? 0;
+              let remaining = usage.limitReached ? 0 : (q.remaining ?? (limit - used));
+              let ratio = limit > 0 ? remaining / limit : 1.0;
+              ratio = Math.max(0, Math.min(1, ratio));
+
+              const existing = buckets["codex_weekly"];
+              if (!existing || ratio > existing.remainingRatio) {
+                buckets["codex_weekly"] = {
+                  id: "codex_weekly",
+                  provider: "codex",
+                  scope: "weekly",
+                  used,
+                  limit,
+                  remaining,
+                  remainingRatio: ratio,
+                  resetAt: q.resetAt ?? null,
+                  observedAt: observedAtIso,
+                  stale: false
+                };
+              }
+            }
+          }
+        } catch {
+          // Individual connection failure caught
+        }
+      })
+    ]);
 
     if (activeAgConnections.length > 0 && !agFetchSuccess) {
       providerHealth.antigravity = "degraded";
     }
-
-    // Fetch usage for active Codex connections
-    for (const conn of activeCxConnections) {
-      try {
-        const signal = AbortSignal.timeout(this.timeoutMs);
-        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
-        if (!res.ok) continue;
-        const usage = await res.json() as {
-          limitReached?: boolean;
-          quotas?: {
-            session?: { used?: number; total?: number; remaining?: number; resetAt?: string | null };
-            weekly?: { used?: number; total?: number; remaining?: number; resetAt?: string | null };
-          };
-        };
-
-        if (usage.quotas) {
-          if (usage.quotas.session) {
-            const q = usage.quotas.session;
-            const limit = q.total ?? 100;
-            const used = q.used ?? 0;
-            let remaining = usage.limitReached ? 0 : (q.remaining ?? (limit - used));
-            let ratio = limit > 0 ? remaining / limit : 1.0;
-            ratio = Math.max(0, Math.min(1, ratio));
-
-            const existing = buckets["codex_session"];
-            if (!existing || ratio > existing.remainingRatio) {
-              buckets["codex_session"] = {
-                id: "codex_session",
-                provider: "codex",
-                scope: "session",
-                used,
-                limit,
-                remaining,
-                remainingRatio: ratio,
-                resetAt: q.resetAt ?? null,
-                observedAt: observedAtIso,
-                stale: false
-              };
-            }
-          }
-
-          if (usage.quotas.weekly) {
-            const q = usage.quotas.weekly;
-            const limit = q.total ?? 100;
-            const used = q.used ?? 0;
-            let remaining = usage.limitReached ? 0 : (q.remaining ?? (limit - used));
-            let ratio = limit > 0 ? remaining / limit : 1.0;
-            ratio = Math.max(0, Math.min(1, ratio));
-
-            const existing = buckets["codex_weekly"];
-            if (!existing || ratio > existing.remainingRatio) {
-              buckets["codex_weekly"] = {
-                id: "codex_weekly",
-                provider: "codex",
-                scope: "weekly",
-                used,
-                limit,
-                remaining,
-                remainingRatio: ratio,
-                resetAt: q.resetAt ?? null,
-                observedAt: observedAtIso,
-                stale: false
-              };
-            }
-          }
-        }
-      } catch {
-        providerHealth.codex = "degraded";
-      }
+    if (activeCxConnections.length > 0 && !cxFetchSuccess) {
+      providerHealth.codex = "degraded";
     }
 
     return {

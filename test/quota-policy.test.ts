@@ -162,7 +162,34 @@ describe("Quota Policy Evaluation & Ranking", () => {
     expect(astraInRanked).toBeUndefined();
   });
 
-  it("11. quality floor is preserved when selecting models", () => {
+  it("11. quota pressure cannot make a specialist serve generic high-risk work", () => {
+    const snapshot = makeSnapshot({
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.0 },
+      codex_weekly: { provider: "codex", remainingRatio: 1.0 },
+      codex_session: { provider: "codex", remainingRatio: 1.0 }
+    });
+    const profiles = DEFAULT_SHADOW_PROFILES.filter((profile) =>
+      ["gemini-flash-high", "luna-review"].includes(profile.id)
+    );
+
+    const decision = resolveQuotaDecision({
+      standardSelectedProfile: "gemini-flash-high",
+      taskType: "code",
+      complexity: "high",
+      risk: "high",
+      minimumQualityTier: "strong",
+      requiredCapabilities: { tools: true, vision: false },
+      profiles,
+      snapshot,
+      cooldownTracker: tracker,
+      quotaPolicy: "auto"
+    });
+
+    expect(decision.selectedProfile).toBeUndefined();
+    expect(decision.selectionEffect).toBe("no_eligible_candidate");
+  });
+
+  it("12. quality floor is preserved when selecting models", () => {
     // Critical concurrency requires STRONG tier
     // Gemini High is exhausted, Gemini Low is healthy
     const snapshot = makeSnapshot({
@@ -241,7 +268,66 @@ describe("Quota Policy Evaluation & Ranking", () => {
     expect(decision.selectionEffect).toContain("conserv");
   });
 
-  it("14. strong/high-risk task can consume reserve when justified", () => {
+  it("14. routine reserve use is preferable to a constrained resilience switch", () => {
+    const snapshot = makeSnapshot({
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.09247579 },
+      codex_weekly: { provider: "codex", remainingRatio: 0.22 },
+      codex_session: { provider: "codex", remainingRatio: 1.0 }
+    });
+    const profiles = DEFAULT_SHADOW_PROFILES.filter((profile) =>
+      ["gemini-flash-low", "terra"].includes(profile.id)
+    );
+
+    const decision = resolveQuotaDecision({
+      standardSelectedProfile: "gemini-flash-low",
+      taskType: "transformation",
+      complexity: "low",
+      risk: "low",
+      minimumQualityTier: "cheap",
+      requiredCapabilities: { tools: false, vision: false },
+      profiles,
+      snapshot,
+      cooldownTracker: tracker,
+      quotaPolicy: "shadow"
+    });
+
+    expect(decision.selectedProfile).toBe("gemini-flash-low");
+    expect(decision.hypotheticalProfile).toBe("gemini-flash-low");
+    expect(decision.wouldSwitch).toBe(false);
+    expect(decision.selectionEffect).toBe("no_beneficial_alternative");
+    expect(decision.decisionReason).toBe("reserve_consumed_for_lack_of_valid_alternative");
+  });
+
+  it("15. normal coding does not migrate to constrained resilience capacity without justification", () => {
+    const snapshot = makeSnapshot({
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.09 },
+      codex_weekly: { provider: "codex", remainingRatio: 0.22 },
+      codex_session: { provider: "codex", remainingRatio: 1.0 }
+    });
+    const profiles = DEFAULT_SHADOW_PROFILES.filter((profile) =>
+      ["gemini-flash-medium", "terra"].includes(profile.id)
+    );
+
+    const decision = resolveQuotaDecision({
+      standardSelectedProfile: "gemini-flash-medium",
+      taskType: "code",
+      complexity: "medium",
+      risk: "low",
+      minimumQualityTier: "balanced",
+      requiredCapabilities: { tools: true, vision: false },
+      profiles,
+      snapshot,
+      cooldownTracker: tracker,
+      quotaPolicy: "shadow"
+    });
+
+    expect(decision.hypotheticalProfile).toBe("gemini-flash-medium");
+    expect(decision.wouldSwitch).toBe(false);
+    expect(decision.selectionEffect).toBe("no_beneficial_alternative");
+    expect(decision.decisionReason).toBe("reserve_consumed_for_lack_of_valid_alternative");
+  });
+
+  it("16. strong/high-risk task can consume reserve when justified", () => {
     // Gemini High is in reserve (5%), Terra is exhausted (0%)
     const snapshot = makeSnapshot({
       gemini_weekly: { provider: "antigravity", remainingRatio: 0.05 },

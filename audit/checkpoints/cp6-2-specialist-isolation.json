@@ -1,0 +1,121 @@
+{
+  "checkpoint": "CP6.2",
+  "status": "specialist-isolated-and-quota-conservation-policy-verified",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "startingHead": "97dbb64d733329764740eae420496546bba47a8e",
+  "timestamp": "2026-09-14T11:15:00.000Z",
+  "invariants": {
+    "lunaReviewSpecialistOnly": true,
+    "highRiskExcludesLunaReview": true,
+    "explicitReviewSelectsLunaReview": true,
+    "quotaPressureCannotBypassSpecialistIsolation": true,
+    "routineGeminiReserveDoesNotJumpToTerra": true,
+    "terraResilienceFallbackEnforced": true,
+    "solDisabled": true,
+    "astraDisabled": true,
+    "productionPort20200Untouched": true,
+    "quotaPolicyShadowInProduction": true
+  },
+  "profileClassification": {
+    "general": [
+      "gemini-flash-low",
+      "gemini-flash-medium",
+      "gemini-flash-high",
+      "sol",
+      "claude-sonnet",
+      "claude-opus",
+      "astra"
+    ],
+    "specialist": [
+      "luna-review"
+    ],
+    "resilience": [
+      "terra"
+    ]
+  },
+  "clauseClassifier": {
+    "architecture": "deterministic-fail-closed-clause-classifier",
+    "reviewTerms": [
+      "review",
+      "audit",
+      "critique"
+    ],
+    "contextTerms": [
+      "comments",
+      "findings",
+      "logs",
+      "logging",
+      "notes",
+      "results",
+      "status",
+      "trail",
+      "feedback",
+      "report",
+      "reports"
+    ],
+    "negations": [
+      "cannot",
+      "can't",
+      "didn't",
+      "doesn't",
+      "don't",
+      "never",
+      "no",
+      "not",
+      "shouldn't",
+      "wasn't",
+      "weren't",
+      "without",
+      "won't",
+      "wouldn't",
+      "skip",
+      "avoid"
+    ],
+    "copulas": [
+      "is",
+      "are",
+      "was",
+      "were",
+      "has",
+      "been",
+      "done",
+      "finished",
+      "complete",
+      "completed"
+    ],
+    "politenessTokens": [
+      "please",
+      "kindly"
+    ],
+    "edgeCasesCovered": [
+      "politeness-prefixes",
+      "modal-polite-requests",
+      "action-verbs-with-review-nouns",
+      "first-person-desires-and-needs",
+      "declarative-copula-exclusion",
+      "mixed-clause-per-occurrence-evaluation",
+      "turn-isolation-no-history-bleed"
+    ]
+  },
+  "quotaPolicyEnhancements": {
+    "resilienceHeadroomGating": {
+      "minRemainingRatio": 0.5,
+      "minHeadroomGain": 0.25
+    },
+    "noBeneficialAlternativeEffects": [
+      "no_beneficial_alternative",
+      "reserve_consumed_for_lack_of_valid_alternative",
+      "conserve_quota_consumed_for_lack_of_valid_alternative"
+    ],
+    "reserveConsumptionEffects": [
+      "reserved_quota_consumed",
+      "reserved_quota_consumed_for_high_value_task"
+    ]
+  },
+  "testResults": {
+    "totalFiles": 16,
+    "totalTests": 271,
+    "passed": 271,
+    "failed": 0
+  }
+}
