@@ -1,0 +1,190 @@
+{
+  "checkpoint": "CP6.5",
+  "status": "account-priority-validated-and-quota-auto-readiness-evaluated",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "startingHead": "1992b08f94c5fbb6127a7ac3964b899bb6e55bc8",
+  "timestamp": "2026-09-14T12:35:00.000Z",
+  "accountPriorities": {
+    "account_1": {
+      "alias": "account_1",
+      "role": "reserve",
+      "configuredPriority": 1,
+      "startingNormalizedRatio": 0.024585217,
+      "endingNormalizedRatio": 0.024571016,
+      "requestsServed": 5,
+      "status": "reserve",
+      "conserved": false
+    },
+    "account_2": {
+      "alias": "account_2",
+      "role": "healthy",
+      "configuredPriority": 2,
+      "startingNormalizedRatio": 0.9899,
+      "endingNormalizedRatio": 0.9899,
+      "requestsServed": 0,
+      "status": "healthy",
+      "servingActive": false
+    },
+    "roundRobin": "disabled",
+    "observation": "9Router retains account_1 at Priority 1 and account_2 at Priority 2. Native fill-first priority routes 100% of live traffic to reserve account_1; account_2 serves 0 requests."
+  },
+  "candidateStates": {
+    "gemini-flash-low": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9899,
+      "limitingBuckets": [],
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "gemini-flash-medium": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9899,
+      "limitingBuckets": [],
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "gemini-flash-high": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9899,
+      "limitingBuckets": [],
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "terra": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "limitingBuckets": ["codex_unavailable"],
+      "poolStatus": "exhausted",
+      "usableAccounts": 0
+    },
+    "luna-review": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "limitingBuckets": ["codex_unavailable"],
+      "poolStatus": "exhausted",
+      "usableAccounts": 0
+    },
+    "sol": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "enabled": false
+    },
+    "astra": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "enabled": false
+    }
+  },
+  "providerPools": {
+    "antigravity": {
+      "status": "healthy",
+      "usableAccounts": 2,
+      "totalAccounts": 2,
+      "constrainedAccounts": 1,
+      "exhaustedAccounts": 0,
+      "bestRemainingRatio": 0.9899
+    },
+    "codex": {
+      "status": "exhausted",
+      "usableAccounts": 0,
+      "totalAccounts": 1,
+      "constrainedAccounts": 0,
+      "exhaustedAccounts": 1,
+      "bestRemainingRatio": 0.0
+    }
+  },
+  "fallbacks": {
+    "explicitReviewFallback": {
+      "standard": "luna-review",
+      "quotaAware": "gemini-flash-high",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "switchReason": "quota_exhausted",
+      "doomedRequestAvoided": true
+    },
+    "invariants": {
+      "solDisabled": true,
+      "astraDisabled": true,
+      "codexExhaustionRespected": true,
+      "noSpecialistLeakage": true
+    }
+  },
+  "shadowSoak": {
+    "requestsObserved": 50,
+    "durationSeconds": 0.16,
+    "GeminiPoolStatus": {
+      "healthy": 50
+    },
+    "CodexPoolStatus": {
+      "exhausted": 50
+    },
+    "wouldSwitchCount": 9,
+    "wouldSwitchRate": 0.18,
+    "actualProfileDistribution": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 18,
+      "gemini-flash-high": 9,
+      "luna-review": 9
+    },
+    "hypotheticalProfileDistribution": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 24,
+      "gemini-flash-high": 12
+    },
+    "quotaFallbackRecommendations": {
+      "luna-review -> gemini-flash-medium (quota_exhausted)": 6,
+      "luna-review -> gemini-flash-high (quota_exhausted)": 3
+    },
+    "telemetryFailures": 0,
+    "telemetryTimeouts": 0
+  },
+  "autoPolicySimulation": {
+    "scenarioA_account1Reserve_account2Healthy": "healthy",
+    "scenarioB_account1Exhausted_account2Healthy": "healthy",
+    "scenarioC_account2Unavailable_account1Reserve": "reserve",
+    "scenarioD_bothAccountsExhausted": "exhausted",
+    "scenarioE_codexExhausted_terraLunaExcluded": "pass",
+    "scenarioF_allGeneralExhausted_explicitNoEligible": "pass",
+    "guards": {
+      "noSol": true,
+      "noAstra": true
+    }
+  },
+  "canaryAutoTesting": {
+    "port": 20206,
+    "routine": {
+      "profile": "gemini-flash-low",
+      "model": "ag/gemini-3.8-flash-low",
+      "status": 200
+    },
+    "normalCoding": {
+      "profile": "gemini-flash-medium",
+      "model": "ag/gemini-3.8-flash-medium",
+      "status": 200
+    },
+    "hard": {
+      "profile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "status": 200
+    },
+    "review": {
+      "profile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "status": 200
+    }
+  },
+  "readinessGate": {
+    "account2ServesRequests": "FAIL",
+    "account1ReserveConserved": "FAIL",
+    "multiAccountGeminiPoolHealthy": "PASS",
+    "codexExhaustionRespected": "PASS",
+    "noDoomedRequestsSent": "PASS",
+    "shadowDecisionsStable": "PASS",
+    "noSpecialistLeakage": "PASS",
+    "noQuotaReasoningCouplingRegression": "PASS",
+    "noIdentityLeaks": "PASS",
+    "testsAndBuildPass": "PASS"
+  },
+  "finalRecommendation": "KEEP QUOTA_POLICY=shadow"
+}
