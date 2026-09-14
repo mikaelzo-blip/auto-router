@@ -105,6 +105,29 @@ export class QuotaCooldownTracker {
     this.defaultRateLimitCooldownMs = options.defaultRateLimitCooldownMs ?? 15_000; // 15 sec
   }
 
+  recordAccountResponse(
+    accountAlias: string,
+    modelOrGroup: string,
+    status: number,
+    body?: string | Record<string, unknown> | null,
+    headers?: Headers | Record<string, string | undefined> | null
+  ): void {
+    const key = `${accountAlias}:${modelOrGroup}`;
+    this.recordResponse(key, status, body, headers);
+  }
+
+  isAccountCooldownActive(
+    accountAlias: string,
+    modelOrGroup: string,
+    now = Date.now()
+  ): { active: boolean; type?: "quota_exhaustion" | "rate_limit"; remainingMs?: number; resetAt?: string } {
+    const accountModel = this.isCooldownActive(`${accountAlias}:${modelOrGroup}`, now);
+    if (accountModel.active) return accountModel;
+    const accountGeneral = this.isCooldownActive(accountAlias, now);
+    if (accountGeneral.active) return accountGeneral;
+    return { active: false };
+  }
+
   recordResponse(
     modelOrGroup: string,
     status: number,

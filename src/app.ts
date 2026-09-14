@@ -521,6 +521,48 @@ export function buildApp(config: AppConfig): FastifyInstance {
       );
     }
 
+    const pools: Record<string, any> = {};
+    if (snapshot.accounts) {
+      const agProfile = shadowProfiles.find((p) => p.id === "gemini-flash-low");
+      if (agProfile && candidateStates[agProfile.id]?.pool) {
+        const p = candidateStates[agProfile.id].pool;
+        pools["antigravity"] = {
+          provider: "antigravity",
+          accountsTotal: p.totalAccountCount,
+          accountsUsable: p.usableAccountCount,
+          poolStatus: p.status,
+          bestRemainingRatio: p.bestRemainingRatio,
+          accounts: p.accounts?.map((a: any) => ({
+            accountAlias: a.accountAlias,
+            status: a.status,
+            effectiveRemainingRatio: a.effectiveRemainingRatio,
+            limitingBuckets: a.limitingBuckets,
+            resetAt: a.resetAt,
+            providerHealth: a.providerHealth
+          }))
+        };
+      }
+      const cxProfile = shadowProfiles.find((p) => p.id === "codex-5.3");
+      if (cxProfile && candidateStates[cxProfile.id]?.pool) {
+        const p = candidateStates[cxProfile.id].pool;
+        pools["codex"] = {
+          provider: "codex",
+          accountsTotal: p.totalAccountCount,
+          accountsUsable: p.usableAccountCount,
+          poolStatus: p.status,
+          bestRemainingRatio: p.bestRemainingRatio,
+          accounts: p.accounts?.map((a: any) => ({
+            accountAlias: a.accountAlias,
+            status: a.status,
+            effectiveRemainingRatio: a.effectiveRemainingRatio,
+            limitingBuckets: a.limitingBuckets,
+            resetAt: a.resetAt,
+            providerHealth: a.providerHealth
+          }))
+        };
+      }
+    }
+
     return {
       policy: quotaPolicy,
       stale: snapshot.stale,
@@ -528,7 +570,8 @@ export function buildApp(config: AppConfig): FastifyInstance {
       providerHealth: snapshot.providerHealth,
       buckets: snapshot.buckets,
       candidateStates,
-      activeCooldowns
+      activeCooldowns,
+      pools
     };
   });
 

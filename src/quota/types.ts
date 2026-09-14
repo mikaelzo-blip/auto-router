@@ -17,6 +17,26 @@ export interface QuotaBucket {
   stale: boolean;
 }
 
+export interface AccountQuotaState {
+  accountAlias: string;
+  status: CandidateQuotaStatus;
+  effectiveRemainingRatio: number;
+  limitingBuckets: string[];
+  resetAt: string | null;
+  providerHealth: ProviderHealthStatus;
+}
+
+export interface CandidateQuotaPoolState {
+  status: CandidateQuotaStatus;
+  bestRemainingRatio: number;
+  usableAccountCount: number;
+  totalAccountCount: number;
+  constrainedAccountCount: number;
+  exhaustedAccountCount: number;
+  earliestRelevantReset: string | null;
+  accounts?: AccountQuotaState[];
+}
+
 export interface CandidateQuotaState {
   status: CandidateQuotaStatus;
   effectiveRemainingRatio: number;
@@ -27,6 +47,15 @@ export interface CandidateQuotaState {
     stale: boolean;
   };
   reason?: string;
+  pool?: CandidateQuotaPoolState;
+}
+
+export interface AccountQuotaSnapshot {
+  accountAlias: string;
+  provider: string;
+  providerHealth: ProviderHealthStatus;
+  buckets: Record<string, QuotaBucket>;
+  isActive?: boolean;
 }
 
 export interface QuotaSnapshot {
@@ -34,6 +63,8 @@ export interface QuotaSnapshot {
   buckets: Record<string, QuotaBucket>;
   providerHealth: Record<string, ProviderHealthStatus>;
   stale: boolean;
+  accounts?: Record<string, AccountQuotaSnapshot>;
+  accountPools?: Record<string, CandidateQuotaPoolState>;
 }
 
 export interface QuotaThresholds {

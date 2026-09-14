@@ -7,7 +7,10 @@ import type {
   QuotaDecision,
   QuotaPolicy,
   QuotaSnapshot,
-  QuotaThresholds
+  QuotaThresholds,
+  AccountQuotaState,
+  CandidateQuotaPoolState,
+  AccountQuotaSnapshot
 } from "./types.js";
 import type { QuotaCooldownTracker } from "./cooldown.js";
 
@@ -76,7 +79,7 @@ export function evaluateCandidateQuota(
 
   // 2. Check provider health
   const pHealth = snapshot.providerHealth[provider];
-  if (pHealth === "unavailable") {
+  if (pHealth === "unavailable" && (!snapshot.accounts || Object.keys(snapshot.accounts).length === 0)) {
     // Note: Provider unavailable is infrastructure health, not quota exhaustion,
     // but candidate is unavailable. If no buckets exist, return unknown/exhausted
     return {
@@ -89,7 +92,168 @@ export function evaluateCandidateQuota(
     };
   }
 
-  // 3. Find applicable buckets
+  // Multi-Account Pool Evaluation
+  const accountEntries = snapshot.accounts
+    ? Object.values(snapshot.accounts).filter((acc) => acc.provider === provider && acc.isActive !== false)
+    : [];
+
+  if (accountEntries.length > 0) {
+    const bucketIds = getApplicableBucketIds(profile);
+    const accountStates: AccountQuotaState[] = [];
+
+    for (const acc of accountEntries) {
+      // Check account-specific cooldown
+      const accCooldown = cooldownTracker
+        ? cooldownTracker.isAccountCooldownActive(acc.accountAlias, profile.model, now)
+        : { active: false };
+      const isAccountExhaustedByCooldown = accCooldown.active && accCooldown.type === "quota_exhaustion";
+      const isAccountUnavailable = acc.providerHealth === "unavailable";
+
+      const accBuckets: QuotaBucket[] = [];
+      for (const id of bucketIds) {
+        if (acc.buckets[id]) {
+          accBuckets.push(acc.buckets[id]!);
+        }
+      }
+
+      let accStatus: CandidateQuotaStatus;
+      let accRatio: number;
+      let accLimitingBuckets: string[] = [];
+      let accResetAt: string | null = null;
+
+      if (isAccountUnavailable) {
+        accStatus = "exhausted";
+        accRatio = 0.0;
+        accLimitingBuckets = [`${acc.accountAlias}_unavailable`];
+        accResetAt = null;
+      } else if (isAccountExhaustedByCooldown) {
+        accStatus = "exhausted";
+        accRatio = 0.0;
+        accLimitingBuckets = ["429_cooldown"];
+        accResetAt = accCooldown.resetAt ?? null;
+      } else if (accBuckets.length === 0) {
+        accStatus = "unknown";
+        accRatio = 1.0;
+        accLimitingBuckets = [];
+        accResetAt = null;
+      } else {
+        // RULE 4: WITHIN ONE ACCOUNT - take minimum applicable quota bucket
+        let minRatio = 1.0;
+        for (const b of accBuckets) {
+          if (b.remainingRatio < minRatio) {
+            minRatio = b.remainingRatio;
+          }
+        }
+        for (const b of accBuckets) {
+          if (Math.abs(b.remainingRatio - minRatio) < 0.001) {
+            accLimitingBuckets.push(b.id);
+            if (!accResetAt && b.resetAt) {
+              accResetAt = b.resetAt;
+            }
+          }
+        }
+        if (minRatio <= 0.0) {
+          accStatus = "exhausted";
+        } else if (minRatio > thresholds.healthyMin) {
+          accStatus = "healthy";
+        } else if (minRatio > thresholds.conserveMin) {
+          accStatus = "conserve";
+        } else {
+          accStatus = "reserve";
+        }
+        accRatio = minRatio;
+      }
+
+      accountStates.push({
+        accountAlias: acc.accountAlias,
+        status: accStatus,
+        effectiveRemainingRatio: accRatio,
+        limitingBuckets: accLimitingBuckets,
+        resetAt: accResetAt,
+        providerHealth: acc.providerHealth
+      });
+    }
+
+    // RULE 6: ACROSS INDEPENDENT ACCOUNTS (Pool Aggregation)
+    const totalAccountCount = accountStates.length;
+    const usableAccounts = accountStates.filter((a) => a.providerHealth !== "unavailable" && !a.limitingBuckets.includes("429_cooldown"));
+    const usableAccountCount = usableAccounts.length;
+    const constrainedAccountCount = accountStates.filter((a) => a.status === "reserve" || a.status === "conserve").length;
+    const exhaustedAccountCount = accountStates.filter((a) => a.status === "exhausted" || a.providerHealth === "unavailable").length;
+
+    let poolStatus: CandidateQuotaStatus;
+    if (snapshot.providerHealth[provider] === "unavailable" || usableAccountCount === 0) {
+      poolStatus = "exhausted";
+    } else if (usableAccounts.some((a) => a.status === "healthy")) {
+      poolStatus = "healthy";
+    } else if (usableAccounts.some((a) => a.status === "conserve")) {
+      poolStatus = "conserve";
+    } else if (usableAccounts.some((a) => a.status === "reserve")) {
+      poolStatus = "reserve";
+    } else if (usableAccounts.some((a) => a.status === "unknown")) {
+      poolStatus = "unknown";
+    } else {
+      poolStatus = "exhausted";
+    }
+
+    // Best remaining ratio across usable accounts
+    let bestRatio = 0.0;
+    if (usableAccounts.length > 0) {
+      const known = usableAccounts.filter((a) => a.status !== "unknown");
+      if (known.length > 0) {
+        if (known.every((a) => a.status === "exhausted") && usableAccounts.some((a) => a.status === "unknown")) {
+          bestRatio = 1.0;
+        } else {
+          bestRatio = Math.max(...known.map((a) => a.effectiveRemainingRatio));
+        }
+      } else {
+        bestRatio = 1.0;
+      }
+    }
+
+    // Earliest relevant reset
+    let earliestRelevantReset: string | null = null;
+    const resetsWithDates = accountStates
+      .map((a) => a.resetAt)
+      .filter((r): r is string => Boolean(r))
+      .sort();
+    if (resetsWithDates.length > 0) {
+      earliestRelevantReset = resetsWithDates[0]!;
+    }
+
+    const pool: CandidateQuotaPoolState = {
+      status: poolStatus,
+      bestRemainingRatio: bestRatio,
+      usableAccountCount,
+      totalAccountCount,
+      constrainedAccountCount,
+      exhaustedAccountCount,
+      earliestRelevantReset,
+      accounts: accountStates
+    };
+
+    const limitingBuckets: string[] = [];
+    if (poolStatus === "exhausted") {
+      limitingBuckets.push(usableAccountCount === 0 ? `${provider}_unavailable` : `${provider}_pool_exhausted`);
+    } else if (poolStatus === "reserve" || poolStatus === "conserve") {
+      const activeLimiting = usableAccounts.find((a) => a.status === poolStatus);
+      if (activeLimiting) {
+        limitingBuckets.push(...activeLimiting.limitingBuckets);
+      }
+    }
+
+    return {
+      status: poolStatus,
+      effectiveRemainingRatio: bestRatio,
+      limitingBuckets,
+      resetAt: earliestRelevantReset,
+      sourceFreshness,
+      pool,
+      ...(poolStatus === "exhausted" && usableAccountCount === 0 ? { reason: "provider_unavailable" } : {})
+    };
+  }
+
+  // 3. Find applicable buckets (Single-account / legacy fallback)
   const bucketIds = getApplicableBucketIds(profile);
   const applicableBuckets: QuotaBucket[] = [];
   for (const id of bucketIds) {

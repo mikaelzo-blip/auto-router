@@ -1,0 +1,128 @@
+{
+  "checkpoint": "CP6.4",
+  "timestamp": "2026-09-14T12:15:26Z",
+  "durationSeconds": 0.34,
+  "requestsObserved": 50,
+  "GeminiPoolStatus": {
+    "healthy": 50
+  },
+  "CodexPoolStatus": {
+    "exhausted": 50
+  },
+  "wouldSwitchCount": 9,
+  "wouldSwitchRate": 0.18,
+  "actualProfileDistribution": {
+    "gemini-flash-low": 14,
+    "gemini-flash-medium": 18,
+    "gemini-flash-high": 9,
+    "luna-review": 9
+  },
+  "hypotheticalProfileDistribution": {
+    "gemini-flash-low": 14,
+    "gemini-flash-medium": 24,
+    "gemini-flash-high": 12
+  },
+  "switchReasons": {
+    "none": 41,
+    "quota_exhausted": 9
+  },
+  "quotaFallbackRecommendations": {
+    "luna-review -> gemini-flash-medium (quota_exhausted)": 6,
+    "luna-review -> gemini-flash-high (quota_exhausted)": 3
+  },
+  "noEligibleCandidateCount": 0,
+  "quotaTelemetryFailures": 0,
+  "quotaTelemetryTimeouts": 0,
+  "providerHealthChanges": 0,
+  "accountPoolChanges": 0,
+  "accountSelectionObservability": {
+    "start9RouterDbRequests": {
+      "account_1": 19923
+    },
+    "end9RouterDbRequests": {
+      "account_1": 19923
+    },
+    "account1Delta": 0,
+    "account2Delta": 0
+  },
+  "reserveAccountConservation": {
+    "startingNormalizedQuota": {
+      "account_1": {
+        "status": "reserve",
+        "effectiveRemainingRatio": 0.03939695
+      },
+      "account_2": {
+        "status": "healthy",
+        "effectiveRemainingRatio": 1
+      }
+    },
+    "endingNormalizedQuota": {
+      "account_1": {
+        "status": "reserve",
+        "effectiveRemainingRatio": 0.03939695
+      },
+      "account_2": {
+        "status": "healthy",
+        "effectiveRemainingRatio": 1
+      }
+    },
+    "account1BurnedDuringSoak": false
+  },
+  "recordsSample": [
+    {
+      "index": 1,
+      "label": "routine_json_to_csv",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 2,
+      "label": "routine_uppercase",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 3,
+      "label": "routine_markdown_table",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 4,
+      "label": "routine_yaml_to_json",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 5,
+      "label": "routine_extract_urls",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    }
+  ]
+}
