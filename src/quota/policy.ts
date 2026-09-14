@@ -29,7 +29,7 @@ export function getProfileProvider(profile: ExecutionProfile): string {
 export function getApplicableBucketIds(profile: ExecutionProfile): string[] {
   const provider = getProfileProvider(profile);
   if (provider === "antigravity") {
-    return ["gemini_weekly"];
+    return ["gemini_flash_pro", "gemini_weekly"];
   }
   if (provider === "codex") {
     return ["codex_session", "codex_weekly"];
@@ -104,7 +104,7 @@ export function evaluateCandidateQuota(
       limitingBuckets: [],
       resetAt: null,
       sourceFreshness,
-      reason: "no_telemetry"
+      reason: pHealth === "degraded" ? "telemetry_degraded" : "no_telemetry"
     };
   }
 
@@ -185,6 +185,7 @@ export interface FilterRankOptions {
   policy: QuotaPolicy;
   previousCandidateStates?: Record<string, CandidateQuotaState>;
   thresholds?: QuotaThresholds;
+  standardSelectedProfile?: string;
 }
 
 export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionProfile[] {
@@ -199,7 +200,8 @@ export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionPro
     cooldownTracker,
     policy,
     previousCandidateStates,
-    thresholds = DEFAULT_QUOTA_THRESHOLDS
+    thresholds = DEFAULT_QUOTA_THRESHOLDS,
+    standardSelectedProfile
   } = options;
 
   // RULE 1: Enabled profiles only. Sol, Astra, Claude NEVER enabled if enabled: false!
@@ -301,6 +303,12 @@ export function filterAndRankWithQuota(options: FilterRankOptions): ExecutionPro
       return distA - distB;
     }
 
+    // Prefer standardSelectedProfile to avoid unnecessary churn when tie-breaking
+    if (standardSelectedProfile) {
+      if (a.id === standardSelectedProfile) return -1;
+      if (b.id === standardSelectedProfile) return 1;
+    }
+
     return 0;
   });
 }
@@ -388,7 +396,8 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
     cooldownTracker,
     policy: "auto",
     previousCandidateStates,
-    thresholds
+    thresholds,
+    standardSelectedProfile
   });
 
   const hypotheticalProfileObj = quotaRanked[0];
@@ -401,6 +410,10 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
   let wouldSwitch = false;
   let switchReason = "none";
   let selectionEffect = "normal";
+
+  const isRoutine = (taskType === "general" || taskType === "transformation") &&
+    (complexity === "trivial" || complexity === "low" || complexity === "medium") &&
+    risk === "low";
 
   if (!hypotheticalProfile) {
     // All candidates exhausted!
@@ -423,9 +436,9 @@ export function resolveQuotaDecision(options: ResolveQuotaDecisionOptions): Quot
       selectionEffect = "quota_optimized";
     }
   } else if (stdState?.status === "reserve") {
-    selectionEffect = "preserved_for_strong_task_in_reserve";
+    selectionEffect = isRoutine ? "no_beneficial_switch_available" : "preserved_for_strong_task_in_reserve";
   } else if (stdState?.status === "conserve") {
-    selectionEffect = "preserved_for_strong_task";
+    selectionEffect = isRoutine ? "no_beneficial_switch_available" : "preserved_for_strong_task";
   }
 
   if (quotaPolicy === "shadow") {

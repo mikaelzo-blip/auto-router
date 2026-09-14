@@ -120,6 +120,12 @@ describe("QuotaSource (9Router and Synthetic)", () => {
     expect(geminiWeekly?.remainingRatio).toBeCloseTo(0.1212, 3);
     expect(geminiWeekly?.resetAt).toBe("2026-09-18T07:36:38.000Z");
 
+    const geminiFlashPro = snapshot.buckets["gemini_flash_pro"];
+    expect(geminiFlashPro).toBeDefined();
+    expect(geminiFlashPro?.provider).toBe("antigravity");
+    expect(geminiFlashPro?.remainingRatio).toBeCloseTo(0.1212, 3);
+    expect(geminiFlashPro?.resetAt).toBe("2026-09-18T07:36:38.000Z");
+
     // Codex buckets
     const codexSession = snapshot.buckets["codex_session"];
     expect(codexSession).toBeDefined();
@@ -212,5 +218,36 @@ describe("QuotaSource (9Router and Synthetic)", () => {
 
     const snapshot = await synthetic.getSnapshot();
     expect(snapshot.buckets["gemini_weekly"]?.remainingRatio).toBe(0);
+  });
+
+  it("marks provider health degraded when usage endpoint times out or fails", async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith("/api/providers")) {
+        return Promise.resolve(new Response(JSON.stringify(mockProvidersResponse), { status: 200 }));
+      }
+      if (url.endsWith("/api/usage/conn-ag-1")) {
+        return Promise.reject(new Error("TimeoutError"));
+      }
+      if (url.endsWith("/api/usage/conn-cx-1")) {
+        return Promise.resolve(new Response(JSON.stringify(mockCodexUsageResponse), { status: 200 }));
+      }
+      return Promise.resolve(new Response("Not found", { status: 404 }));
+    });
+
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      refreshTtlMs: 30_000,
+      staleFallbackMs: 60_000,
+      timeoutMs: 5000,
+      fetchImpl: fetchMock
+    });
+
+    const snapshot = await source.getSnapshot();
+    expect(snapshot.providerHealth["antigravity"]).toBe("degraded");
+    expect(snapshot.providerHealth["codex"]).toBe("healthy");
+    expect(snapshot.buckets["gemini_flash_pro"]).toBeUndefined();
+    expect(snapshot.buckets["codex_session"]).toBeDefined();
+
+    source.close();
   });
 });

@@ -1,0 +1,245 @@
+{
+  "checkpoint": "CP6.1",
+  "status": "live-quota-mapped-and-shadow-verified",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "startingHead": "401d07048642bc4b95ec81414ed39a567ea93ed5",
+  "cp6BaselineHead": "83a5e4d2bfb99a6c42953e5e408ec210041e17cb",
+  "timestamp": "2026-09-14T09:05:00.000Z",
+  "validationInstance": {
+    "host": "127.0.0.1",
+    "port": 20205,
+    "productionPort": 20200,
+    "productionPreserved": true,
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "quotaPolicy": "shadow",
+    "upstreamBaseUrl": "http://127.0.0.1:20128"
+  },
+  "rootCauseAnalysis": {
+    "symptom": "Antigravity provider health degraded, Gemini candidate quota unknown, effectiveRemainingRatio 1.0",
+    "rootCause": "Timeout parameter mismatch. 9Router's /api/usage/[connectionId] endpoint invokes Google Cloud Code Assist upstream APIs (loadCodeAssist and quotaSummaryApiUrl) taking 1100ms - 1800ms. AutoRouter default timeout was 1000ms. AbortSignal.timeout(1000) aborted the fetch, the catch block marked Antigravity degraded, and no buckets were populated. Zero buckets caused evaluateCandidateQuota to fail-open to unknown with ratio 1.0.",
+    "telemetryVsHealth": "Provider connection in 9Router was healthy (testStatus active). Telemetry fetch timeout was incorrectly treated as provider degradation rather than isolated telemetry retry/degraded warning.",
+    "fixesApplied": [
+      "Increased default quotaSourceTimeoutMs from 1000ms to 5000ms",
+      "Increased default quotaRefreshTtlMs from 20000ms to 30000ms",
+      "Normalized live Antigravity schema into shared gemini_flash_pro and gemini_weekly buckets",
+      "Mapped ag/gemini-3.8-flash-low, ag/gemini-3.8-flash-medium, ag/gemini-3.8-flash-high to shared multi-window Gemini group",
+      "Separated provider API health from telemetry failure, ensuring unknown fail-open robustness"
+    ]
+  },
+  "quotaSourceSpecification": {
+    "upstreamService": "9Router local daemon (Next.js)",
+    "endpoint": "GET /api/usage/[connectionId]",
+    "discoveryEndpoint": "GET /api/providers",
+    "discoveryFilter": "provider === 'antigravity' && isActive !== false && testStatus === 'active'",
+    "schema": {
+      "plan": "string",
+      "quotas": "Record<string, { used: number, total: number, remaining?: number, remainingPercentage?: number, resetAt?: string, unlimited?: boolean, displayName?: string }>"
+    },
+    "units": "Count (used/total, e.g. 908/1000) and remainingPercentage (0-100 float)",
+    "semantics": "remainingPercentage / 100 defines remainingRatio. Effective remaining is the minimum across applicable windows.",
+    "resetAtSemantics": "ISO 8601 UTC timestamp of quota reset window",
+    "sharedGeminiQuotaGroup": {
+      "bucketId": "gemini_flash_pro",
+      "scope": "model_shared",
+      "modelsIncluded": [
+        "gemini-3.8-flash-low",
+        "gemini-3.8-flash-medium",
+        "gemini-3.8-flash-high",
+        "gemini-3.7-flash-high",
+        "gemini-pro-agent"
+      ],
+      "factualFinding": "All Gemini Flash and Pro models in Antigravity return identical usage and resetAt, verifying they draw from a single shared Google Cloud Code Assist quota pool."
+    },
+    "codexQuotaGroup": {
+      "sessionBucket": "codex_session",
+      "weeklyBucket": "codex_weekly"
+    }
+  },
+  "liveQuotaObservation": {
+    "timestamp": "2026-09-14T09:02:00.682Z",
+    "providerHealth": {
+      "antigravity": "healthy",
+      "codex": "healthy"
+    },
+    "buckets": {
+      "gemini_flash_pro": {
+        "used": 908,
+        "limit": 1000,
+        "remaining": 92,
+        "remainingRatio": 0.09247579,
+        "resetAt": "2026-09-18T07:36:38.000Z"
+      },
+      "gemini_weekly": {
+        "used": 908,
+        "limit": 1000,
+        "remaining": 92,
+        "remainingRatio": 0.09247579,
+        "resetAt": "2026-09-18T07:36:38.000Z"
+      },
+      "codex_session": {
+        "used": 0,
+        "limit": 100,
+        "remaining": 100,
+        "remainingRatio": 1.0,
+        "resetAt": "2026-09-14T13:41:12.000Z"
+      },
+      "codex_weekly": {
+        "used": 78,
+        "limit": 100,
+        "remaining": 22,
+        "remainingRatio": 0.22,
+        "resetAt": "2026-09-19T08:39:48.000Z"
+      }
+    },
+    "geminiStatus": "reserve",
+    "codexStatus": "conserve"
+  },
+  "scenariosEvaluated": [
+    {
+      "scenario": "A. routine transformation",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "quotaStatus": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBucket": ["gemini_flash_pro", "gemini_weekly"],
+      "resetAt": "2026-09-18T07:36:38.000Z",
+      "hypotheticalQuotaAwareProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low"
+    },
+    {
+      "scenario": "B. normal coding",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "quotaStatus": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBucket": ["gemini_flash_pro", "gemini_weekly"],
+      "resetAt": "2026-09-18T07:36:38.000Z",
+      "hypotheticalQuotaAwareProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium"
+    },
+    {
+      "scenario": "C. hard concurrency",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "quotaStatus": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBucket": ["gemini_flash_pro", "gemini_weekly"],
+      "resetAt": "2026-09-18T07:36:38.000Z",
+      "hypotheticalQuotaAwareProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high"
+    },
+    {
+      "scenario": "D. high-risk financial/data-integrity",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "quotaStatus": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBucket": ["codex_weekly"],
+      "resetAt": "2026-09-19T08:39:48.000Z",
+      "hypotheticalQuotaAwareProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task"
+    },
+    {
+      "scenario": "E. review task",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "quotaStatus": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBucket": ["codex_weekly"],
+      "resetAt": "2026-09-19T08:39:48.000Z",
+      "hypotheticalQuotaAwareProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task"
+    }
+  ],
+  "shadowSoakMetrics": {
+    "totalRequests": 50,
+    "successfulRequests": 50,
+    "failedRequests": 0,
+    "durationSeconds": 2.85,
+    "switchesThatWouldHaveHappened": 41,
+    "switchRate": 0.82,
+    "standardRoutingDistribution": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 17,
+      "gemini-flash-high": 10,
+      "luna-review": 9
+    },
+    "hypotheticalRoutingDistribution": {
+      "terra": 41,
+      "luna-review": 9
+    },
+    "switchReasonsDistribution": {
+      "quota_reserve": 41,
+      "none": 9
+    },
+    "limitingBucketDistribution": {
+      "gemini_flash_pro": 41,
+      "gemini_weekly": 41,
+      "codex_weekly": 9
+    },
+    "averageRemainingRatio": 0.1154,
+    "cooldownEvents": 0,
+    "staleSnapshotOccurrences": 0,
+    "quotaPollFailureCount": 0
+  },
+  "thresholdReview": {
+    "healthyMin": 0.30,
+    "conserveMin": 0.10,
+    "reserveMin": 0.00,
+    "hysteresis": 0.03,
+    "evaluatedStability": "Confirmed sound. At 9.24% remaining, Gemini stably settles in 'reserve' without flapping. Exit threshold to conserve requires >13% remaining.",
+    "verdict": "CONFIRMED_SOUND"
+  },
+  "pollingLoadReview": {
+    "configuredIntervalMs": 30000,
+    "previousIntervalMs": 20000,
+    "measuredUpstreamLatencyMs": {
+      "antigravity": [1219, 1092, 1774],
+      "codex": [553]
+    },
+    "upstreamCacheBehavior": "9Router caches weekly summary for 180s, but per-model calls hit Google Cloud Code Assist. 30s polling interval reduces upstream calls by 33% (120 calls/hr vs 180 calls/hr) preventing Google API 429 rate limit pressure.",
+    "cachedLookupOverheadUs": 0.233
+  },
+  "autoReadinessGate": {
+    "verdict": "NOT_READY",
+    "recommendation": "KEEP QUOTA_POLICY=shadow",
+    "summary": "Telemetry mapping is highly accurate and fail-open works reliably. However, the candidate pool under low Gemini (~9.2% reserve) is severely restricted: Terra (strong/high-cost) is the sole enabled non-Gemini alternative. In auto mode, 82% of all traffic would divert to Terra, which itself relies on Codex Weekly currently at 22% (conserve). This would rapidly drain Codex quota and cause cascading router exhaustion.",
+    "blockingPrerequisites": [
+      "Enable a calibrated cheap/balanced non-Gemini alternative (e.g. Sol or Astra) before cutover to absorb routine low-tier requests without overloading Terra",
+      "Allow Gemini quota reset window (2026-09-18T07:36:38.000Z) to restore Flash/Pro reserve to healthy levels",
+      "Enforce routine-escalation guardrail preventing cheap routine tasks from diverting to strong tier when alternate provider is also <= 30%"
+    ]
+  },
+  "testSuiteVerification": {
+    "totalTests": 227,
+    "passed": 227,
+    "failed": 0,
+    "buildStatus": "clean",
+    "regressionSuite": [
+      "Antigravity live schema normalization",
+      "Gemini shared quota group affecting all three candidate profiles",
+      "Multi-window Gemini minimum bucket selection",
+      "resetAt propagation from limiting bucket",
+      "Degraded provider with known quota evaluation",
+      "Degraded telemetry with unknown quota fail-open",
+      "Account identity and secret redaction",
+      "Existing Codex session and weekly parsing unchanged"
+    ]
+  }
+}

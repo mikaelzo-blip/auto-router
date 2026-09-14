@@ -308,4 +308,88 @@ describe("Quota Policy Evaluation & Ranking", () => {
     });
     expect(state.status).toBe("conserve");
   });
+
+  it("17. multi-window Gemini minimum bucket selection and resetAt propagation (short window lower)", () => {
+    const snapshot = makeSnapshot({
+      gemini_flash_pro: { provider: "antigravity", remainingRatio: 0.13, resetAt: "2026-09-15T12:00:00.000Z" },
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.69, resetAt: "2026-09-18T00:00:00.000Z" }
+    });
+    const profile = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-low")!;
+    const state = evaluateCandidateQuota(profile, snapshot, tracker);
+
+    expect(state.effectiveRemainingRatio).toBe(0.13);
+    expect(state.status).toBe("conserve");
+    expect(state.limitingBuckets).toContain("gemini_flash_pro");
+    expect(state.resetAt).toBe("2026-09-15T12:00:00.000Z");
+  });
+
+  it("18. multi-window Gemini minimum bucket selection (weekly window lower)", () => {
+    const snapshot = makeSnapshot({
+      gemini_flash_pro: { provider: "antigravity", remainingRatio: 0.25, resetAt: "2026-09-15T12:00:00.000Z" },
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.08, resetAt: "2026-09-18T00:00:00.000Z" }
+    });
+    const profile = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-medium")!;
+    const state = evaluateCandidateQuota(profile, snapshot, tracker);
+
+    expect(state.effectiveRemainingRatio).toBe(0.08);
+    expect(state.status).toBe("reserve");
+    expect(state.limitingBuckets).toContain("gemini_weekly");
+    expect(state.resetAt).toBe("2026-09-18T00:00:00.000Z");
+  });
+
+  it("19. shared Gemini quota group affects all three Gemini candidate states", () => {
+    const snapshot = makeSnapshot({
+      gemini_flash_pro: { provider: "antigravity", remainingRatio: 0.098, resetAt: "2026-09-18T07:36:38.000Z" },
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.102, resetAt: "2026-09-18T07:36:38.000Z" }
+    });
+    const pLow = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-low")!;
+    const pMed = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-medium")!;
+    const pHigh = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-high")!;
+
+    const sLow = evaluateCandidateQuota(pLow, snapshot, tracker);
+    const sMed = evaluateCandidateQuota(pMed, snapshot, tracker);
+    const sHigh = evaluateCandidateQuota(pHigh, snapshot, tracker);
+
+    expect(sLow.status).toBe("reserve");
+    expect(sMed.status).toBe("reserve");
+    expect(sHigh.status).toBe("reserve");
+    expect(sLow.effectiveRemainingRatio).toBe(0.098);
+    expect(sMed.effectiveRemainingRatio).toBe(0.098);
+    expect(sHigh.effectiveRemainingRatio).toBe(0.098);
+    expect(sLow.limitingBuckets).toContain("gemini_flash_pro");
+    expect(sMed.limitingBuckets).toContain("gemini_flash_pro");
+    expect(sHigh.limitingBuckets).toContain("gemini_flash_pro");
+  });
+
+  it("20. degraded provider health with known quota evaluates from quota buckets", () => {
+    const snapshot = makeSnapshot({
+      gemini_weekly: { provider: "antigravity", remainingRatio: 0.25 }
+    });
+    snapshot.providerHealth["antigravity"] = "degraded";
+
+    const profile = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-low")!;
+    const state = evaluateCandidateQuota(profile, snapshot, tracker);
+
+    expect(state.status).toBe("conserve");
+    expect(state.effectiveRemainingRatio).toBe(0.25);
+  });
+
+  it("21. degraded provider health with missing quota telemetry fails open to unknown", () => {
+    const snapshot: QuotaSnapshot = {
+      observedAt: Date.now(),
+      buckets: {},
+      providerHealth: {
+        antigravity: "degraded",
+        codex: "healthy"
+      },
+      stale: false
+    };
+
+    const profile = DEFAULT_SHADOW_PROFILES.find((p) => p.id === "gemini-flash-low")!;
+    const state = evaluateCandidateQuota(profile, snapshot, tracker);
+
+    expect(state.status).toBe("unknown");
+    expect(state.effectiveRemainingRatio).toBe(1.0);
+    expect(state.reason).toBe("telemetry_degraded");
+  });
 });

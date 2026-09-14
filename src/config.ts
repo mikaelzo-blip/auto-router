@@ -85,9 +85,9 @@ export async function loadConfig(): Promise<AppConfig> {
   }
   const quotaPolicy = quotaPolicyRaw as QuotaPolicy;
   const quotaSourceBaseUrl = process.env.QUOTA_SOURCE_BASE_URL ?? upstream.origin;
-  const quotaRefreshTtlMs = integer(process.env.QUOTA_REFRESH_TTL_MS, 20_000);
+  const quotaRefreshTtlMs = integer(process.env.QUOTA_REFRESH_TTL_MS, 30_000);
   const quotaStaleFallbackMs = integer(process.env.QUOTA_STALE_FALLBACK_MS, 60_000);
-  const quotaSourceTimeoutMs = integer(process.env.QUOTA_SOURCE_TIMEOUT_MS, 1000);
+  const quotaSourceTimeoutMs = integer(process.env.QUOTA_SOURCE_TIMEOUT_MS, 5000);
 
   const healthyMin = process.env.QUOTA_HEALTHY_MIN !== undefined ? Number(process.env.QUOTA_HEALTHY_MIN) : DEFAULT_QUOTA_THRESHOLDS.healthyMin;
   const conserveMin = process.env.QUOTA_CONSERVE_MIN !== undefined ? Number(process.env.QUOTA_CONSERVE_MIN) : DEFAULT_QUOTA_THRESHOLDS.conserveMin;

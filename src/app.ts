@@ -122,9 +122,9 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const quotaTracker = new QuotaCooldownTracker();
   const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
     baseUrl: config.quotaSourceBaseUrl ?? "http://127.0.0.1:20128",
-    refreshTtlMs: config.quotaRefreshTtlMs ?? 20_000,
+    refreshTtlMs: config.quotaRefreshTtlMs ?? 30_000,
     staleFallbackMs: config.quotaStaleFallbackMs ?? 60_000,
-    timeoutMs: config.quotaSourceTimeoutMs ?? 1000
+    timeoutMs: config.quotaSourceTimeoutMs ?? 5000
   });
   const quotaPolicy = config.quotaPolicy ?? "off";
   const quotaThresholds = config.quotaThresholds ?? DEFAULT_QUOTA_THRESHOLDS;

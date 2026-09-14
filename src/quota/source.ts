@@ -21,9 +21,9 @@ export class NineRouterQuotaSource implements QuotaSource {
 
   constructor(options: NineRouterQuotaSourceOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, "");
-    this.refreshTtlMs = options.refreshTtlMs ?? 20_000;
+    this.refreshTtlMs = options.refreshTtlMs ?? 30_000;
     this.staleFallbackMs = options.staleFallbackMs ?? 60_000;
-    this.timeoutMs = options.timeoutMs ?? 1000;
+    this.timeoutMs = options.timeoutMs ?? 5000;
     this.fetchImpl = options.fetchImpl ?? fetch;
   }
 
@@ -138,6 +138,7 @@ export class NineRouterQuotaSource implements QuotaSource {
     }
 
     // Fetch usage for active Antigravity connections
+    let agFetchSuccess = false;
     for (const conn of activeAgConnections) {
       try {
         const signal = AbortSignal.timeout(this.timeoutMs);
@@ -151,12 +152,61 @@ export class NineRouterQuotaSource implements QuotaSource {
             remainingPercentage?: number;
             resetAt?: string | null;
             unlimited?: boolean;
+            displayName?: string;
           }>;
         };
 
         if (usage.quotas) {
-          // Antigravity has gemini_weekly or individual flash model quotas
-          // Find gemini_weekly or gemini-3.8-flash-high
+          agFetchSuccess = true;
+
+          // 1. Group Gemini Flash / Pro models (excluding image)
+          const geminiEntries = Object.entries(usage.quotas)
+            .filter(([key]) => key.startsWith("gemini-") && !key.includes("image"));
+
+          if (geminiEntries.length > 0) {
+            const minGeminiEntry = geminiEntries.reduce((min, curr) => {
+              const minRatio = min[1].remainingPercentage !== undefined
+                ? min[1].remainingPercentage / 100
+                : (min[1].remaining !== undefined && (min[1].total ?? 1000) > 0)
+                  ? min[1].remaining / (min[1].total ?? 1000)
+                  : 1.0;
+              const currRatio = curr[1].remainingPercentage !== undefined
+                ? curr[1].remainingPercentage / 100
+                : (curr[1].remaining !== undefined && (curr[1].total ?? 1000) > 0)
+                  ? curr[1].remaining / (curr[1].total ?? 1000)
+                  : 1.0;
+              return currRatio < minRatio ? curr : min;
+            });
+
+            const q = minGeminiEntry[1];
+            const limit = q.total ?? 1000;
+            const used = q.used ?? 0;
+            let ratio = q.remainingPercentage !== undefined
+              ? q.remainingPercentage / 100
+              : q.remaining !== undefined && limit > 0
+                ? q.remaining / limit
+                : 1.0;
+            ratio = Math.max(0, Math.min(1, ratio));
+            const remaining = q.remaining ?? Math.round(limit * ratio);
+
+            const existing = buckets["gemini_flash_pro"];
+            if (!existing || ratio > existing.remainingRatio) {
+              buckets["gemini_flash_pro"] = {
+                id: "gemini_flash_pro",
+                provider: "antigravity",
+                scope: "model_shared",
+                used,
+                limit,
+                remaining,
+                remainingRatio: ratio,
+                resetAt: q.resetAt ?? null,
+                observedAt: observedAtIso,
+                stale: false
+              };
+            }
+          }
+
+          // 2. Weekly quota bucket
           const weekly = usage.quotas["gemini_weekly"] ?? usage.quotas["gemini-3.8-flash-high"];
           if (weekly) {
             const limit = weekly.total ?? 1000;
@@ -185,10 +235,31 @@ export class NineRouterQuotaSource implements QuotaSource {
               };
             }
           }
+
+          // Ensure bidirectional presence if only one was parsed
+          if (!buckets["gemini_weekly"] && buckets["gemini_flash_pro"]) {
+            const b = buckets["gemini_flash_pro"]!;
+            buckets["gemini_weekly"] = {
+              ...b,
+              id: "gemini_weekly",
+              scope: "weekly"
+            };
+          } else if (!buckets["gemini_flash_pro"] && buckets["gemini_weekly"]) {
+            const b = buckets["gemini_weekly"]!;
+            buckets["gemini_flash_pro"] = {
+              ...b,
+              id: "gemini_flash_pro",
+              scope: "model_shared"
+            };
+          }
         }
       } catch {
-        providerHealth.antigravity = "degraded";
+        // Individual connection failure caught; agFetchSuccess tracks overall status
       }
+    }
+
+    if (activeAgConnections.length > 0 && !agFetchSuccess) {
+      providerHealth.antigravity = "degraded";
     }
 
     // Fetch usage for active Codex connections
