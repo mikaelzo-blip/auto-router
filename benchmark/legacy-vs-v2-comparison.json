@@ -1,8 +1,8 @@
 {
   "totalCases": 20,
   "tierDistribution": {
-    "cheap": 14,
-    "balanced": 1,
+    "cheap": 7,
+    "balanced": 8,
     "strong": 5,
     "frontier": 0
   },
@@ -49,9 +49,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -59,7 +59,7 @@
           "astra"
         ]
       },
-      "alignment": "EXACT"
+      "alignment": "COMPATIBLE"
     },
     {
       "caseId": "case-b1",
@@ -72,9 +72,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -82,7 +82,7 @@
           "astra"
         ]
       },
-      "alignment": "EXACT"
+      "alignment": "COMPATIBLE"
     },
     {
       "caseId": "case-b2",
@@ -95,9 +95,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -105,7 +105,7 @@
           "astra"
         ]
       },
-      "alignment": "EXACT"
+      "alignment": "COMPATIBLE"
     },
     {
       "caseId": "case-c1",
@@ -141,9 +141,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -151,7 +151,7 @@
           "astra"
         ]
       },
-      "alignment": "COMPATIBLE"
+      "alignment": "EXACT"
     },
     {
       "caseId": "case-d1",
@@ -164,9 +164,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -174,7 +174,7 @@
           "astra"
         ]
       },
-      "alignment": "COMPATIBLE"
+      "alignment": "EXACT"
     },
     {
       "caseId": "case-d2",
@@ -187,9 +187,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -197,7 +197,7 @@
           "astra"
         ]
       },
-      "alignment": "COMPATIBLE"
+      "alignment": "EXACT"
     },
     {
       "caseId": "case-e1",
@@ -210,9 +210,9 @@
       },
       "v2": {
         "taskType": "code",
-        "complexity": "low",
+        "complexity": "medium",
         "risk": "low",
-        "qualityTier": "cheap",
+        "qualityTier": "balanced",
         "selectedProfile": "gemini-flash-medium",
         "alternatives": [
           "luna",
@@ -220,7 +220,7 @@
           "astra"
         ]
       },
-      "alignment": "COMPATIBLE"
+      "alignment": "EXACT"
     },
     {
       "caseId": "case-e2",

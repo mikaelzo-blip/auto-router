@@ -16,7 +16,8 @@ async function loadShadowProfiles(): Promise<ExecutionProfile[]> {
 export interface AppConfig {
   host: string;
   port: number;
-  routerMode: "legacy" | "shadow" | "v2";
+  routerMode?: "legacy" | "shadow" | "v2";
+  reasoningPolicy?: "passthrough" | "auto" | "shadow";
   upstreamBaseUrl: string;
   upstreamApiKey?: string;
   classifierModel?: string;
@@ -42,7 +43,7 @@ export async function loadConfig(): Promise<AppConfig> {
   const routing = JSON.parse(await readFile(path, "utf8")) as RoutingConfig;
   validateRoutingConfig(routing);
   const timeoutConfig = normalizeTimeoutConfig({
-    connectTimeoutMs: integer(process.env.UPSTREAM_CONNECT_TIMEOUT_MS, 10_000),
+    connectTimeoutMs: integer(process.env.UPSTREAM_CONNECT_TIMEOUT_MS, 30_000),
     headerTimeoutMs: integer(process.env.UPSTREAM_HEADER_TIMEOUT_MS, 30_000),
     firstByteTimeoutMs: integer(process.env.UPSTREAM_FIRST_BYTE_TIMEOUT_MS, 60_000),
     streamIdleTimeoutMs: integer(process.env.UPSTREAM_STREAM_IDLE_TIMEOUT_MS, 30_000)
@@ -63,10 +64,16 @@ export async function loadConfig(): Promise<AppConfig> {
     throw new Error(`Invalid ROUTER_MODE: ${process.env.ROUTER_MODE}. Must be legacy, shadow, or v2`);
   }
   const routerMode = modeRaw as "legacy" | "shadow" | "v2";
+  const reasoningPolicyRaw = (process.env.REASONING_POLICY ?? "passthrough").toLowerCase();
+  if (!["passthrough", "auto", "shadow"].includes(reasoningPolicyRaw)) {
+    throw new Error(`Invalid REASONING_POLICY: ${process.env.REASONING_POLICY}. Must be passthrough, auto, or shadow`);
+  }
+  const reasoningPolicy = reasoningPolicyRaw as "passthrough" | "auto" | "shadow";
   return {
     host,
     port: integer(process.env.PORT, 20200),
     routerMode,
+    reasoningPolicy,
     upstreamBaseUrl,
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,

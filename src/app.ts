@@ -7,6 +7,13 @@ import { DEFAULT_SHADOW_PROFILES } from "./shadow-profiles.js";
 import type { ChatCompletionRequest, ChatMessage } from "./types.js";
 import { sanitizedUpstreamError, UpstreamClient } from "./upstream.js";
 import { StreamLifecycleTracker, classifyUpstreamError, withStreamTimeouts } from "./reliability.js";
+import {
+  determineAutoReasoning,
+  resolveReasoningDecision,
+  applyReasoningToPayload,
+  normalizeReasoningEffort,
+  type ReasoningContext
+} from "./reasoning.js";
 
 const chatSchema = {
   type: "object",
@@ -392,10 +399,40 @@ export function buildApp(config: AppConfig): FastifyInstance {
         } catch {
           shadowV2 = { error: "shadow routing unavailable" };
         }
+
+        const clientEffort = normalizeReasoningEffort(request.body.reasoning_effort ?? (request.body.reasoning as any)?.effort);
+        const reasoningContext: ReasoningContext = {
+          taskType: shadowV2 && typeof shadowV2 === "object" && "taskType" in shadowV2 ? (shadowV2 as any).taskType : undefined,
+          complexity: shadowV2 && typeof shadowV2 === "object" && "complexity" in shadowV2 ? (shadowV2 as any).complexity : undefined,
+          risk: shadowV2 && typeof shadowV2 === "object" && "risk" in shadowV2 ? (shadowV2 as any).risk : undefined,
+          promptText: typeof request.body.messages?.[request.body.messages.length - 1]?.content === "string" ? String(request.body.messages[request.body.messages.length - 1]?.content) : undefined,
+          selectedProfile: shadowV2 && typeof shadowV2 === "object" && "selectedProfile" in shadowV2 ? (shadowV2 as any).selectedProfile : undefined
+        };
+        const autoReasoning = determineAutoReasoning(reasoningContext);
+        const matchedProfile = (reasoningContext.selectedProfile ? shadowProfiles.find((p) => p.id === reasoningContext.selectedProfile) : undefined) ??
+          shadowProfiles.find((p) => p.model === actual.upstreamModel) ??
+          shadowProfiles[0]!;
+
+        const currentPolicy = config.reasoningPolicy ?? "passthrough";
+        const resolvedReasoning = resolveReasoningDecision({
+          policy: currentPolicy,
+          clientEffort,
+          autoDesired: autoReasoning.desired,
+          profile: matchedProfile,
+          escalationApplied: autoReasoning.escalationApplied,
+          deescalationApplied: autoReasoning.deescalationApplied,
+          reasons: autoReasoning.reasons
+        });
+
         return {
           ...actual,
           actual: { route: actual.route, upstreamModel: actual.upstreamModel },
-          shadowV2
+          selectedProfile: matchedProfile.id,
+          selectedModel: matchedProfile.model,
+          complexity: reasoningContext.complexity ?? "medium",
+          risk: reasoningContext.risk ?? "low",
+          shadowV2,
+          reasoning: resolvedReasoning.debugSummary
         };
       } catch (error) {
         return reply.code(400).send(
@@ -662,10 +699,51 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const forwarded = {
+      let forwarded = {
         ...request.body,
         model: selectedModel
       };
+
+      const clientEffort = normalizeReasoningEffort(request.body.reasoning_effort ?? (request.body.reasoning as any)?.effort);
+      const reasoningContext: ReasoningContext = {
+        taskType: shadowResult?.taskType,
+        complexity: shadowResult?.complexity,
+        risk: shadowResult?.risk,
+        recentFailure: shadowResult && "recentFailure" in shadowResult ? (shadowResult as any).recentFailure : undefined,
+        recentTestOutcome: shadowResult && "recentTestOutcome" in shadowResult ? (shadowResult as any).recentTestOutcome : undefined,
+        selectedProfile: shadowResult?.selectedProfile
+      };
+      const autoReasoning = determineAutoReasoning(reasoningContext);
+      const matchedProfile = (shadowResult ? shadowProfiles.find((p) => p.id === shadowResult.selectedProfile) : undefined) ??
+        shadowProfiles.find((p) => p.model === selectedModel) ??
+        shadowProfiles[0]!;
+
+      const currentPolicy = config.reasoningPolicy ?? "passthrough";
+      const resolvedReasoning = resolveReasoningDecision({
+        policy: currentPolicy,
+        clientEffort,
+        autoDesired: autoReasoning.desired,
+        profile: matchedProfile,
+        escalationApplied: autoReasoning.escalationApplied,
+        deescalationApplied: autoReasoning.deescalationApplied,
+        reasons: autoReasoning.reasons
+      });
+
+      if (currentPolicy === "auto") {
+        forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+      } else if (currentPolicy === "passthrough") {
+        if (clientEffort) {
+          forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+        } else {
+          delete (forwarded as Record<string, unknown>).reasoning;
+        }
+      } else if (currentPolicy === "shadow") {
+        if (clientEffort) {
+          forwarded = applyReasoningToPayload(forwarded, clientEffort);
+        } else {
+          delete (forwarded as Record<string, unknown>).reasoning;
+        }
+      }
 
       const candidates = selectionCandidates;
 
@@ -792,6 +870,23 @@ export function buildApp(config: AppConfig): FastifyInstance {
         reply.header(
           "x-auto-router-mode",
           config.routerMode
+        );
+
+        reply.header(
+          "x-auto-router-reasoning-policy",
+          resolvedReasoning.policy
+        );
+        reply.header(
+          "x-auto-router-reasoning-desired",
+          resolvedReasoning.desiredReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-effective",
+          resolvedReasoning.effectiveReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-clamped",
+          String(resolvedReasoning.clamped)
         );
 
         if (config.routerMode === "v2" && shadowResult) {
@@ -1120,10 +1215,53 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      let shadowResult: ReturnType<typeof computeShadow> | undefined;
       try {
-        computeShadow(routingRequest, request.headers["x-session-id"]?.toString());
+        shadowResult = computeShadow(routingRequest, request.headers["x-session-id"]?.toString());
       } catch (error) {
         request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
+      }
+
+      const clientEffort = normalizeReasoningEffort(body.reasoning_effort ?? (body.reasoning as any)?.effort);
+      const reasoningContext: ReasoningContext = {
+        taskType: shadowResult?.taskType,
+        complexity: shadowResult?.complexity,
+        risk: shadowResult?.risk,
+        selectedProfile: shadowResult?.selectedProfile
+      };
+      const autoReasoning = determineAutoReasoning(reasoningContext);
+      const matchedProfile = (shadowResult ? shadowProfiles.find((p) => p.id === shadowResult.selectedProfile) : undefined) ??
+        shadowProfiles.find((p) => p.model === decision.upstreamModel) ??
+        shadowProfiles[0]!;
+
+      const currentPolicy = config.reasoningPolicy ?? "passthrough";
+      const resolvedReasoning = resolveReasoningDecision({
+        policy: currentPolicy,
+        clientEffort,
+        autoDesired: autoReasoning.desired,
+        profile: matchedProfile,
+        escalationApplied: autoReasoning.escalationApplied,
+        deescalationApplied: autoReasoning.deescalationApplied,
+        reasons: autoReasoning.reasons
+      });
+
+      let forwardedBody: Record<string, unknown> = {
+        ...body
+      };
+      if (currentPolicy === "auto") {
+        forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+      } else if (currentPolicy === "passthrough") {
+        if (clientEffort) {
+          forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+        } else {
+          delete forwardedBody.reasoning;
+        }
+      } else if (currentPolicy === "shadow") {
+        if (clientEffort) {
+          forwardedBody = applyReasoningToPayload(forwardedBody, clientEffort);
+        } else {
+          delete forwardedBody.reasoning;
+        }
       }
 
       const candidates = uniqueModels(
@@ -1174,7 +1312,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
             response = await upstream.responses(
               {
-                ...body,
+                ...forwardedBody,
                 model
               },
               cancellation.signal
@@ -1236,6 +1374,23 @@ export function buildApp(config: AppConfig): FastifyInstance {
         reply.header(
           "x-auto-router-model",
           decision.upstreamModel
+        );
+
+        reply.header(
+          "x-auto-router-reasoning-policy",
+          resolvedReasoning.policy
+        );
+        reply.header(
+          "x-auto-router-reasoning-desired",
+          resolvedReasoning.desiredReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-effective",
+          resolvedReasoning.effectiveReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-clamped",
+          String(resolvedReasoning.clamped)
         );
 
         const contentType =

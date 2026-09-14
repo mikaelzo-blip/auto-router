@@ -17,6 +17,9 @@ export interface ExecutionProfile {
   costClass: "very_low" | "low" | "medium" | "high" | "very_high";
   latencyClass: "fast" | "medium" | "slow";
   reasoningEffort?: "low" | "medium" | "high";
+  supportedReasoningEfforts?: Array<"minimal" | "low" | "medium" | "high" | "max">;
+  defaultReasoningEffort?: "minimal" | "low" | "medium" | "high" | "max";
+  maximumReasoningEffort?: "minimal" | "low" | "medium" | "high" | "max";
 }
 
 export interface ShadowRequest {
@@ -108,9 +111,10 @@ function classify(request: ShadowRequest): ShadowTaskType {
 }
 function complexity(request: ShadowRequest): Complexity {
   const text = words(textOf(request));
+  const isInfraFailure = request.failureType === "infrastructure" || request.failureType === "timeout" || request.failureType === "429" || request.failureType === "5xx";
   if (/linearizable|race condition|concurr|deadlock|distributed|architecture|security invariant|financial ledger|lock-free|critical/.test(text)) return "high";
-  if (request.recentFailure || request.recentTestOutcome === "failed") return "high";
-  if (/step by step|trade.?off|in depth|deeply|multiple files|migration/.test(text)) return "medium";
+  if (!isInfraFailure && (request.recentFailure || request.recentTestOutcome === "failed")) return "high";
+  if (/step by step|trade.?off|in depth|deeply|multiple files|migration|implement|function|class|method|algorithm|service|handler|endpoint|component|refactor|debounce/.test(text)) return "medium";
   if (text.trim().length < 40 && !/implement|debug|prove|design/.test(text)) return "trivial";
   return "low";
 }
@@ -122,8 +126,9 @@ function riskOf(request: ShadowRequest): Risk {
   return "low";
 }
 function floor(complexityLevel: Complexity, risk: Risk, request: ShadowRequest): QualityTier {
+  const isInfraFailure = request.failureType === "infrastructure" || request.failureType === "timeout" || request.failureType === "429" || request.failureType === "5xx";
   if (risk === "high" || complexityLevel === "critical") return "strong";
-  if (complexityLevel === "high" || request.recentFailure || request.recentTestOutcome === "failed") return "strong";
+  if (complexityLevel === "high" || (!isInfraFailure && (request.recentFailure || request.recentTestOutcome === "failed"))) return "strong";
   if (complexityLevel === "medium") return "balanced";
   return "cheap";
 }
