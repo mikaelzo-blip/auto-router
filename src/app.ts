@@ -14,6 +14,16 @@ import {
   normalizeReasoningEffort,
   type ReasoningContext
 } from "./reasoning.js";
+import { QuotaCooldownTracker } from "./quota/cooldown.js";
+import { NineRouterQuotaSource } from "./quota/source.js";
+import {
+  resolveQuotaDecision,
+  filterAndRankWithQuota,
+  evaluateCandidateQuota,
+  DEFAULT_QUOTA_THRESHOLDS
+} from "./quota/policy.js";
+import type { QuotaDecisionResult } from "./quota/policy.js";
+import type { QuotaSource } from "./quota/types.js";
 
 const chatSchema = {
   type: "object",
@@ -108,6 +118,20 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const READINESS_CACHE_MS = 15_000;
   const shadowStore = createSessionStore(15 * 60_000);
   const shadowProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
+
+  const quotaTracker = new QuotaCooldownTracker();
+  const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
+    baseUrl: config.quotaSourceBaseUrl ?? "http://127.0.0.1:20128",
+    refreshTtlMs: config.quotaRefreshTtlMs ?? 20_000,
+    staleFallbackMs: config.quotaStaleFallbackMs ?? 60_000,
+    timeoutMs: config.quotaSourceTimeoutMs ?? 1000
+  });
+  const quotaPolicy = config.quotaPolicy ?? "off";
+  const quotaThresholds = config.quotaThresholds ?? DEFAULT_QUOTA_THRESHOLDS;
+
+  app.addHook("onClose", async () => {
+    quotaSource.close();
+  });
 
   function computeShadow(body: ChatCompletionRequest, sessionId = "anonymous") {
     const latestUser = [...body.messages].reverse().find((message) => message.role === "user");
@@ -424,15 +448,48 @@ export function buildApp(config: AppConfig): FastifyInstance {
           reasons: autoReasoning.reasons
         });
 
+        const quotaSnapshot = await quotaSource.getSnapshot();
+        const quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowV2 && typeof shadowV2 === "object" && "selectedProfile" in shadowV2 ? (shadowV2 as any).selectedProfile : undefined,
+          taskType: reasoningContext.taskType ?? "general",
+          complexity: reasoningContext.complexity ?? "medium",
+          risk: reasoningContext.risk ?? "low",
+          minimumQualityTier: shadowV2 && typeof shadowV2 === "object" && "minimumQualityTier" in shadowV2 ? (shadowV2 as any).minimumQualityTier : "cheap",
+          requiredCapabilities: shadowV2 && typeof shadowV2 === "object" && "requiredCapabilities" in shadowV2 ? (shadowV2 as any).requiredCapabilities : { tools: false, vision: false },
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        const effectiveProfile = (quotaPolicy === "auto" && quotaDecision.selectedProfile)
+          ? shadowProfiles.find((p) => p.id === quotaDecision.selectedProfile) ?? matchedProfile
+          : matchedProfile;
+
         return {
           ...actual,
           actual: { route: actual.route, upstreamModel: actual.upstreamModel },
-          selectedProfile: matchedProfile.id,
-          selectedModel: matchedProfile.model,
+          selectedProfile: effectiveProfile.id,
+          selectedModel: effectiveProfile.model,
           complexity: reasoningContext.complexity ?? "medium",
           risk: reasoningContext.risk ?? "low",
           shadowV2,
-          reasoning: resolvedReasoning.debugSummary
+          reasoning: resolvedReasoning.debugSummary,
+          quota: {
+            policy: quotaDecision.policy,
+            status: quotaDecision.status,
+            effectiveRemainingRatio: quotaDecision.effectiveRemainingRatio,
+            limitingBuckets: quotaDecision.limitingBuckets,
+            snapshotAgeMs: quotaDecision.snapshotAgeMs,
+            stale: quotaDecision.stale,
+            selectionEffect: quotaDecision.selectionEffect,
+            hypotheticalProfile: quotaDecision.hypotheticalProfile,
+            hypotheticalModel: quotaDecision.hypotheticalModel,
+            wouldSwitch: quotaDecision.wouldSwitch,
+            switchReason: quotaDecision.switchReason,
+            candidateStates: quotaDecision.candidateStates
+          }
         };
       } catch (error) {
         return reply.code(400).send(
@@ -446,6 +503,32 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
     }
   );
+
+  app.get("/debug/quota", async (request, reply) => {
+    const snapshot = await quotaSource.getSnapshot();
+    const activeCooldowns = quotaTracker.getActiveCooldowns();
+
+    const candidateStates: Record<string, any> = {};
+    for (const profile of shadowProfiles) {
+      candidateStates[profile.id] = evaluateCandidateQuota(
+        profile,
+        snapshot,
+        quotaTracker,
+        undefined,
+        quotaThresholds
+      );
+    }
+
+    return {
+      policy: quotaPolicy,
+      stale: snapshot.stale,
+      observedAt: snapshot.observedAt,
+      providerHealth: snapshot.providerHealth,
+      buckets: snapshot.buckets,
+      candidateStates,
+      activeCooldowns
+    };
+  });
 
   app.post<{ Body: ChatCompletionRequest }>(
     "/v1/chat/completions",
@@ -688,14 +771,62 @@ export function buildApp(config: AppConfig): FastifyInstance {
         )
       );
 
+      let quotaDecision: QuotaDecisionResult | undefined;
       if (config.routerMode === "v2" && shadowResult) {
-        const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
-        if (profile) {
-          selectedModel = profile.model;
-          const altModels = shadowResult.alternatives
-            .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
-            .filter((m): m is string => Boolean(m));
-          selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+        const quotaSnapshot = await quotaSource.getSnapshot();
+        quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowResult.selectedProfile,
+          taskType: shadowResult.taskType,
+          complexity: shadowResult.complexity,
+          risk: shadowResult.risk,
+          minimumQualityTier: shadowResult.minimumQualityTier,
+          requiredCapabilities: shadowResult.requiredCapabilities,
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        if (quotaPolicy === "auto") {
+          if (!quotaDecision.selectedProfile) {
+            reply.header("x-auto-router-quota-policy", "auto");
+            reply.header("x-auto-router-quota-status", "exhausted");
+            reply.header("x-auto-router-quota-effect", "no_eligible_candidate");
+            return reply.code(503).send(
+              openAiError("No eligible model currently available", "model_unavailable")
+            );
+          }
+          const selectedProfileId = quotaDecision.selectedProfile;
+          const profile = shadowProfiles.find((p) => p.id === selectedProfileId);
+          if (profile) {
+            selectedModel = profile.model;
+            const quotaRanked = filterAndRankWithQuota({
+              taskType: shadowResult.taskType,
+              complexity: shadowResult.complexity,
+              risk: shadowResult.risk,
+              minimumQualityTier: shadowResult.minimumQualityTier,
+              requiredCapabilities: shadowResult.requiredCapabilities,
+              profiles: shadowProfiles,
+              snapshot: quotaSnapshot,
+              cooldownTracker: quotaTracker,
+              policy: "auto",
+              thresholds: quotaThresholds
+            });
+            const altModels = quotaRanked
+              .filter((p) => p.id !== profile.id)
+              .map((p) => p.model);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+          }
+        } else {
+          const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
+          if (profile) {
+            selectedModel = profile.model;
+            const altModels = shadowResult.alternatives
+              .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
+              .filter((m): m is string => Boolean(m));
+            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+          }
         }
       }
 
@@ -714,7 +845,11 @@ export function buildApp(config: AppConfig): FastifyInstance {
         selectedProfile: shadowResult?.selectedProfile
       };
       const autoReasoning = determineAutoReasoning(reasoningContext);
-      const matchedProfile = (shadowResult ? shadowProfiles.find((p) => p.id === shadowResult.selectedProfile) : undefined) ??
+      const effectiveProfileId = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+        ? quotaDecision.selectedProfile
+        : shadowResult?.selectedProfile;
+
+      const matchedProfile = (effectiveProfileId ? shadowProfiles.find((p) => p.id === effectiveProfileId) : undefined) ??
         shadowProfiles.find((p) => p.model === selectedModel) ??
         shadowProfiles[0]!;
 
@@ -813,6 +948,16 @@ export function buildApp(config: AppConfig): FastifyInstance {
             continue;
           }
 
+          if (response.status === 429 || response.status === 403) {
+            const errClone = response.clone();
+            const text = await errClone.text().catch(() => "");
+            const headerObj: Record<string, string> = {};
+            response.headers.forEach((v, k) => {
+              headerObj[k.toLowerCase()] = v;
+            });
+            quotaTracker.recordResponse(model, response.status, text, headerObj);
+          }
+
           if (
             !await shouldFallback(
               response,
@@ -841,6 +986,16 @@ export function buildApp(config: AppConfig): FastifyInstance {
           throw new Error(
             "No upstream response"
           );
+        }
+
+        if (quotaDecision) {
+          reply.header("x-auto-router-quota-policy", quotaDecision.policy);
+          reply.header("x-auto-router-quota-status", quotaDecision.status);
+          reply.header("x-auto-router-quota-remaining", quotaDecision.effectiveRemainingRatio.toFixed(4));
+          reply.header("x-auto-router-quota-limiting-bucket", quotaDecision.limitingBuckets.join(","));
+          reply.header("x-auto-router-quota-effect", quotaDecision.selectionEffect);
+        } else {
+          reply.header("x-auto-router-quota-policy", quotaPolicy);
         }
 
         if (!response.ok) {
@@ -890,9 +1045,12 @@ export function buildApp(config: AppConfig): FastifyInstance {
         );
 
         if (config.routerMode === "v2" && shadowResult) {
+          const effectiveProfile = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+            ? quotaDecision.selectedProfile
+            : shadowResult.selectedProfile;
           reply.header(
             "x-auto-router-profile",
-            shadowResult.selectedProfile
+            effectiveProfile
           );
           reply.header(
             "x-auto-router-tier",
@@ -900,7 +1058,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
           );
           reply.header(
             "x-auto-router-switch-reason",
-            shadowResult.switchReason
+            quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason
           );
         }
 
@@ -1264,7 +1422,8 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const candidates = uniqueModels(
+      let selectedModel = decision.upstreamModel;
+      let selectionCandidates = uniqueModels(
         config.routing.routes[
           decision.route
         ]?.selectionPriority ?? [
@@ -1277,6 +1436,67 @@ export function buildApp(config: AppConfig): FastifyInstance {
           decision.requirements
         )
       );
+
+      let quotaDecision: QuotaDecisionResult | undefined;
+      if (config.routerMode === "v2" && shadowResult) {
+        const quotaSnapshot = await quotaSource.getSnapshot();
+        quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowResult.selectedProfile,
+          taskType: shadowResult.taskType,
+          complexity: shadowResult.complexity,
+          risk: shadowResult.risk,
+          minimumQualityTier: shadowResult.minimumQualityTier,
+          requiredCapabilities: shadowResult.requiredCapabilities,
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        if (quotaPolicy === "auto") {
+          if (!quotaDecision.selectedProfile) {
+            reply.header("x-auto-router-quota-policy", "auto");
+            reply.header("x-auto-router-quota-status", "exhausted");
+            reply.header("x-auto-router-quota-effect", "no_eligible_candidate");
+            return reply.code(503).send(
+              openAiError("No eligible model currently available", "model_unavailable")
+            );
+          }
+          const selectedProfileId = quotaDecision.selectedProfile;
+          const profile = shadowProfiles.find((p) => p.id === selectedProfileId);
+          if (profile) {
+            selectedModel = profile.model;
+            const quotaRanked = filterAndRankWithQuota({
+              taskType: shadowResult.taskType,
+              complexity: shadowResult.complexity,
+              risk: shadowResult.risk,
+              minimumQualityTier: shadowResult.minimumQualityTier,
+              requiredCapabilities: shadowResult.requiredCapabilities,
+              profiles: shadowProfiles,
+              snapshot: quotaSnapshot,
+              cooldownTracker: quotaTracker,
+              policy: "auto",
+              thresholds: quotaThresholds
+            });
+            const altModels = quotaRanked
+              .filter((p) => p.id !== profile.id)
+              .map((p) => p.model);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+          }
+        } else {
+          const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
+          if (profile) {
+            selectedModel = profile.model;
+            const altModels = shadowResult.alternatives
+              .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
+              .filter((m): m is string => Boolean(m));
+            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+          }
+        }
+      }
+
+      const candidates = selectionCandidates;
 
       if (candidates.length === 0) {
 
@@ -1331,6 +1551,16 @@ export function buildApp(config: AppConfig): FastifyInstance {
             continue;
           }
 
+          if (response.status === 429 || response.status === 403) {
+            const errClone = response.clone();
+            const text = await errClone.text().catch(() => "");
+            const headerObj: Record<string, string> = {};
+            response.headers.forEach((v, k) => {
+              headerObj[k.toLowerCase()] = v;
+            });
+            quotaTracker.recordResponse(model, response.status, text, headerObj);
+          }
+
           if (
             !await shouldFallback(
               response,
@@ -1351,8 +1581,35 @@ export function buildApp(config: AppConfig): FastifyInstance {
           );
         }
 
-        if (!response.ok) {
+        if (quotaDecision) {
+          reply.header("x-auto-router-quota-policy", quotaDecision.policy);
+          reply.header("x-auto-router-quota-status", quotaDecision.status);
+          reply.header("x-auto-router-quota-remaining", quotaDecision.effectiveRemainingRatio.toFixed(4));
+          reply.header("x-auto-router-quota-limiting-bucket", quotaDecision.limitingBuckets.join(","));
+          reply.header("x-auto-router-quota-effect", quotaDecision.selectionEffect);
+        } else {
+          reply.header("x-auto-router-quota-policy", quotaPolicy);
+        }
 
+        if (config.routerMode === "v2" && shadowResult) {
+          const effectiveProfile = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+            ? quotaDecision.selectedProfile
+            : shadowResult.selectedProfile;
+          reply.header(
+            "x-auto-router-profile",
+            effectiveProfile
+          );
+          reply.header(
+            "x-auto-router-tier",
+            shadowResult.minimumQualityTier
+          );
+          reply.header(
+            "x-auto-router-switch-reason",
+            quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason
+          );
+        }
+
+        if (!response.ok) {
           return reply
             .code(
               publicUpstreamStatus(
@@ -1373,7 +1630,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
         reply.header(
           "x-auto-router-model",
-          decision.upstreamModel
+          selectedModel
         );
 
         reply.header(

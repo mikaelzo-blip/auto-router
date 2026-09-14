@@ -3,6 +3,8 @@ import { resolve } from "node:path";
 import type { RoutingConfig } from "./types.js";
 import { normalizeTimeoutConfig, validateTimeoutConfig } from "./reliability.js";
 import { validateProfileRegistry, validateProfileCoverage, type ExecutionProfile } from "./shadow-router.js";
+import type { QuotaPolicy, QuotaThresholds, QuotaSource } from "./quota/types.js";
+import { DEFAULT_QUOTA_THRESHOLDS } from "./quota/policy.js";
 
 async function loadShadowProfiles(): Promise<ExecutionProfile[]> {
   const path = resolve(process.env.SHADOW_PROFILE_CONFIG ?? "./config/shadow-profiles.json");
@@ -18,6 +20,13 @@ export interface AppConfig {
   port: number;
   routerMode?: "legacy" | "shadow" | "v2";
   reasoningPolicy?: "passthrough" | "auto" | "shadow";
+  quotaPolicy?: QuotaPolicy;
+  quotaSourceBaseUrl?: string;
+  quotaRefreshTtlMs?: number;
+  quotaStaleFallbackMs?: number;
+  quotaSourceTimeoutMs?: number;
+  quotaThresholds?: QuotaThresholds;
+  quotaSource?: QuotaSource;
   upstreamBaseUrl: string;
   upstreamApiKey?: string;
   classifierModel?: string;
@@ -69,11 +78,40 @@ export async function loadConfig(): Promise<AppConfig> {
     throw new Error(`Invalid REASONING_POLICY: ${process.env.REASONING_POLICY}. Must be passthrough, auto, or shadow`);
   }
   const reasoningPolicy = reasoningPolicyRaw as "passthrough" | "auto" | "shadow";
+
+  const quotaPolicyRaw = (process.env.QUOTA_POLICY ?? "off").toLowerCase();
+  if (!["off", "shadow", "auto"].includes(quotaPolicyRaw)) {
+    throw new Error(`Invalid QUOTA_POLICY: ${process.env.QUOTA_POLICY}. Must be off, shadow, or auto`);
+  }
+  const quotaPolicy = quotaPolicyRaw as QuotaPolicy;
+  const quotaSourceBaseUrl = process.env.QUOTA_SOURCE_BASE_URL ?? upstream.origin;
+  const quotaRefreshTtlMs = integer(process.env.QUOTA_REFRESH_TTL_MS, 20_000);
+  const quotaStaleFallbackMs = integer(process.env.QUOTA_STALE_FALLBACK_MS, 60_000);
+  const quotaSourceTimeoutMs = integer(process.env.QUOTA_SOURCE_TIMEOUT_MS, 1000);
+
+  const healthyMin = process.env.QUOTA_HEALTHY_MIN !== undefined ? Number(process.env.QUOTA_HEALTHY_MIN) : DEFAULT_QUOTA_THRESHOLDS.healthyMin;
+  const conserveMin = process.env.QUOTA_CONSERVE_MIN !== undefined ? Number(process.env.QUOTA_CONSERVE_MIN) : DEFAULT_QUOTA_THRESHOLDS.conserveMin;
+  const conserveExit = process.env.QUOTA_CONSERVE_EXIT !== undefined ? Number(process.env.QUOTA_CONSERVE_EXIT) : DEFAULT_QUOTA_THRESHOLDS.conserveExit;
+  const reserveExit = process.env.QUOTA_RESERVE_EXIT !== undefined ? Number(process.env.QUOTA_RESERVE_EXIT) : DEFAULT_QUOTA_THRESHOLDS.reserveExit;
+
+  const quotaThresholds: QuotaThresholds = {
+    healthyMin,
+    conserveMin,
+    conserveExit,
+    reserveExit
+  };
+
   return {
     host,
     port: integer(process.env.PORT, 20200),
     routerMode,
     reasoningPolicy,
+    quotaPolicy,
+    quotaSourceBaseUrl,
+    quotaRefreshTtlMs,
+    quotaStaleFallbackMs,
+    quotaSourceTimeoutMs,
+    quotaThresholds,
     upstreamBaseUrl,
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,
