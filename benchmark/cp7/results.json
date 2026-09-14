@@ -1,0 +1,6 @@
+{
+  "status": "INVALIDATED",
+  "reason": "The initial execution did not preserve full qualitative outputs or complete agentic patch evidence, used permissive keyword scoring, had asymmetric cached retries, and did not implement documented timeout semantics. See benchmark/cp7/invalidated/ and methodology.md.",
+  "validRuns": [],
+  "nextAction": "Rerun the full matrix with the corrected append-only manifest-based harness before comparing candidate quality or recommending a role."
+}

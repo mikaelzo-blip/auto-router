@@ -1,0 +1,56 @@
+{
+  "caseId": "R2",
+  "track": "reasoning",
+  "name": "Distributed Idempotency & Webhook Retry Correctness",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:38:23.852Z",
+  "ttfbMs": 1988,
+  "totalLatencyMs": 53441,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2235,
+    "completion": 3000
+  },
+  "outputSnippet": "# Production-Grade Idempotent Webhook Processing System\n\n## Table of Contents\n1. Idempotency Protocol Formulation\n2. Redis Failure Mode Analysis\n3. Relational Database Transaction Design\n4. Duplicate Arrival Response Matrix\n5. SQL DDL and Transaction Logic\n\n---\n\n## 1. Idempotency Protocol Formulatio",
+  "evaluation": {
+    "satisfiedInvariants": 3,
+    "totalInvariants": 4,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Idempotency record must be stored atomically within the same database transaction as the state mutation (or via outbox)",
+        "satisfied": true
+      },
+      {
+        "text": "Identifies Redis-only deduplication failure modes (cache eviction, unpersisted writes, race window)",
+        "satisfied": true
+      },
+      {
+        "text": "Handles concurrent in-flight duplicates via unique constraint violation with proper retry or 409/200 response",
+        "satisfied": true
+      },
+      {
+        "text": "Distinguishes between retryable transient failure and terminal duplicate replay",
+        "satisfied": false
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Storing idempotency key in Redis without database transactional synchronization",
+        "avoided": true
+      },
+      {
+        "text": "Returning HTTP 500 on duplicate webhook instead of HTTP 200 acknowledging receipt",
+        "avoided": true
+      },
+      {
+        "text": "Fulfilling order before durable commit of event processing record",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

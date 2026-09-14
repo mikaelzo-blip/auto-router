@@ -1,0 +1,23 @@
+{
+  "caseId": "E1",
+  "track": "agentic",
+  "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:45:16.761Z",
+  "ttfbMs": 3223,
+  "totalLatencyMs": 118159,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 15,
+    "failedToolCalls": 2,
+    "filesChanged": [],
+    "testsPassed": false,
+    "hiddenTestsPassed": true,
+    "publicTestOutput": "✔ SlidingWindowRateLimiter - allows requests up to limit (0.435ms)\n✖ SlidingWindowRateLimiter - boundary expiration allows new requests (0.8784ms)\n✔ SlidingWindowRateLimiter - remaining requests calculation (0.0929ms)\nℹ tests 3\nℹ suites 0\nℹ pass 2\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.0262\n\n✖ failing tests:\n\ntest at test\\rate-limiter.test.ts:1:492\n✖ SlidingWindowRateLimiter - boundary expiration allows new requests (0.8784ms)\n  AssertionError [ERR_ASSERTION]: Request at ex",
+    "hiddenTestOutput": "✔ Hidden: multi-key isolation (0.4944ms)\n✔ Hidden: sliding window rolling burst recovery (0.0844ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.8178\n"
+  }
+}

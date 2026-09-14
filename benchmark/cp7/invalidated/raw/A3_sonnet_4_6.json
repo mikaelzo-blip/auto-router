@@ -1,0 +1,35 @@
+{
+  "caseId": "A3",
+  "track": "architecture",
+  "name": "High-Integrity Transaction Architecture",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:29:36.878Z",
+  "ttfbMs": 2059,
+  "totalLatencyMs": 40947,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2187,
+    "completion": 3000
+  },
+  "outputSnippet": "# Mission-Critical Transaction Architecture: Ledger & Balance Reservation System\n\n## Executive Summary\n\nThis architecture prevents double-spend and double-allocation through deterministic lock ordering, idempotent state machines, two-phase reservation patterns, and reconciliation-driven drift correc",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "concurrency_control_strategy": 2,
+      "lock_ordering_and_deadlock_avoidance": 2,
+      "idempotency_contract": 2,
+      "reservation_lifecycle": 2,
+      "reconciliation_and_drift_detection": 2,
+      "failure_mode_analysis": 1,
+      "database_boundary_realism": 2,
+      "data_integrity_invariants": 2,
+      "tradeoff_analysis": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

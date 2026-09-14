@@ -1,0 +1,36 @@
+{
+  "caseId": "A1",
+  "track": "architecture",
+  "name": "Offline / Delayed-Processing Document System",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:19:19.728Z",
+  "ttfbMs": 3998,
+  "totalLatencyMs": 53903,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2165,
+    "completion": 11790,
+    "reasoning": 2939
+  },
+  "outputSnippet": "## Architectural Topology & Component Interaction\n\n```\n[ Clients / Edge Producers ]\n             │\n             ▼ (TLS 1.3 / mTLS)\n   ┌───────────────────┐\n   │ L4/L7 Ingress LB  │ (Envoy / AWS NLB)\n   └─────────┬─────────┘\n             │\n             ▼\n   ┌──────────────────────────────────────────",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "durability_guarantee": 2,
+      "queueing_and_backpressure": 2,
+      "idempotency_mechanism": 2,
+      "duplicate_detection": 2,
+      "failure_recovery_and_dlq": 2,
+      "operational_simplicity": 2,
+      "security_and_encryption": 2,
+      "observability_and_alerts": 2,
+      "tradeoff_analysis": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

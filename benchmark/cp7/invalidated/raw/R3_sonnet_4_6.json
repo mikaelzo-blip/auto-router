@@ -1,0 +1,56 @@
+{
+  "caseId": "R3",
+  "track": "reasoning",
+  "name": "Zero-Downtime Database Migration with Phased Rollback",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:40:25.217Z",
+  "ttfbMs": 1426,
+  "totalLatencyMs": 47261,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2266,
+    "completion": 3000
+  },
+  "outputSnippet": "# Zero-Downtime PostgreSQL Column Migration: Expand-and-Contract Pattern\n\n## Architecture Overview\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                    MIGRATION PHASES                              │\n│                                                          ",
+  "evaluation": {
+    "satisfiedInvariants": 4,
+    "totalInvariants": 4,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Prohibits single-statement table-wide UPDATE due to table bloat, lock contention, and transaction replication lag",
+        "satisfied": true
+      },
+      {
+        "text": "Uses phased expand-and-contract: 1) add nullable columns; 2) dual-write (trigger or app code); 3) batch backfill with bounded chunk sizes (e.g. 1000-5000 rows by primary key); 4) enforce NOT NULL constraint via CHECK ... NOT VALID followed by VALIDATE CONSTRAINT; 5) switch reads; 6) remove dual-write; 7) drop old column",
+        "satisfied": true
+      },
+      {
+        "text": "Defines explicit non-destructive rollback path at every phase",
+        "satisfied": true
+      },
+      {
+        "text": "Identifies AccessExclusiveLock required for ALTER TABLE DROP COLUMN and schedules during low traffic or with low lock_timeout",
+        "satisfied": true
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Proposing single massive UPDATE statement",
+        "avoided": true
+      },
+      {
+        "text": "Adding NOT NULL column without default in older Postgres or locking table",
+        "avoided": true
+      },
+      {
+        "text": "Dropping old column before all application replicas are running new code",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

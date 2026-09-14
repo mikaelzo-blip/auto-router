@@ -1,0 +1,56 @@
+{
+  "caseId": "R1",
+  "track": "reasoning",
+  "name": "PostgreSQL Concurrency & Balance Reservation Invariants",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:23:08.928Z",
+  "ttfbMs": 1525,
+  "totalLatencyMs": 55423,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2345,
+    "completion": 3000
+  },
+  "outputSnippet": "# Production-Grade Wallet Reservation: Complete Analysis\n\n## 1. Exact Production-Grade SQL Transaction\n\n### Primary Approach: Atomic Conditional UPDATE with RETURNING\n\n```sql\n-- Single atomic statement — no explicit transaction block needed for single statement\n-- but shown in transaction context fo",
+  "evaluation": {
+    "satisfiedInvariants": 3,
+    "totalInvariants": 4,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Identifies check-then-act race condition in naive implementation leading to double-allocation",
+        "satisfied": true
+      },
+      {
+        "text": "Recommends atomic conditional UPDATE or SELECT ... FOR UPDATE with explicit transaction boundary",
+        "satisfied": true
+      },
+      {
+        "text": "Mandates deterministic row lock ordering (e.g. ORDER BY user_id ASC) when locking multiple wallets to prevent deadlocks",
+        "satisfied": true
+      },
+      {
+        "text": "Specifies database CHECK constraint `CONSTRAINT check_sufficient_balance CHECK (balance >= reserved)` as the ultimate defense-in-depth",
+        "satisfied": false
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Claiming application-level mutex/lock is sufficient across multiple service instances",
+        "avoided": true
+      },
+      {
+        "text": "Failing to sort IDs before acquiring multiple row locks",
+        "avoided": true
+      },
+      {
+        "text": "Omitting the schema CHECK constraint",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

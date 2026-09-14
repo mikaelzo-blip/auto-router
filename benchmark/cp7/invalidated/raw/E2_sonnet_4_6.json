@@ -1,0 +1,24 @@
+{
+  "caseId": "E2",
+  "track": "agentic",
+  "name": "Multi-File Feature Implementation (Wildcard Event Bus)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:54:42.579Z",
+  "ttfbMs": 2858,
+  "totalLatencyMs": 114680,
+  "httpStatus": 0,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "agenticDetails": {
+    "iterations": 8,
+    "toolCalls": 11,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/types.ts",
+      "src/event-bus.ts"
+    ],
+    "testsPassed": false,
+    "hiddenTestsPassed": false
+  }
+}

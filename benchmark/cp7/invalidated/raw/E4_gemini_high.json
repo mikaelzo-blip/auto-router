@@ -1,0 +1,26 @@
+{
+  "caseId": "E4",
+  "track": "agentic",
+  "name": "Refactor Under Constraints (Order Service Strategy Decomposition)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T16:00:22.194Z",
+  "ttfbMs": 4868,
+  "totalLatencyMs": 126464,
+  "httpStatus": 200,
+  "success": true,
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 15,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/pricing/pricing-calculator.ts",
+      "src/pricing/discount-calculator.ts",
+      "src/pricing/tax-calculator.ts"
+    ],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "publicTestOutput": "✔ OrderService - empty order returns zeros (1.4708ms)\n✔ OrderService - calculates subtotal and category taxes without discount (0.1723ms)\n✔ OrderService - calculates percentage discount correctly (0.1053ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.2153\n",
+    "hiddenTestOutput": "✔ Hidden: fixed discount exceeding subtotal caps discount at subtotal (0.4555ms)\n✔ Hidden: throws error on zero or negative quantity (0.2122ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.9272\n"
+  }
+}

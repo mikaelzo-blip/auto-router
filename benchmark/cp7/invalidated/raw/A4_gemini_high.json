@@ -1,0 +1,36 @@
+{
+  "caseId": "A4",
+  "track": "architecture",
+  "name": "Evolution & Migration Architecture (Monolith Evolution)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:31:03.882Z",
+  "ttfbMs": 5352,
+  "totalLatencyMs": 36658,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2158,
+    "completion": 7162,
+    "reasoning": 2149
+  },
+  "outputSnippet": "---\n\n### 1. Comparative Evaluation Matrix & Trade-Off Analysis\n\n| Dimension | Strategy 1: Modular Monolith | Strategy 2: Strangler Fig Extraction | Strategy 3: Pure Event-Driven Architecture (EDA) |\n| :--- | :--- | :--- | :--- |\n| **Blast Radius & Failure Modes** | **Medium–High**: Runtime crashes (",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "architectural_option_comparison": 2,
+      "modular_monolith_depth": 2,
+      "service_extraction_realism": 2,
+      "event_driven_boundaries": 2,
+      "definitive_recommendation": 2,
+      "data_decomposition_strategy": 2,
+      "strangler_fig_migration_path": 2,
+      "operational_risk_mitigation": 2,
+      "team_topology_alignment": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

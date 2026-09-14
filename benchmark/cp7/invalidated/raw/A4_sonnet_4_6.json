@@ -1,0 +1,35 @@
+{
+  "caseId": "A4",
+  "track": "architecture",
+  "name": "Evolution & Migration Architecture (Monolith Evolution)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:30:27.223Z",
+  "ttfbMs": 1606,
+  "totalLatencyMs": 50345,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2190,
+    "completion": 3000
+  },
+  "outputSnippet": "# Evolutionary Architecture Transition: E-Commerce & Logistics Platform\n\n## Executive Technical Assessment\n\n---\n\n## Part I: Problem Decomposition & Root Cause Analysis\n\nBefore evaluating strategies, we must precisely characterize the failure modes to avoid solving symptoms rather than causes.\n\n### C",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "architectural_option_comparison": 2,
+      "modular_monolith_depth": 2,
+      "service_extraction_realism": 2,
+      "event_driven_boundaries": 2,
+      "definitive_recommendation": 2,
+      "data_decomposition_strategy": 2,
+      "strangler_fig_migration_path": 2,
+      "operational_risk_mitigation": 2,
+      "team_topology_alignment": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

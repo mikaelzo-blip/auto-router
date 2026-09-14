@@ -1,0 +1,35 @@
+{
+  "caseId": "P4",
+  "track": "prd",
+  "name": "AI-Assisted Document Workflow Product Requirements",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:36:25.874Z",
+  "ttfbMs": 1170,
+  "totalLatencyMs": 50533,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2285,
+    "completion": 3000
+  },
+  "outputSnippet": "# Engineering-Grade PRD: AI-Assisted Legal & Medical Vendor Contract Intelligence Platform\n\n**Document ID:** PRD-CVCI-2024-001  \n**Version:** 1.0.0  \n**Status:** Draft for Engineering Review  \n**Classification:** Internal — Confidential  \n**Authors:** Product Engineering  \n**Reviewers:** Legal, Comp",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "deterministic_vs_llm_boundary": 2,
+      "confidence_threshold_routing": 2,
+      "reviewer_ux_specification": 2,
+      "provenance_and_auditability": 2,
+      "cost_control_and_caching": 2,
+      "pii_and_privacy_safeguards": 2,
+      "failure_recovery_fallbacks": 2,
+      "edge_cases": 1,
+      "metrics_and_acceptance_criteria": 2,
+      "engineering_handoff_clarity": 2
+    },
+    "passed": true
+  }
+}

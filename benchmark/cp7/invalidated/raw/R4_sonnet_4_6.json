@@ -1,0 +1,60 @@
+{
+  "caseId": "R4",
+  "track": "reasoning",
+  "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:41:14.336Z",
+  "ttfbMs": 1438,
+  "totalLatencyMs": 49119,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2244,
+    "completion": 3000
+  },
+  "outputSnippet": "# Multi-Tenant Authorization System: Comprehensive Security Analysis\n\n## 1. Privilege Escalation Vectors\n\n### Vector 1: Vertical Escalation — Role Elevation Beyond Actor's Level\n\n```\nATTACK: Admin promotes another user to Owner\nCONDITION: Check only validates user:edit_role permission\nEXPLOIT:\n  cur",
+  "evaluation": {
+    "satisfiedInvariants": 4,
+    "totalInvariants": 5,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+        "satisfied": true
+      },
+      {
+        "text": "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+        "satisfied": false
+      },
+      {
+        "text": "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+        "satisfied": true
+      },
+      {
+        "text": "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+        "satisfied": true
+      },
+      {
+        "text": "Fail-closed evaluation default",
+        "satisfied": true
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Only checking permission string without hierarchy and target-user ownership validation",
+        "avoided": true
+      },
+      {
+        "text": "Allowing Admin to assign Owner role",
+        "avoided": true
+      },
+      {
+        "text": "Ignoring cross-tenant target validation",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

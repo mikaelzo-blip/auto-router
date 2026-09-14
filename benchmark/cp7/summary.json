@@ -1,0 +1,7 @@
+{
+  "status": "INVALIDATED",
+  "timestamp": "2026-09-14T16:45:00.000Z",
+  "reason": "Independent code review rejected initial qualitative and hard-reasoning claims. Evidence invalidated and moved to benchmark/cp7/invalidated/.",
+  "validRunsCount": 0,
+  "verdict": "CP7 BENCHMARK INCOMPLETE"
+}

@@ -1,0 +1,50 @@
+{
+  "totalPersistedRuns": 32,
+  "timestamp": "2026-09-14T16:01:39.326Z",
+  "byTrack": {
+    "architecture": {
+      "total": 8,
+      "geminiRuns": 4,
+      "geminiPassed": 4,
+      "sonnetRuns": 4,
+      "sonnetPassed": 4
+    },
+    "prd": {
+      "total": 8,
+      "geminiRuns": 4,
+      "geminiPassed": 4,
+      "sonnetRuns": 4,
+      "sonnetPassed": 4
+    },
+    "reasoning": {
+      "total": 8,
+      "geminiRuns": 4,
+      "geminiPassed": 4,
+      "sonnetRuns": 4,
+      "sonnetPassed": 4
+    },
+    "agentic": {
+      "total": 8,
+      "geminiRuns": 4,
+      "geminiPassed": 1,
+      "sonnetRuns": 4,
+      "sonnetPassed": 2
+    }
+  },
+  "byCandidate": {
+    "gemini_high": {
+      "runs": 16,
+      "passed": 13,
+      "passRate": "81%",
+      "avgLatencyMs": 67023,
+      "avgTtfbMs": 5599
+    },
+    "sonnet_4_6": {
+      "runs": 16,
+      "passed": 14,
+      "passRate": "88%",
+      "avgLatencyMs": 56638,
+      "avgTtfbMs": 1914
+    }
+  }
+}

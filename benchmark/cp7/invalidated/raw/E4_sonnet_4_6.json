@@ -1,0 +1,28 @@
+{
+  "caseId": "E4",
+  "track": "agentic",
+  "name": "Refactor Under Constraints (Order Service Strategy Decomposition)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T16:01:39.322Z",
+  "ttfbMs": 3373,
+  "totalLatencyMs": 77127,
+  "httpStatus": 200,
+  "success": true,
+  "agenticDetails": {
+    "iterations": 12,
+    "toolCalls": 18,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/pricing/item-pricer.ts",
+      "src/pricing/discount-calculator.ts",
+      "src/pricing/tax-calculator.ts",
+      "src/pricing/index.ts",
+      "src/order-service.ts"
+    ],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "publicTestOutput": "✔ OrderService - empty order returns zeros (0.6854ms)\n✔ OrderService - calculates subtotal and category taxes without discount (0.1337ms)\n✔ OrderService - calculates percentage discount correctly (0.067ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.5399\n",
+    "hiddenTestOutput": "✔ Hidden: fixed discount exceeding subtotal caps discount at subtotal (0.4447ms)\n✔ Hidden: throws error on zero or negative quantity (0.1989ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 123.5815\n"
+  }
+}
