@@ -3,6 +3,7 @@ import {
   evaluateCandidateQuota,
   filterAndRankWithQuota,
   resolveQuotaDecision,
+  getApplicableBucketIds,
   DEFAULT_QUOTA_THRESHOLDS
 } from "../src/quota/policy.js";
 import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
@@ -477,5 +478,73 @@ describe("Quota Policy Evaluation & Ranking", () => {
     expect(state.status).toBe("unknown");
     expect(state.effectiveRemainingRatio).toBe(1.0);
     expect(state.reason).toBe("telemetry_degraded");
+  });
+
+  it("22. gets applicable bucket ids for sonnet / claude models", () => {
+    const sonnetProfile = {
+      id: "sonnet-agentic",
+      model: "ag/claude-sonnet-4-6",
+      enabled: false,
+      profileClass: "specialist" as const,
+      role: "AGENTIC_EXECUTOR",
+      hardCapabilities: { tools: true, vision: true },
+      taskFit: ["code" as const],
+      qualityTier: "strong" as const,
+      costClass: "high" as const,
+      latencyClass: "slow" as const
+    };
+    const bucketIds = getApplicableBucketIds(sonnetProfile);
+    expect(bucketIds).toEqual(["claude_short", "claude_weekly"]);
+  });
+
+  it("23. evaluates sonnet candidate quota from claude buckets", () => {
+    const sonnetProfile = {
+      id: "sonnet-agentic",
+      model: "ag/claude-sonnet-4-6",
+      enabled: false,
+      profileClass: "specialist" as const,
+      role: "AGENTIC_EXECUTOR",
+      hardCapabilities: { tools: true, vision: true },
+      taskFit: ["code" as const],
+      qualityTier: "strong" as const,
+      costClass: "high" as const,
+      latencyClass: "slow" as const
+    };
+
+    // Healthy
+    const healthySnap = makeSnapshot({
+      claude_short: { provider: "antigravity", remainingRatio: 0.62 },
+      claude_weekly: { provider: "antigravity", remainingRatio: 0.69 }
+    });
+    const healthyState = evaluateCandidateQuota(sonnetProfile, healthySnap, tracker);
+    expect(healthyState.status).toBe("healthy");
+    expect(healthyState.effectiveRemainingRatio).toBeCloseTo(0.62, 2);
+
+    // Conserve
+    const conserveSnap = makeSnapshot({
+      claude_short: { provider: "antigravity", remainingRatio: 0.25 },
+      claude_weekly: { provider: "antigravity", remainingRatio: 0.50 }
+    });
+    const conserveState = evaluateCandidateQuota(sonnetProfile, conserveSnap, tracker);
+    expect(conserveState.status).toBe("conserve");
+    expect(conserveState.effectiveRemainingRatio).toBeCloseTo(0.25, 2);
+
+    // Reserve
+    const reserveSnap = makeSnapshot({
+      claude_short: { provider: "antigravity", remainingRatio: 0.08 },
+      claude_weekly: { provider: "antigravity", remainingRatio: 0.50 }
+    });
+    const reserveState = evaluateCandidateQuota(sonnetProfile, reserveSnap, tracker);
+    expect(reserveState.status).toBe("reserve");
+    expect(reserveState.effectiveRemainingRatio).toBeCloseTo(0.08, 2);
+
+    // Exhausted
+    const exhaustedSnap = makeSnapshot({
+      claude_short: { provider: "antigravity", remainingRatio: 0.0 },
+      claude_weekly: { provider: "antigravity", remainingRatio: 0.0 }
+    });
+    const exhaustedState = evaluateCandidateQuota(sonnetProfile, exhaustedSnap, tracker);
+    expect(exhaustedState.status).toBe("exhausted");
+    expect(exhaustedState.effectiveRemainingRatio).toBe(0.0);
   });
 });

@@ -1,0 +1,117 @@
+{
+  "checkpoint": "CP7.3 SONNET AGENTIC SHADOW ROUTING VALIDATION",
+  "status": "COMPLETED",
+  "timestamp": "2026-09-15T10:35:00.000Z",
+  "branch": "hermes/autorouter-v2-cp7-3-sonnet-shadow",
+  "startingHead": "c14d551",
+  "currentHead": "c14d551",
+  "productionHealth": "HEALTHY (http://127.0.0.1:20200/health -> 200 OK)",
+  "productionMode": {
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "quotaPolicy": "auto",
+    "status": "UNTOUCHED_AND_ACTIVE"
+  },
+  "productionForwardingInvariant": {
+    "rule": "selectedProfile != sonnet-agentic && upstreamModel != ag/claude-sonnet-4-6",
+    "status": "STRICTLY_ENFORCED",
+    "verified": true
+  },
+  "sonnetProfile": {
+    "id": "sonnet-agentic",
+    "model": "ag/claude-sonnet-4-6",
+    "role": "AGENTIC_EXECUTOR",
+    "enabled": false,
+    "enabledForShadow": true,
+    "enabledForExecution": false,
+    "qualityTier": "strong",
+    "costClass": "high",
+    "latencyClass": "slow"
+  },
+  "claudeQuotaStatus": {
+    "provider": "antigravity",
+    "status": "healthy",
+    "claudeShortRemainingRatio": 1.0,
+    "claudeWeeklyRemainingRatio": 0.691,
+    "consumptionCausedByShadow": 0
+  },
+  "routingCorpus": {
+    "corpusPath": "benchmark/cp7-3/agentic-routing-corpus.json",
+    "totalCases": 48,
+    "trueAgenticCases": 16,
+    "correctlyIdentifiedAgentic": 16,
+    "nonAgenticCases": 32,
+    "correctlyIdentifiedNonAgentic": 32,
+    "falsePositives": 0,
+    "falseNegatives": 0,
+    "falsePositiveRate": 0.0,
+    "falseNegativeRate": 0.0,
+    "accuracyRate": 100.0
+  },
+  "criticalFalsePositiveGates": {
+    "longPromptNotAgentic": "PASSED",
+    "toolsSuppliedNotAgentic": "PASSED",
+    "codingKeywordNotAgentic": "PASSED",
+    "architectureNotAgentic": "PASSED",
+    "prdNotAgentic": "PASSED",
+    "reviewNotAgentic": "PASSED",
+    "simpleEditNotAgentic": "PASSED"
+  },
+  "multiTurnTrajectory": {
+    "turn1_plan": "Gemini High (Architecture design -> wouldUseSonnet=false)",
+    "turn2_execute": "Sonnet Shadow Candidate (Approved migration execution -> wouldUseSonnet=true)",
+    "turn3_sticky_fix": "Sonnet Shadow Sticky (Test failure diagnosis -> wouldUseSonnet=true)",
+    "turn4_deescalate": "Gemini Medium (Test pass & summary request -> wouldUseSonnet=false)",
+    "stickinessVerified": true,
+    "deescalationVerified": true,
+    "modelFlapping": false
+  },
+  "shadowSoak": {
+    "requestsObserved": 50,
+    "agenticEligible": 10,
+    "wouldUseSonnet": 10,
+    "wouldUseSonnetRate": 20.0,
+    "falsePositiveCandidates": 0,
+    "falseNegativeCandidates": 0,
+    "actualProfileDistribution": {
+      "gemini-flash-low": 10,
+      "gemini-flash-medium": 30,
+      "gemini-flash-high": 7,
+      "luna-review": 3
+    },
+    "shadowProfileDistribution": {
+      "gemini-flash-low": 9,
+      "gemini-flash-medium": 23,
+      "gemini-flash-high": 5,
+      "luna-review": 3,
+      "sonnet-agentic": 10
+    },
+    "taskTransitions": 10,
+    "claudeQuotaConsumptionCausedByShadow": 0
+  },
+  "existingRolesPreserved": {
+    "geminiLow": "CHEAP (routine utilities, typos, formatting)",
+    "geminiMedium": "BALANCED (standard coding, debouncing, caching)",
+    "geminiHigh": "STRONG / ARCHITECT / PRD / HARD REASONING",
+    "lunaReview": "SPECIALIST REVIEW (code review, security audit)",
+    "terra": "RESILIENCE (cross-provider failover)",
+    "sol": "DISABLED",
+    "astra": "DISABLED"
+  },
+  "independentReview": {
+    "verdict": "PASSED",
+    "high": 0,
+    "medium": 0,
+    "low": 0,
+    "info": 1
+  },
+  "verificationSuite": {
+    "testFiles": 24,
+    "testsTotal": 423,
+    "testsPassed": 423,
+    "testsFailed": 0,
+    "build": "PASSED",
+    "gitDiffCheck": "PASSED"
+  },
+  "finalRecommendation": "READY_FOR_SONNET_CANARY"
+}

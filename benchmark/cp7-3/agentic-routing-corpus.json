@@ -1,0 +1,488 @@
+[
+  {
+    "id": "TC01_multi_file_event_bus",
+    "category": "true_agentic",
+    "prompt": "Implement wildcard event bus across several files in src/events/, update types, and run tests until passing.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["multi_file_implementation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC02_repo_wide_migration",
+    "category": "true_agentic",
+    "prompt": "Implement this approved schema migration across the repository and run tests until passing.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["repo_wide_change", "migration_implementation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.80
+  },
+  {
+    "id": "TC03_approved_arch_exec",
+    "category": "true_agentic",
+    "prompt": "Implement approved architecture across API, database and tests, then verify all tests pass.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["repo_wide_change", "approved_plan_execution"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.75
+  },
+  {
+    "id": "TC04_test_fix_loop",
+    "category": "true_agentic",
+    "prompt": "Tests are failing after my implementation. Diagnose the repo, fix it, rerun tests until green.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["test_fix_loop"],
+    "recentTestOutcome": "failed",
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.70
+  },
+  {
+    "id": "TC05_cross_module_refactor",
+    "category": "true_agentic",
+    "prompt": "Refactor multiple modules across the repository to extract BaseKeyValueStore while maintaining backward compatibility.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["large_refactor_execution"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.90
+  },
+  {
+    "id": "TC06_repo_maintenance_repair",
+    "category": "true_agentic",
+    "prompt": "Diagnose and repair the repository build failures, update implementation and verify all tests.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["implementation_with_verification"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC07_cross_module_bug_fix",
+    "category": "true_agentic",
+    "prompt": "Trace and fix the bug across authentication, session store, and middleware modules, and run tests.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["cross_module_bug_fix"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.80
+  },
+  {
+    "id": "TC08_batch_worker_exec",
+    "category": "true_agentic",
+    "prompt": "Execute the approved plan to replace the legacy batch worker across multiple files and verify all tests pass.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["approved_plan_execution", "multi_file_implementation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.75
+  },
+  {
+    "id": "TC09_oauth_pkce_multi_file",
+    "category": "true_agentic",
+    "prompt": "Implement OAuth2 PKCE flow across several files in auth/, router/, and client/, and run tests until green.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["multi_file_implementation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.70
+  },
+  {
+    "id": "TC10_saga_compensation",
+    "category": "true_agentic",
+    "prompt": "Implement saga compensation across orders, inventory, and payment modules, with test-fix-test verification.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["test_fix_loop"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC11_event_store_migration",
+    "category": "true_agentic",
+    "prompt": "Execute the migration implementation for the new event store across the codebase and verify all tests.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["migration_implementation", "repo_wide_change"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.80
+  },
+  {
+    "id": "TC12_cache_invalidation_loop",
+    "category": "true_agentic",
+    "prompt": "Run tests and fix cache invalidation race conditions across the repository until green.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["test_fix_loop", "repo_wide_change"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.75
+  },
+  {
+    "id": "TC13_rate_limiter_refactor",
+    "category": "true_agentic",
+    "prompt": "Refactor multiple modules in networking to integrate token bucket rate limiting and run tests until passing.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["large_refactor_execution"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC14_schema_drift_repair",
+    "category": "true_agentic",
+    "prompt": "Diagnose the repo for schema drift across migrations and models, fix discrepancies, and verify all tests pass.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["implementation_with_verification"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.70
+  },
+  {
+    "id": "TC15_arch_distributed_cache",
+    "category": "architecture_negative",
+    "prompt": "Design a modular architecture for distributed caching across edge locations.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC16_arch_event_driven",
+    "category": "architecture_negative",
+    "prompt": "Design an event-driven architecture for high-throughput order processing.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC17_arch_adr_cockroachdb",
+    "category": "architecture_negative",
+    "prompt": "Draft an architecture decision record (ADR) evaluating PostgreSQL vs CockroachDB for multi-region active-active.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC18_arch_microservices_split",
+    "category": "architecture_negative",
+    "prompt": "Design a system architecture to decompose the monolithic billing engine into microservices.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC19_arch_auth_federation",
+    "category": "architecture_negative",
+    "prompt": "Architect a multi-tenant SAML and OIDC authentication architecture for enterprise customers.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC20_arch_long_prompt_adr",
+    "category": "architecture_negative",
+    "prompt": "We are conducting an exhaustive technical evaluation of our distributed transaction processing system. The current architecture uses a 2-phase commit protocol across four regional datacenters. However, under network partitions, latency spikes to unacceptable levels. Please analyze the CAP theorem implications, compare Paxos vs Raft consensus algorithms, evaluate the trade-offs of using Percolator-style snapshot isolation vs Spanner-style TrueTime, and write a comprehensive 10-page architecture decision record (ADR) explaining your findings. Do not modify the repository or run tests. We only need the architectural documentation.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC21_prd_onboarding_flow",
+    "category": "prd_negative",
+    "prompt": "Create a PRD for our new self-service user onboarding flow.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["prd_creation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC22_prd_enterprise_rbac",
+    "category": "prd_negative",
+    "prompt": "Write a specification for enterprise role-based access control (RBAC).",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["prd_creation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC23_prd_audit_log_compliance",
+    "category": "prd_negative",
+    "prompt": "Write a PRD detailing product requirements for regulatory compliance audit logs.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["prd_creation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC24_prd_notification_service",
+    "category": "prd_negative",
+    "prompt": "Create a spec for a multi-channel user notification service (email, push, SMS).",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["prd_creation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC25_prd_migration_plan_only",
+    "category": "prd_negative",
+    "prompt": "Review this repo, choose the safest design, and write an implementation plan for my review. Do not write code yet.",
+    "expectedIntent": "mixed_planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["prd_creation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC26_code_regex_email",
+    "category": "coding_negative",
+    "prompt": "Write a regex to validate an email address in TypeScript.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_code_question"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC27_code_sort_algorithm",
+    "category": "coding_negative",
+    "prompt": "How to sort an array of objects by multiple keys in JavaScript?",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_code_question"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC28_code_readme_typo",
+    "category": "coding_negative",
+    "prompt": "Fix typo in README.md line 12.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["small_isolated_edit"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC29_code_rename_variable",
+    "category": "coding_negative",
+    "prompt": "Rename variable foo to bar in calculateTax function.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["small_isolated_edit"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC30_code_format_json",
+    "category": "coding_negative",
+    "prompt": "Format this JSON payload and make it pretty.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_transformation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC31_code_unit_test_math",
+    "category": "coding_negative",
+    "prompt": "Write a snippet showing how to test math.add using vitest.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_code_question"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC32_code_sql_snippet",
+    "category": "coding_negative",
+    "prompt": "Write a function that takes a list of numbers and returns the median.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_code_question"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC33_code_env_var_helper",
+    "category": "coding_negative",
+    "prompt": "Write a small snippet for reading an environment variable with a default value in Node.js.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["simple_code_question"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC34_review_payment_security",
+    "category": "review_docs_research_negative",
+    "prompt": "Review this implementation of the payment processor for security flaws.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["code_review_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC35_review_codebase_audit",
+    "category": "review_docs_research_negative",
+    "prompt": "Audit this repository for security vulnerabilities and prepare findings.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["code_review_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC36_explain_race_condition",
+    "category": "review_docs_research_negative",
+    "prompt": "Explain this race condition and why double-checked locking can fail.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["explanation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC37_explain_closure_memory",
+    "category": "review_docs_research_negative",
+    "prompt": "Explain how closures work in JavaScript and how memory is allocated.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["explanation"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC38_research_sota_models",
+    "category": "review_docs_research_negative",
+    "prompt": "What are the latest developments and state of the art in sparse autoencoders?",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["research"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC39_docs_release_summary",
+    "category": "review_docs_research_negative",
+    "prompt": "Summarize what changed across the repository in the last release.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["documentation_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC40_docs_api_endpoints",
+    "category": "review_docs_research_negative",
+    "prompt": "Write documentation for the public endpoints in docs/api.md.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["documentation_only"],
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC41_tools_http_status_question",
+    "category": "tools_negative",
+    "prompt": "What is the HTTP status code for method not allowed?",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["explanation"],
+    "toolsProvided": true,
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC42_tools_general_chat",
+    "category": "tools_negative",
+    "prompt": "Hello, can you help me understand how git rebase works?",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "toolsProvided": true,
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC43_trajectory_turn1_plan",
+    "category": "multi_turn_trajectory",
+    "prompt": "Design a safe 3-phase schema migration architecture for user accounts.",
+    "expectedIntent": "planning",
+    "expectedWouldUseSonnet": false,
+    "expectedExclusions": ["architecture_design_only"],
+    "sessionId": "trajectory_eval_session",
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC44_trajectory_turn2_execute",
+    "category": "multi_turn_trajectory",
+    "prompt": "The plan is approved. Implement the migration across the repository and run tests until passing.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "expectedSignals": ["migration_implementation", "repo_wide_change"],
+    "sessionId": "trajectory_eval_session",
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC45_trajectory_turn3_sticky_fix",
+    "category": "multi_turn_trajectory",
+    "prompt": "Tests failed with Assertion error in test/migrator.test.ts line 45. Fix it and rerun tests.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": true,
+    "recentTestOutcome": "failed",
+    "sessionId": "trajectory_eval_session",
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC46_trajectory_turn4_deescalate",
+    "category": "multi_turn_trajectory",
+    "prompt": "Tests pass. Summarize what changed across the repository.",
+    "expectedIntent": "non_agentic",
+    "expectedWouldUseSonnet": false,
+    "recentTestOutcome": "passed",
+    "sessionId": "trajectory_eval_session",
+    "claudeQuotaStatus": "healthy",
+    "claudeQuotaRatio": 0.85
+  },
+  {
+    "id": "TC47_agentic_quota_reserve_suppression",
+    "category": "quota_conservation",
+    "prompt": "Implement approved payment validator across src/ and test/, run tests until green.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": false,
+    "expectedSignals": ["test_fix_loop"],
+    "claudeQuotaStatus": "reserve",
+    "claudeQuotaRatio": 0.08
+  },
+  {
+    "id": "TC48_agentic_quota_exhausted_suppression",
+    "category": "quota_conservation",
+    "prompt": "Implement approved payment validator across src/ and test/, run tests until green.",
+    "expectedIntent": "execution",
+    "expectedWouldUseSonnet": false,
+    "expectedSignals": ["test_fix_loop"],
+    "claudeQuotaStatus": "exhausted",
+    "claudeQuotaRatio": 0.0
+  }
+]

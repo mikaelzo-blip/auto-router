@@ -250,4 +250,60 @@ describe("QuotaSource (9Router and Synthetic)", () => {
 
     source.close();
   });
+
+  it("parses claude quota buckets from antigravity usage response", async () => {
+    const mockAgWithClaude = {
+      plan: "Antigravity",
+      quotas: {
+        ...mockAgUsageResponse.quotas,
+        "claude-sonnet-4-6": {
+          used: 379,
+          total: 1000,
+          remainingPercentage: 62.1,
+          resetAt: "2026-09-18T07:36:38.000Z",
+          unlimited: false
+        },
+        "claude_gpt_weekly": {
+          used: 309,
+          total: 1000,
+          remainingPercentage: 69.1,
+          resetAt: "2026-09-22T07:36:38.000Z",
+          unlimited: false
+        }
+      }
+    };
+
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith("/api/providers")) {
+        return Promise.resolve(new Response(JSON.stringify(mockProvidersResponse), { status: 200 }));
+      }
+      if (url.endsWith("/api/usage/conn-ag-1")) {
+        return Promise.resolve(new Response(JSON.stringify(mockAgWithClaude), { status: 200 }));
+      }
+      if (url.endsWith("/api/usage/conn-cx-1")) {
+        return Promise.resolve(new Response(JSON.stringify(mockCodexUsageResponse), { status: 200 }));
+      }
+      return Promise.resolve(new Response("Not found", { status: 404 }));
+    });
+
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      refreshTtlMs: 30_000,
+      staleFallbackMs: 60_000,
+      timeoutMs: 5000,
+      fetchImpl: fetchMock
+    });
+
+    const snapshot = await source.getSnapshot();
+    expect(snapshot.buckets["claude_short"]).toBeDefined();
+    expect(snapshot.buckets["claude_short"]?.remainingRatio).toBeCloseTo(0.621, 2);
+    expect(snapshot.buckets["claude_weekly"]).toBeDefined();
+    expect(snapshot.buckets["claude_weekly"]?.remainingRatio).toBeCloseTo(0.691, 2);
+
+    const account = snapshot.accounts?.["antigravity:account_1"];
+    expect(account?.buckets["claude_short"]).toBeDefined();
+    expect(account?.buckets["claude_weekly"]).toBeDefined();
+
+    source.close();
+  });
 });

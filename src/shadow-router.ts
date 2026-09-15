@@ -23,6 +23,9 @@ export interface ExecutionProfile {
   supportedReasoningEfforts?: Array<"minimal" | "low" | "medium" | "high" | "max">;
   defaultReasoningEffort?: "minimal" | "low" | "medium" | "high" | "max";
   maximumReasoningEffort?: "minimal" | "low" | "medium" | "high" | "max";
+  role?: "AGENTIC_EXECUTOR" | string;
+  enabledForShadow?: boolean;
+  enabledForExecution?: boolean;
 }
 
 export interface ShadowRequest {

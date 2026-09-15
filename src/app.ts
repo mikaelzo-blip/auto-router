@@ -24,6 +24,11 @@ import {
 } from "./quota/policy.js";
 import type { QuotaDecisionResult } from "./quota/policy.js";
 import type { QuotaSource } from "./quota/types.js";
+import {
+  evaluateAgenticShadow,
+  createAgenticSessionStore,
+  type ShadowAgenticDecision
+} from "./agentic-shadow.js";
 
 const chatSchema = {
   type: "object",
@@ -156,6 +161,46 @@ export function buildApp(config: AppConfig): FastifyInstance {
       policy: "balanced"
     };
     return routeShadow(shadowRequest, shadowProfiles, shadowStore);
+  }
+
+  const agenticSessionStore = createAgenticSessionStore(120_000);
+
+  function computeAgenticShadow(
+    body: ChatCompletionRequest,
+    actualProfile: string,
+    actualModel: string,
+    quotaSnapshot?: any,
+    sessionId = "anonymous"
+  ): ShadowAgenticDecision {
+    const sonnetProfile = shadowProfiles.find((p) => p.id === "sonnet-agentic");
+    const sonnetQuotaState = (sonnetProfile && quotaSnapshot)
+      ? evaluateCandidateQuota(sonnetProfile, quotaSnapshot, quotaTracker, undefined, quotaThresholds)
+      : undefined;
+
+    const recentMessages = body.messages.slice(-3);
+    const recentFailure = recentMessages.some((message) => message.role === "tool" && /fail|error|reject/i.test(String(message.content)))
+      ? "recent tool failure"
+      : undefined;
+    const recentTestOutcome = recentMessages.some((message) => /tests? (passed|green)|build passed/i.test(String(message.content)))
+      ? "passed"
+      : recentMessages.some((message) => /tests? (failed|red)|build failed/i.test(String(message.content)))
+        ? "failed"
+        : undefined;
+
+    return evaluateAgenticShadow(
+      {
+        sessionId,
+        messages: body.messages,
+        recentFailure,
+        recentTestOutcome,
+        toolsProvided: Boolean(body.tools?.length || body.functions?.length),
+        claudeQuotaStatus: sonnetQuotaState?.status,
+        claudeQuotaRatio: sonnetQuotaState?.effectiveRemainingRatio
+      },
+      actualProfile,
+      actualModel,
+      agenticSessionStore
+    );
   }
 
   function configuredUpstreams(): string[] {
@@ -468,6 +513,14 @@ export function buildApp(config: AppConfig): FastifyInstance {
           ? shadowProfiles.find((p) => p.id === quotaDecision.selectedProfile) ?? matchedProfile
           : matchedProfile;
 
+        const shadowAgentic = computeAgenticShadow(
+          request.body,
+          effectiveProfile.id,
+          effectiveProfile.model,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+
         return {
           ...actual,
           actual: { route: actual.route, upstreamModel: actual.upstreamModel },
@@ -476,6 +529,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
           complexity: reasoningContext.complexity ?? "medium",
           risk: reasoningContext.risk ?? "low",
           shadowV2,
+          shadowAgentic,
           reasoning: resolvedReasoning.debugSummary,
           quota: {
             policy: quotaDecision.policy,
@@ -817,8 +871,9 @@ export function buildApp(config: AppConfig): FastifyInstance {
       );
 
       let quotaDecision: QuotaDecisionResult | undefined;
+      let quotaSnapshot: any | undefined;
       if (config.routerMode === "v2" && shadowResult) {
-        const quotaSnapshot = await quotaSource.getSnapshot();
+        quotaSnapshot = await quotaSource.getSnapshot();
         quotaDecision = resolveQuotaDecision({
           standardSelectedProfile: shadowResult.selectedProfile,
           taskType: shadowResult.taskType,
@@ -928,6 +983,19 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       const candidates = selectionCandidates;
+
+      let agenticShadow: ReturnType<typeof computeAgenticShadow> | undefined;
+      try {
+        agenticShadow = computeAgenticShadow(
+          request.body,
+          matchedProfile.id,
+          selectedModel,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+      } catch (err) {
+        request.log.warn({ err }, "agentic shadow calculation failed; continuing");
+      }
 
       if (candidates.length === 0) {
         return reply.code(400).send(
@@ -1090,6 +1158,13 @@ export function buildApp(config: AppConfig): FastifyInstance {
           "x-auto-router-reasoning-clamped",
           String(resolvedReasoning.clamped)
         );
+
+        if (agenticShadow) {
+          reply.header("x-auto-router-shadow-agentic-eligible", agenticShadow.shadowAgenticEligible ? "true" : "false");
+          reply.header("x-auto-router-shadow-agentic-profile", agenticShadow.shadowAgenticProfile);
+          reply.header("x-auto-router-shadow-agentic-model", agenticShadow.shadowAgenticModel);
+          reply.header("x-auto-router-shadow-agentic-reason", agenticShadow.shadowAgenticReason);
+        }
 
         if (config.routerMode === "v2" && shadowResult) {
           const effectiveProfile = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
@@ -1485,8 +1560,9 @@ export function buildApp(config: AppConfig): FastifyInstance {
       );
 
       let quotaDecision: QuotaDecisionResult | undefined;
+      let quotaSnapshot: any | undefined;
       if (config.routerMode === "v2" && shadowResult) {
-        const quotaSnapshot = await quotaSource.getSnapshot();
+        quotaSnapshot = await quotaSource.getSnapshot();
         quotaDecision = resolveQuotaDecision({
           standardSelectedProfile: shadowResult.selectedProfile,
           taskType: shadowResult.taskType,

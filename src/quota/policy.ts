@@ -34,6 +34,9 @@ export function getProfileProvider(profile: ExecutionProfile): string {
 export function getApplicableBucketIds(profile: ExecutionProfile): string[] {
   const provider = getProfileProvider(profile);
   if (provider === "antigravity") {
+    if (profile.model.includes("claude") || profile.id.includes("claude") || profile.id.includes("sonnet")) {
+      return ["claude_short", "claude_weekly"];
+    }
     return ["gemini_flash_pro", "gemini_weekly"];
   }
   if (provider === "codex") {

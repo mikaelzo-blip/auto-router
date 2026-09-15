@@ -292,6 +292,91 @@ export class NineRouterQuotaSource implements QuotaSource {
             };
           }
 
+          // 3. Claude quota buckets (short-window & weekly)
+          const claudeEntries = Object.entries(usage.quotas)
+            .filter(([key]) => key.startsWith("claude-"));
+          if (claudeEntries.length > 0) {
+            const minClaudeEntry = claudeEntries.reduce((min, curr) => {
+              const minRatio = min[1].remainingPercentage !== undefined
+                ? min[1].remainingPercentage / 100
+                : (min[1].remaining !== undefined && (min[1].total ?? 1000) > 0)
+                  ? min[1].remaining / (min[1].total ?? 1000)
+                  : 1.0;
+              const currRatio = curr[1].remainingPercentage !== undefined
+                ? curr[1].remainingPercentage / 100
+                : (curr[1].remaining !== undefined && (curr[1].total ?? 1000) > 0)
+                  ? curr[1].remaining / (curr[1].total ?? 1000)
+                  : 1.0;
+              return currRatio < minRatio ? curr : min;
+            });
+
+            const q = minClaudeEntry[1];
+            const limit = q.total ?? 1000;
+            const used = q.used ?? 0;
+            let ratio = q.remainingPercentage !== undefined
+              ? q.remainingPercentage / 100
+              : q.remaining !== undefined && limit > 0
+                ? q.remaining / limit
+                : 1.0;
+            ratio = Math.max(0, Math.min(1, ratio));
+            const remaining = q.remaining ?? Math.round(limit * ratio);
+
+            accountBuckets["claude_short"] = {
+              id: "claude_short",
+              provider: "antigravity",
+              scope: "model_shared",
+              used,
+              limit,
+              remaining,
+              remainingRatio: ratio,
+              resetAt: q.resetAt ?? null,
+              observedAt: observedAtIso,
+              stale: false
+            };
+          }
+
+          const claudeWeekly = usage.quotas["claude_gpt_weekly"] ?? usage.quotas["claude_weekly"] ?? usage.quotas["claude-sonnet-4-6"];
+          if (claudeWeekly) {
+            const limit = claudeWeekly.total ?? 1000;
+            const used = claudeWeekly.used ?? 0;
+            let ratio = claudeWeekly.remainingPercentage !== undefined
+              ? claudeWeekly.remainingPercentage / 100
+              : claudeWeekly.remaining !== undefined && limit > 0
+                ? claudeWeekly.remaining / limit
+                : 1.0;
+            ratio = Math.max(0, Math.min(1, ratio));
+            const remaining = claudeWeekly.remaining ?? Math.round(limit * ratio);
+
+            accountBuckets["claude_weekly"] = {
+              id: "claude_weekly",
+              provider: "antigravity",
+              scope: "weekly",
+              used,
+              limit,
+              remaining,
+              remainingRatio: ratio,
+              resetAt: claudeWeekly.resetAt ?? null,
+              observedAt: observedAtIso,
+              stale: false
+            };
+          }
+
+          if (!accountBuckets["claude_weekly"] && accountBuckets["claude_short"]) {
+            const b = accountBuckets["claude_short"]!;
+            accountBuckets["claude_weekly"] = {
+              ...b,
+              id: "claude_weekly",
+              scope: "weekly"
+            };
+          } else if (!accountBuckets["claude_short"] && accountBuckets["claude_weekly"]) {
+            const b = accountBuckets["claude_weekly"]!;
+            accountBuckets["claude_short"] = {
+              ...b,
+              id: "claude_short",
+              scope: "model_shared"
+            };
+          }
+
           // Update legacy / pooled buckets
           for (const [bId, bVal] of Object.entries(accountBuckets)) {
             const existing = buckets[bId];
