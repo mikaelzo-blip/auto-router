@@ -122,7 +122,13 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const MAX_LATENCY_SAMPLES = 200;
   const READINESS_CACHE_MS = 15_000;
   const shadowStore = createSessionStore(15 * 60_000);
-  const shadowProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
+  const rawProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
+  const shadowProfiles = rawProfiles.map((p) => {
+    if (p.id === "sonnet-agentic" && config.sonnetAgenticEnabled) {
+      return { ...p, enabled: true, enabledForExecution: true };
+    }
+    return p;
+  });
 
   const quotaTracker = new QuotaCooldownTracker();
   const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
@@ -483,7 +489,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
           shadowProfiles[0]!;
 
         const currentPolicy = config.reasoningPolicy ?? "passthrough";
-        const resolvedReasoning = resolveReasoningDecision({
+        let resolvedReasoning = resolveReasoningDecision({
           policy: currentPolicy,
           clientEffort,
           autoDesired: autoReasoning.desired,
@@ -509,23 +515,28 @@ export function buildApp(config: AppConfig): FastifyInstance {
           thresholds: quotaThresholds
         });
 
-        const effectiveProfile = (quotaPolicy === "auto" && quotaDecision.selectedProfile)
+        const baselineProfile = (quotaPolicy === "auto" && quotaDecision.selectedProfile)
           ? shadowProfiles.find((p) => p.id === quotaDecision.selectedProfile) ?? matchedProfile
           : matchedProfile;
 
         const shadowAgentic = computeAgenticShadow(
           request.body,
-          effectiveProfile.id,
-          effectiveProfile.model,
+          baselineProfile.id,
+          baselineProfile.model,
           quotaSnapshot,
           request.headers["x-session-id"]?.toString()
         );
+
+        const effectiveProfile = (config.sonnetAgenticEnabled && shadowAgentic?.wouldUseSonnet)
+          ? shadowProfiles.find((p) => p.id === "sonnet-agentic") ?? baselineProfile
+          : baselineProfile;
 
         return {
           ...actual,
           actual: { route: actual.route, upstreamModel: actual.upstreamModel },
           selectedProfile: effectiveProfile.id,
           selectedModel: effectiveProfile.model,
+          sonnetAgenticEnabled: config.sonnetAgenticEnabled ?? false,
           complexity: reasoningContext.complexity ?? "medium",
           risk: reasoningContext.risk ?? "low",
           shadowV2,
@@ -956,7 +967,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         shadowProfiles[0]!;
 
       const currentPolicy = config.reasoningPolicy ?? "passthrough";
-      const resolvedReasoning = resolveReasoningDecision({
+      let resolvedReasoning = resolveReasoningDecision({
         policy: currentPolicy,
         clientEffort,
         autoDesired: autoReasoning.desired,
@@ -982,8 +993,6 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const candidates = selectionCandidates;
-
       let agenticShadow: ReturnType<typeof computeAgenticShadow> | undefined;
       try {
         agenticShadow = computeAgenticShadow(
@@ -995,6 +1004,32 @@ export function buildApp(config: AppConfig): FastifyInstance {
         );
       } catch (err) {
         request.log.warn({ err }, "agentic shadow calculation failed; continuing");
+      }
+
+      let candidates = selectionCandidates;
+
+      if (config.routerMode === "v2" && config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet) {
+        selectedModel = "ag/claude-sonnet-4-6";
+        const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
+        candidates = uniqueModels([selectedModel, geminiHighModel, config.routing.globalFallbackModel]);
+        forwarded = {
+          ...forwarded,
+          model: selectedModel
+        };
+
+        const sonnetProfile = shadowProfiles.find((p) => p.id === "sonnet-agentic");
+        if (sonnetProfile && currentPolicy === "auto") {
+          resolvedReasoning = resolveReasoningDecision({
+            policy: currentPolicy,
+            clientEffort,
+            autoDesired: autoReasoning.desired,
+            profile: sonnetProfile,
+            escalationApplied: autoReasoning.escalationApplied,
+            deescalationApplied: autoReasoning.deescalationApplied,
+            reasons: autoReasoning.reasons
+          });
+          forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+        }
       }
 
       if (candidates.length === 0) {
@@ -1015,6 +1050,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
 
         let response: Response | undefined;
+        let successfulModel = selectedModel;
 
         for (
           let index = 0;
@@ -1023,6 +1059,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         ) {
 
           const model = candidates[index]!;
+          successfulModel = model;
 
           metrics.upstreamAttempts += 1;
 
@@ -1134,7 +1171,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
         reply.header(
           "x-auto-router-model",
-          selectedModel
+          successfulModel
         );
 
         reply.header(
@@ -1167,20 +1204,26 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
 
         if (config.routerMode === "v2" && shadowResult) {
-          const effectiveProfile = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
-            ? quotaDecision.selectedProfile
-            : shadowResult.selectedProfile;
+          const effectiveProfile = (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet)
+            ? (successfulModel === "ag/claude-sonnet-4-6" ? "sonnet-agentic" : "gemini-flash-high")
+            : (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+              ? quotaDecision.selectedProfile
+              : shadowResult.selectedProfile;
           reply.header(
             "x-auto-router-profile",
             effectiveProfile
           );
           reply.header(
             "x-auto-router-tier",
-            shadowResult.minimumQualityTier
+            (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet && successfulModel === "ag/claude-sonnet-4-6")
+              ? "strong"
+              : shadowResult.minimumQualityTier
           );
           reply.header(
             "x-auto-router-switch-reason",
-            quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason
+            (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet)
+              ? (successfulModel === "ag/claude-sonnet-4-6" ? agenticShadow.shadowAgenticReason : "upstream_fallback_to_gemini_high")
+              : (quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason)
           );
         }
 
@@ -1515,7 +1558,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         shadowProfiles[0]!;
 
       const currentPolicy = config.reasoningPolicy ?? "passthrough";
-      const resolvedReasoning = resolveReasoningDecision({
+      let resolvedReasoning = resolveReasoningDecision({
         policy: currentPolicy,
         clientEffort,
         autoDesired: autoReasoning.desired,
@@ -1621,10 +1664,46 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const candidates = selectionCandidates;
+      let agenticShadow: ReturnType<typeof computeAgenticShadow> | undefined;
+      try {
+        agenticShadow = computeAgenticShadow(
+          routingRequest,
+          matchedProfile.id,
+          selectedModel,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+      } catch (err) {
+        request.log.warn({ err }, "agentic shadow calculation failed; continuing");
+      }
+
+      let candidates = selectionCandidates;
+
+      if (config.routerMode === "v2" && config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet) {
+        selectedModel = "ag/claude-sonnet-4-6";
+        const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
+        candidates = uniqueModels([selectedModel, geminiHighModel, config.routing.globalFallbackModel]);
+        forwardedBody = {
+          ...forwardedBody,
+          model: selectedModel
+        };
+
+        const sonnetProfile = shadowProfiles.find((p) => p.id === "sonnet-agentic");
+        if (sonnetProfile && currentPolicy === "auto") {
+          resolvedReasoning = resolveReasoningDecision({
+            policy: currentPolicy,
+            clientEffort,
+            autoDesired: autoReasoning.desired,
+            profile: sonnetProfile,
+            escalationApplied: autoReasoning.escalationApplied,
+            deescalationApplied: autoReasoning.deescalationApplied,
+            reasons: autoReasoning.reasons
+          });
+          forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+        }
+      }
 
       if (candidates.length === 0) {
-
         return reply.code(400).send(
           openAiError(
             "No configured model supports the requested capabilities",
@@ -1642,6 +1721,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
 
         let response: Response | undefined;
+        let successfulModel = selectedModel;
 
         for (
           let index = 0;
@@ -1650,6 +1730,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         ) {
 
           const model = candidates[index]!;
+          successfulModel = model;
 
           metrics.upstreamAttempts += 1;
 
@@ -1716,21 +1797,34 @@ export function buildApp(config: AppConfig): FastifyInstance {
           reply.header("x-auto-router-quota-policy", quotaPolicy);
         }
 
+        if (agenticShadow) {
+          reply.header("x-auto-router-shadow-agentic-eligible", agenticShadow.shadowAgenticEligible ? "true" : "false");
+          reply.header("x-auto-router-shadow-agentic-profile", agenticShadow.shadowAgenticProfile);
+          reply.header("x-auto-router-shadow-agentic-model", agenticShadow.shadowAgenticModel);
+          reply.header("x-auto-router-shadow-agentic-reason", agenticShadow.shadowAgenticReason);
+        }
+
         if (config.routerMode === "v2" && shadowResult) {
-          const effectiveProfile = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
-            ? quotaDecision.selectedProfile
-            : shadowResult.selectedProfile;
+          const effectiveProfile = (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet)
+            ? (successfulModel === "ag/claude-sonnet-4-6" ? "sonnet-agentic" : "gemini-flash-high")
+            : (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+              ? quotaDecision.selectedProfile
+              : shadowResult.selectedProfile;
           reply.header(
             "x-auto-router-profile",
             effectiveProfile
           );
           reply.header(
             "x-auto-router-tier",
-            shadowResult.minimumQualityTier
+            (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet && successfulModel === "ag/claude-sonnet-4-6")
+              ? "strong"
+              : shadowResult.minimumQualityTier
           );
           reply.header(
             "x-auto-router-switch-reason",
-            quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason
+            (config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet)
+              ? (successfulModel === "ag/claude-sonnet-4-6" ? agenticShadow.shadowAgenticReason : "upstream_fallback_to_gemini_high")
+              : (quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason)
           );
         }
 
@@ -1755,7 +1849,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
         reply.header(
           "x-auto-router-model",
-          selectedModel
+          successfulModel
         );
 
         reply.header(

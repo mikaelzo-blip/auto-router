@@ -27,6 +27,7 @@ export interface AppConfig {
   quotaSourceTimeoutMs?: number;
   quotaThresholds?: QuotaThresholds;
   quotaSource?: QuotaSource;
+  sonnetAgenticEnabled?: boolean;
   upstreamBaseUrl: string;
   upstreamApiKey?: string;
   classifierModel?: string;
@@ -101,6 +102,8 @@ export async function loadConfig(): Promise<AppConfig> {
     reserveExit
   };
 
+  const sonnetAgenticEnabled = (process.env.SONNET_AGENTIC_ENABLED ?? "false").toLowerCase() === "true";
+
   return {
     host,
     port: integer(process.env.PORT, 20200),
@@ -112,6 +115,7 @@ export async function loadConfig(): Promise<AppConfig> {
     quotaStaleFallbackMs,
     quotaSourceTimeoutMs,
     quotaThresholds,
+    sonnetAgenticEnabled,
     upstreamBaseUrl,
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,
