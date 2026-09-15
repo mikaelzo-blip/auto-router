@@ -1,0 +1,27 @@
+{
+  "caseId": "E1",
+  "family": "DATA_CONCURRENCY_MIGRATION",
+  "name": "Database Migration: 3-Phase Safe Schema Rollout",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T05:35:01.002Z",
+  "ttfbMs": 2970,
+  "totalLatencyMs": 67722,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 12,
+    "toolCalls": 11,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/db/migrator.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.4723ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.0193\n",
+    "hiddenTestOutput": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.6017ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.0922ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.9541\n"
+  }
+}

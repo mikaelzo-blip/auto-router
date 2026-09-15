@@ -1,0 +1,28 @@
+{
+  "caseId": "A2",
+  "family": "BUG_DIAGNOSIS_AND_REPAIR",
+  "name": "Cross-Module Defect (Session Auth & Token Validation)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T05:17:00.572Z",
+  "ttfbMs": 1895,
+  "totalLatencyMs": 34823,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 14,
+    "toolCalls": 13,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/session-service.ts",
+      "src/token-validator.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ SessionAuth - valid active session token validates successfully (0.4644ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1038ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.3847\n",
+    "hiddenTestOutput": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.8529ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.1236ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.1479\n"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "caseId": "E2",
+  "family": "DATA_CONCURRENCY_MIGRATION",
+  "name": "Concurrency & Idempotency: Anti-Double-Allocation",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T05:38:02.032Z",
+  "ttfbMs": 3024,
+  "totalLatencyMs": 68618,
+  "httpStatus": 0,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "agenticDetails": {
+    "iterations": 6,
+    "toolCalls": 5,
+    "failedToolCalls": 1,
+    "filesChanged": [],
+    "prohibitedFilesChanged": [],
+    "testsPassed": false,
+    "hiddenTestsPassed": false,
+    "recoveryEvents": 0
+  }
+}

@@ -1,0 +1,637 @@
+[
+  {
+    "caseId": "A1",
+    "family": "BUG_DIAGNOSIS_AND_REPAIR",
+    "name": "Localized Bug with Misleading Symptom (Rate Limiter)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:12:28.569Z",
+    "ttfbMs": 3002,
+    "totalLatencyMs": 18607,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 10,
+      "toolCalls": 9,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/rate-limiter.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4143ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0768ms)\n✔ RateLimiter - allows new requests after window expires (0.0532ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.7831\n",
+      "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.4436ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.069ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0768ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.5276\n"
+    }
+  },
+  {
+    "caseId": "A1",
+    "family": "BUG_DIAGNOSIS_AND_REPAIR",
+    "name": "Localized Bug with Misleading Symptom (Rate Limiter)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:12:50.949Z",
+    "ttfbMs": 2270,
+    "totalLatencyMs": 22379,
+    "httpStatus": 200,
+    "success": false,
+    "failureClass": "TEST_FAILURE",
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 5,
+      "toolCalls": 5,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/rate-limiter.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4084ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0732ms)\n✔ RateLimiter - allows new requests after window expires (0.0542ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.8607\n",
+      "hiddenTestOutput": "✖ Hidden: RateLimiter - exact window boundary condition (1.2177ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.0977ms)\n✖ Hidden: RateLimiter - token count calculation accuracy (0.1829ms)\nℹ tests 3\nℹ suites 0\nℹ pass 1\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.3084\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:122\n✖ Hidden: RateLimiter - exact window boundary condition (1.2177ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  false !=="
+    }
+  },
+  {
+    "caseId": "A2",
+    "family": "BUG_DIAGNOSIS_AND_REPAIR",
+    "name": "Cross-Module Defect (Session Auth & Token Validation)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:17:00.572Z",
+    "ttfbMs": 1895,
+    "totalLatencyMs": 34823,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 14,
+      "toolCalls": 13,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/session-service.ts",
+        "src/token-validator.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ SessionAuth - valid active session token validates successfully (0.4644ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1038ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.3847\n",
+      "hiddenTestOutput": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.8529ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.1236ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.1479\n"
+    }
+  },
+  {
+    "caseId": "A2",
+    "family": "BUG_DIAGNOSIS_AND_REPAIR",
+    "name": "Cross-Module Defect (Session Auth & Token Validation)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:17:33.558Z",
+    "ttfbMs": 2923,
+    "totalLatencyMs": 32985,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 7,
+      "toolCalls": 10,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/token-validator.ts",
+        "src/session-service.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ SessionAuth - valid active session token validates successfully (0.4689ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1027ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 96.0521\n",
+      "hiddenTestOutput": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.5491ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.0818ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 134.4847\n"
+    }
+  },
+  {
+    "caseId": "B1",
+    "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+    "name": "Multi-File Feature: Wildcard Event Bus",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:14:56.979Z",
+    "ttfbMs": 2973,
+    "totalLatencyMs": 90828,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 16,
+      "toolCalls": 15,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/events/dispatcher.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ EventBus - exact topic subscription (0.8912ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1955ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.1802ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.3223\n",
+      "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4926ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.3838ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.3964\n"
+    }
+  },
+  {
+    "caseId": "B1",
+    "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+    "name": "Multi-File Feature: Wildcard Event Bus",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:13:26.150Z",
+    "ttfbMs": 2106,
+    "totalLatencyMs": 35200,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 7,
+      "toolCalls": 10,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/events/dispatcher.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ EventBus - exact topic subscription (0.8041ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1169ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.0949ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.9379\n",
+      "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.5589ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.4092ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.606\n"
+    }
+  },
+  {
+    "caseId": "B2",
+    "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+    "name": "Feature with Validation & Idempotency (Payment Processor)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:25:23.146Z",
+    "ttfbMs": 2941,
+    "totalLatencyMs": 95658,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 13,
+      "toolCalls": 12,
+      "failedToolCalls": 3,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "B2",
+    "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+    "name": "Feature with Validation & Idempotency (Payment Processor)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:23:47.487Z",
+    "ttfbMs": 1906,
+    "totalLatencyMs": 53116,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 8,
+      "toolCalls": 12,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/payments/validator.ts",
+        "src/payments/processor.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ PaymentProcessor - valid request produces SUCCESS response (0.4752ms)\n✔ PaymentProcessor - rejects non-positive amount (0.074ms)\n✔ PaymentProcessor - rejects invalid currency code (0.0704ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.3454\n",
+      "hiddenTestOutput": "✔ Hidden: PaymentProcessor - duplicate idempotencyKey returns cached response without duplicate execution (0.5135ms)\n✔ Hidden: PaymentProcessor - missing recipientId returns MISSING_RECIPIENT (0.0941ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.4588\n"
+    }
+  },
+  {
+    "caseId": "C1",
+    "family": "REFACTOR_UNDER_CONSTRAINTS",
+    "name": "Multi-File Refactor: Billing Calculator Strategies",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:27:28.115Z",
+    "ttfbMs": 2940,
+    "totalLatencyMs": 118494,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 11,
+      "toolCalls": 10,
+      "failedToolCalls": 1,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "C1",
+    "family": "REFACTOR_UNDER_CONSTRAINTS",
+    "name": "Multi-File Refactor: Billing Calculator Strategies",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:28:56.382Z",
+    "ttfbMs": 3638,
+    "totalLatencyMs": 88265,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 16,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/billing/strategies/DiscountStrategy.ts",
+        "src/billing/strategies/TaxStrategy.ts",
+        "src/billing/strategies/index.ts",
+        "src/billing/calculator.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ BillingCalculator - standard invoice without discount (0.4502ms)\n✔ BillingCalculator - invoice with percentage discount (0.082ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.7856\n",
+      "hiddenTestOutput": "✔ Hidden: BillingCalculator - non-taxable item proportion in tax calculation (0.4755ms)\n✔ Hidden: BillingCalculator - empty items array handling (0.0801ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.8784\n"
+    }
+  },
+  {
+    "caseId": "C2",
+    "family": "REFACTOR_UNDER_CONSTRAINTS",
+    "name": "Extract Abstraction: Base Key-Value Store",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:31:34.142Z",
+    "ttfbMs": 2973,
+    "totalLatencyMs": 82872,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 11,
+      "toolCalls": 10,
+      "failedToolCalls": 1,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "C2",
+    "family": "REFACTOR_UNDER_CONSTRAINTS",
+    "name": "Extract Abstraction: Base Key-Value Store",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:30:11.269Z",
+    "ttfbMs": 2986,
+    "totalLatencyMs": 69307,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 10,
+      "toolCalls": 14,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/storage/base-store.ts",
+        "src/storage/memory-store.ts",
+        "src/storage/file-store.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ MemoryStore - basic set, get, delete operations (0.5855ms)\n✔ FileStore - basic set, get, delete operations (0.1389ms)\n✔ Store key validation - rejects keys with invalid characters (0.234ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 95.0041\n",
+      "hiddenTestOutput": "✔ Hidden: Store TTL expiration across both stores (70.0568ms)\n✔ Hidden: Store namespace isolation (0.109ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 201.9666\n"
+    }
+  },
+  {
+    "caseId": "D1",
+    "family": "FAILURE_RECOVERY",
+    "name": "Failure Recovery: Replace Bogus Cache Eviction Patch",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:15:46.502Z",
+    "ttfbMs": 2779,
+    "totalLatencyMs": 31489,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 11,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/cache/lru-cache.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ LruCache - basic set and get (0.3966ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0787ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.5803\n",
+      "hiddenTestOutput": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.4375ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0773ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.3098\n"
+    }
+  },
+  {
+    "caseId": "D1",
+    "family": "FAILURE_RECOVERY",
+    "name": "Failure Recovery: Replace Bogus Cache Eviction Patch",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:16:16.524Z",
+    "ttfbMs": 4902,
+    "totalLatencyMs": 30020,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 6,
+      "toolCalls": 6,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/cache/lru-cache.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ LruCache - basic set and get (0.39ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0785ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.5335\n",
+      "hiddenTestOutput": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.5619ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0766ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.2971\n"
+    }
+  },
+  {
+    "caseId": "D2",
+    "family": "FAILURE_RECOVERY",
+    "name": "Behavioral Contract: Enterprise Retry Policy",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:33:47.729Z",
+    "ttfbMs": 3219,
+    "totalLatencyMs": 81288,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 9,
+      "toolCalls": 8,
+      "failedToolCalls": 0,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "D2",
+    "family": "FAILURE_RECOVERY",
+    "name": "Behavioral Contract: Enterprise Retry Policy",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:32:26.440Z",
+    "ttfbMs": 2413,
+    "totalLatencyMs": 46242,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 7,
+      "toolCalls": 8,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/resilience/retry-policy.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.8385ms)\n✔ RetryPolicy - retries on transient failure and recovers (10.8621ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.7381\n",
+      "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.63ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (9.5158ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.8291\n"
+    }
+  },
+  {
+    "caseId": "E1",
+    "family": "DATA_CONCURRENCY_MIGRATION",
+    "name": "Database Migration: 3-Phase Safe Schema Rollout",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:35:01.002Z",
+    "ttfbMs": 2970,
+    "totalLatencyMs": 67722,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 11,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/db/migrator.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.4723ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.0193\n",
+      "hiddenTestOutput": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.6017ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.0922ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.9541\n"
+    }
+  },
+  {
+    "caseId": "E1",
+    "family": "DATA_CONCURRENCY_MIGRATION",
+    "name": "Database Migration: 3-Phase Safe Schema Rollout",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:35:59.525Z",
+    "ttfbMs": 3254,
+    "totalLatencyMs": 58522,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 7,
+      "toolCalls": 9,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/db/migrator.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.5639ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.3456\n",
+      "hiddenTestOutput": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.7068ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.0937ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.2931\n"
+    }
+  },
+  {
+    "caseId": "E2",
+    "family": "DATA_CONCURRENCY_MIGRATION",
+    "name": "Concurrency & Idempotency: Anti-Double-Allocation",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:38:02.032Z",
+    "ttfbMs": 3024,
+    "totalLatencyMs": 68618,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 6,
+      "toolCalls": 5,
+      "failedToolCalls": 1,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "E2",
+    "family": "DATA_CONCURRENCY_MIGRATION",
+    "name": "Concurrency & Idempotency: Anti-Double-Allocation",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:36:53.413Z",
+    "ttfbMs": 2593,
+    "totalLatencyMs": 49097,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 6,
+      "toolCalls": 7,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/concurrency/reservation-lock.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ ReservationLock - basic sequential reservation (24.1456ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (31.0324ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 145.4549\n",
+      "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (14.1278ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (157.0264ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 300.6189\n"
+    }
+  },
+  {
+    "caseId": "F1",
+    "family": "REPOSITORY_SCALE_MAINTENANCE",
+    "name": "Dependency Upgrade: Upstream API Adapter",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:38:41.962Z",
+    "ttfbMs": 2502,
+    "totalLatencyMs": 30079,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 11,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/upstream/adapter.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ UpstreamAdapter - successfully fetches resource using modern v2 client (0.4598ms)\n✔ UpstreamAdapter - rejects with clean error when resource is not found (404) (0.2673ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.5843\n",
+      "hiddenTestOutput": "✔ Hidden: UpstreamAdapter - network failure propagates descriptive error (0.7093ms)\n✔ Hidden: UpstreamAdapter - preserves returned resource object identity and payload structure (0.1037ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.9247\n"
+    }
+  },
+  {
+    "caseId": "F1",
+    "family": "REPOSITORY_SCALE_MAINTENANCE",
+    "name": "Dependency Upgrade: Upstream API Adapter",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:39:11.377Z",
+    "ttfbMs": 2461,
+    "totalLatencyMs": 29414,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 6,
+      "toolCalls": 7,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/upstream/adapter.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ UpstreamAdapter - successfully fetches resource using modern v2 client (0.5097ms)\n✔ UpstreamAdapter - rejects with clean error when resource is not found (404) (0.2834ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.1992\n",
+      "hiddenTestOutput": "✔ Hidden: UpstreamAdapter - network failure propagates descriptive error (0.6292ms)\n✔ Hidden: UpstreamAdapter - preserves returned resource object identity and payload structure (0.0913ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.0876\n"
+    }
+  },
+  {
+    "caseId": "F2",
+    "family": "REPOSITORY_SCALE_MAINTENANCE",
+    "name": "Architecture Cleanup: Pipeline Error Flow & Modularity",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:42:04.728Z",
+    "ttfbMs": 3317,
+    "totalLatencyMs": 105281,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 14,
+      "toolCalls": 13,
+      "failedToolCalls": 1,
+      "filesChanged": [],
+      "prohibitedFilesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false,
+      "recoveryEvents": 0
+    }
+  },
+  {
+    "caseId": "F2",
+    "family": "REPOSITORY_SCALE_MAINTENANCE",
+    "name": "Architecture Cleanup: Pipeline Error Flow & Modularity",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:40:19.445Z",
+    "ttfbMs": 2456,
+    "totalLatencyMs": 62310,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 15,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/pipeline/context.ts",
+        "src/pipeline/step.ts",
+        "src/pipeline/pipeline.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 0,
+      "publicTestOutput": "✔ Pipeline - executes sequential steps modifying context (0.499ms)\n✔ Pipeline - stopOnError: true halts pipeline immediately when step fails (0.1661ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.9326\n",
+      "hiddenTestOutput": "✔ Hidden: Pipeline - stopOnError: false continues executing remaining steps and aggregates errors (0.5058ms)\n✔ Hidden: Pipeline - empty pipeline returns success with unchanged context (0.073ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 136.4008\n"
+    }
+  }
+]

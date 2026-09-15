@@ -1,0 +1,119 @@
+{
+  "checkpoint": "CP7.2 SONNET AGENTIC EXECUTOR VALIDATION",
+  "status": "COMPLETED",
+  "timestamp": "2026-09-15T05:50:00.000Z",
+  "branch": "hermes/autorouter-v2-cp7-2-sonnet-agentic",
+  "baselineCommit": "2377b9b",
+  "modelsEvaluated": {
+    "baseline": {
+      "alias": "gemini_high",
+      "modelId": "ag/gemini-3.8-flash-high",
+      "provider": "antigravity",
+      "reasoningEffort": "high"
+    },
+    "challenger": {
+      "alias": "sonnet_4_6",
+      "modelId": "ag/claude-sonnet-4-6",
+      "provider": "antigravity",
+      "reasoningEffort": "high"
+    }
+  },
+  "quotaPreflight": {
+    "gemini": {
+      "startUsableRatio": 0.812,
+      "endUsableRatio": 0.693,
+      "gate": "PASSED (>= 20%)"
+    },
+    "sonnet": {
+      "startUsableRatio": 0.813,
+      "endUsableRatio": 0.693,
+      "gate": "PASSED (>= 20%)"
+    }
+  },
+  "executionSummary": {
+    "corpusCases": 12,
+    "totalPrimaryRuns": 24,
+    "validCanonicalRuns": 24,
+    "invalidRuns": 0,
+    "missingRuns": 0,
+    "duplicateRuns": 0,
+    "smokeRuns": 6,
+    "stressRuns": 4
+  },
+  "candidateMetrics": {
+    "gemini_high": {
+      "completed": 6,
+      "attempted": 12,
+      "completionRate": 0.500,
+      "hiddenTestSuccessCount": 6,
+      "hiddenTestRate": 0.500,
+      "timeouts": 6,
+      "regressions": 0,
+      "toolCalls": 128,
+      "failedToolCalls": 13,
+      "medianIterations": 12,
+      "medianWallClockMs": 81288,
+      "medianTtfbMs": 2973
+    },
+    "sonnet_4_6": {
+      "completed": 11,
+      "attempted": 12,
+      "completionRate": 0.917,
+      "hiddenTestSuccessCount": 11,
+      "hiddenTestRate": 0.917,
+      "timeouts": 0,
+      "regressions": 0,
+      "toolCalls": 119,
+      "failedToolCalls": 5,
+      "medianIterations": 7,
+      "medianWallClockMs": 49097,
+      "medianTtfbMs": 2593
+    }
+  },
+  "headToHead": {
+    "geminiWins": 1,
+    "sonnetWins": 11,
+    "ties": 0,
+    "noValidWinner": 0
+  },
+  "familyWins": {
+    "BUG_DIAGNOSIS_AND_REPAIR": "TIE",
+    "MULTI_FILE_FEATURE_IMPLEMENTATION": "SONNET",
+    "REFACTOR_UNDER_CONSTRAINTS": "SONNET",
+    "FAILURE_RECOVERY": "SONNET",
+    "DATA_CONCURRENCY_MIGRATION": "SONNET",
+    "REPOSITORY_SCALE_MAINTENANCE": "SONNET"
+  },
+  "stressTestOutcomes": {
+    "S1_transaction_engine_rollback": {
+      "sonnet": { "success": true, "latencyMs": 32268, "iterations": 6 },
+      "gemini": { "success": true, "latencyMs": 75802, "iterations": 10 },
+      "winner": "SONNET"
+    },
+    "S2_fulfillment_saga_compensation": {
+      "sonnet": { "success": true, "latencyMs": 28569, "iterations": 7 },
+      "gemini": { "success": true, "latencyMs": 46475, "iterations": 10 },
+      "winner": "SONNET"
+    }
+  },
+  "promotionGateEvaluation": {
+    "criterionA_completionAdvantage": { "passed": true, "delta": 5, "threshold": 2 },
+    "criterionB_hiddenTestSuccess": { "passed": true, "sonnetRate": 0.917, "geminiRate": 0.500 },
+    "criterionC_regressionSafety": { "passed": true, "sonnetRegressions": 0, "geminiRegressions": 0 },
+    "criterionD_timeoutRate": { "passed": true, "sonnetTimeoutRate": 0.000, "threshold": 0.100 },
+    "criterionE_toolReliability": { "passed": true, "sonnetFailureRate": 0.042, "geminiFailureRate": 0.102 },
+    "criterionF_iterationEfficiency": { "passed": true, "sonnetMedian": 7, "geminiMedian": 12 },
+    "criterionG_latencyBoundedness": { "passed": true, "latencyRatio": 0.60, "threshold": 1.50 },
+    "criterionH_taskFamilyDiversity": { "passed": true, "winningFamilies": 5, "threshold": 2 },
+    "overallGate": "PASSED",
+    "recommendation": "PROMOTE_TO_AGENTIC_EXECUTOR"
+  },
+  "productionPolicySafety": {
+    "productionPort": 20200,
+    "productionStatus": "UNMODIFIED_GREEN",
+    "sonnetEnabledInProduction": false,
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "quotaPolicy": "auto"
+  }
+}

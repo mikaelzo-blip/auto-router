@@ -1,0 +1,27 @@
+{
+  "caseId": "D1",
+  "family": "FAILURE_RECOVERY",
+  "name": "Failure Recovery: Replace Bogus Cache Eviction Patch",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:16:16.524Z",
+  "ttfbMs": 4902,
+  "totalLatencyMs": 30020,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 6,
+    "toolCalls": 6,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/cache/lru-cache.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ LruCache - basic set and get (0.39ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0785ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.5335\n",
+    "hiddenTestOutput": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.5619ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0766ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.2971\n"
+  }
+}

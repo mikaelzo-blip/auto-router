@@ -1,0 +1,147 @@
+{
+  "benchmark": "CP7.2 SONNET AGENTIC EXECUTOR VALIDATION",
+  "version": "1.0.0",
+  "totalCases": 12,
+  "families": {
+    "A": "BUG_DIAGNOSIS_AND_REPAIR",
+    "B": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+    "C": "REFACTOR_UNDER_CONSTRAINTS",
+    "D": "FAILURE_RECOVERY",
+    "E": "DATA_CONCURRENCY_MIGRATION",
+    "F": "REPOSITORY_SCALE_MAINTENANCE"
+  },
+  "cases": [
+    {
+      "caseId": "A1",
+      "family": "BUG_DIAGNOSIS_AND_REPAIR",
+      "name": "Localized Bug with Misleading Symptom (Rate Limiter)",
+      "prompt": "The test suite in `test/rate-limiter.test.ts` is failing for `src/rate-limiter.ts`. Run `run_tests` to reproduce the error. Inspect the implementation and test contract, identify the root cause of the unexpected rate limiting behavior, fix the defect in `src/rate-limiter.ts`, and run `run_tests` to confirm all tests pass cleanly.",
+      "rubric": {
+        "caseDir": "A1",
+        "testFile": "test/rate-limiter.test.ts",
+        "hiddenTestFile": "a1-rate-limiter-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "A2",
+      "family": "BUG_DIAGNOSIS_AND_REPAIR",
+      "name": "Cross-Module Defect (Session Auth & Token Validation)",
+      "prompt": "Tests in `test/session-auth.test.ts` indicate that revoked sessions are still passing token validation. The defect spans `src/session-service.ts` and `src/token-validator.ts`. Run `run_tests` to observe the failure. Trace the interaction between session lifecycle and token verification, fix the root cause across both modules so revoked and refreshed sessions are properly enforced, and verify that all tests pass.",
+      "rubric": {
+        "caseDir": "A2",
+        "testFile": "test/session-auth.test.ts",
+        "hiddenTestFile": "a2-session-auth-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "B1",
+      "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+      "name": "Multi-File Feature: Wildcard Event Bus",
+      "prompt": "Implement wildcard topic subscriptions across `src/events/dispatcher.ts` and `src/events/event-bus.ts`. Subscribers must be able to subscribe to single-segment wildcard patterns (`*`, e.g. `order.*` matching `order.created` but not `order.us.created`) and multi-segment wildcard patterns (`#`, e.g. `audit.#` matching `audit.user.login`). Existing exact topic subscribers and unsubscribe behavior must remain fully intact. Use `run_tests` to verify your implementation.",
+      "rubric": {
+        "caseDir": "B1",
+        "testFile": "test/wildcard-events.test.ts",
+        "hiddenTestFile": "b1-wildcard-events-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "B2",
+      "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+      "name": "Feature with Validation & Idempotency (Payment Processor)",
+      "prompt": "Implement robust input validation and error semantics in `src/payments/validator.ts` and `src/payments/processor.ts`. Ensure non-positive amounts return `INVALID_AMOUNT`, non-ISO 3-letter currency codes return `INVALID_CURRENCY`, and missing/empty recipients return `MISSING_RECIPIENT`. Support idempotent duplicate requests using `idempotencyKey` so replaying a transaction returns the original response. Run `run_tests` to verify.",
+      "rubric": {
+        "caseDir": "B2",
+        "testFile": "test/payment-processor.test.ts",
+        "hiddenTestFile": "b2-payment-processor-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "C1",
+      "family": "REFACTOR_UNDER_CONSTRAINTS",
+      "name": "Multi-File Refactor: Billing Calculator Strategies",
+      "prompt": "Refactor monolithic calculations in `src/billing/calculator.ts` into clean, modular strategies under `src/billing/strategies/` (e.g., TaxStrategy and DiscountStrategy). `BillingCalculator` must delegate calculations to these strategies while preserving 100% of its public API signature and calculation precision. Verify that all tests in `test/billing-calculator.test.ts` pass with zero regressions using `run_tests`.",
+      "rubric": {
+        "caseDir": "C1",
+        "testFile": "test/billing-calculator.test.ts",
+        "hiddenTestFile": "c1-billing-calculator-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "C2",
+      "family": "REFACTOR_UNDER_CONSTRAINTS",
+      "name": "Extract Abstraction: Base Key-Value Store",
+      "prompt": "Refactor `src/storage/memory-store.ts` and `src/storage/file-store.ts` to eliminate duplicate logic (key validation, TTL expiration checks, and key prefixing). Extract a shared `BaseKeyValueStore` under `src/storage/base-store.ts` that both stores inherit from or compose with. Preserve exact public interfaces and verify with `run_tests`.",
+      "rubric": {
+        "caseDir": "C2",
+        "testFile": "test/storage-stores.test.ts",
+        "hiddenTestFile": "c2-storage-stores-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "D1",
+      "family": "FAILURE_RECOVERY",
+      "name": "Failure Recovery: Replace Bogus Cache Eviction Patch",
+      "prompt": "Tests in `test/lru-cache.test.ts` are currently failing. A previous developer attempted a quick fix for cache sizing in `src/cache/lru-cache.ts` but introduced a severe flaw where recently used items are incorrectly purged. Run `run_tests` to inspect the failure, identify why the existing fix is wrong, replace it with proper Least-Recently-Used eviction, and verify all tests pass.",
+      "rubric": {
+        "caseDir": "D1",
+        "testFile": "test/lru-cache.test.ts",
+        "hiddenTestFile": "d1-lru-cache-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "D2",
+      "family": "FAILURE_RECOVERY",
+      "name": "Behavioral Contract: Enterprise Retry Policy",
+      "prompt": "Inspect `src/resilience/retry-policy.ts` and `test/retry-policy.test.ts`. While standard retries currently pass, the retry policy lacks critical enterprise resilience requirements: it must fail fast without retrying when encountering unretryable client errors (such as 401 Unauthorized or 403 Forbidden, or errors where `isRetryable === false`), while continuing to retry transient network errors and 429 quota limits. Implement these safeguards and verify with `run_tests`.",
+      "rubric": {
+        "caseDir": "D2",
+        "testFile": "test/retry-policy.test.ts",
+        "hiddenTestFile": "d2-retry-policy-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "E1",
+      "family": "DATA_CONCURRENCY_MIGRATION",
+      "name": "Database Migration: 3-Phase Safe Schema Rollout",
+      "prompt": "Implement the 3-phase safe migration workflow in `src/db/migrator.ts`. To safely add a NOT NULL column `organization_id` to an existing table with live data without downtime or constraint violations: 1) add the column as nullable, 2) backfill existing rows, 3) enforce the NOT NULL constraint (ensuring no null values remain before applying). Run `run_tests` to verify.",
+      "rubric": {
+        "caseDir": "E1",
+        "testFile": "test/migrator.test.ts",
+        "hiddenTestFile": "e1-migrator-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "E2",
+      "family": "DATA_CONCURRENCY_MIGRATION",
+      "name": "Concurrency & Idempotency: Anti-Double-Allocation",
+      "prompt": "A race condition exists in `src/concurrency/reservation-lock.ts` where concurrent requests for the same resource cause double-spending and over-allocation. In addition, repeated requests with the same `idempotencyKey` must return the cached reservation result without deducting balance again. Fix the concurrency and idempotency handling so concurrent competing reservations are safely serialized or locked. Run `run_tests` to verify.",
+      "rubric": {
+        "caseDir": "E2",
+        "testFile": "test/reservation-lock.test.ts",
+        "hiddenTestFile": "e2-concurrency-lock-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "F1",
+      "family": "REPOSITORY_SCALE_MAINTENANCE",
+      "name": "Dependency Upgrade: Upstream API Adapter",
+      "prompt": "The codebase is migrating from legacy callback-based `src/upstream/v1-client.ts` to modern Promise-based `src/upstream/v2-client.ts`. The adapter in `src/upstream/adapter.ts` currently fails because it still invokes the old callback method. Update `src/upstream/adapter.ts` to use `V2Client`, adopting modern async/await and response handling while keeping the public `getResource` interface intact. Run `run_tests` to verify.",
+      "rubric": {
+        "caseDir": "F1",
+        "testFile": "test/upstream-adapter.test.ts",
+        "hiddenTestFile": "f1-upstream-adapter-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "F2",
+      "family": "REPOSITORY_SCALE_MAINTENANCE",
+      "name": "Architecture Cleanup: Pipeline Error Flow & Modularity",
+      "prompt": "Clean up the data processing pipeline across `src/pipeline/context.ts`, `src/pipeline/step.ts`, and `src/pipeline/pipeline.ts`. Decouple pipeline steps and ensure error handling conforms to `PipelineOptions.stopOnError`: if true, halt immediately on step failure; if false, collect the error and continue executing subsequent steps. Do not perform a broad rewrite. Run `run_tests` to verify.",
+      "rubric": {
+        "caseDir": "F2",
+        "testFile": "test/pipeline-cleanup.test.ts",
+        "hiddenTestFile": "f2-pipeline-cleanup-hidden.test.ts"
+      }
+    }
+  ]
+}

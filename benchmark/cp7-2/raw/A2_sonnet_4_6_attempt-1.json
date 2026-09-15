@@ -1,0 +1,28 @@
+{
+  "caseId": "A2",
+  "family": "BUG_DIAGNOSIS_AND_REPAIR",
+  "name": "Cross-Module Defect (Session Auth & Token Validation)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:17:33.558Z",
+  "ttfbMs": 2923,
+  "totalLatencyMs": 32985,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 7,
+    "toolCalls": 10,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/token-validator.ts",
+      "src/session-service.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ SessionAuth - valid active session token validates successfully (0.4689ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1027ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 96.0521\n",
+    "hiddenTestOutput": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.5491ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.0818ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 134.4847\n"
+  }
+}

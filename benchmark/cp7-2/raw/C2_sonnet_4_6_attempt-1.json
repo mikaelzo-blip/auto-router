@@ -1,0 +1,29 @@
+{
+  "caseId": "C2",
+  "family": "REFACTOR_UNDER_CONSTRAINTS",
+  "name": "Extract Abstraction: Base Key-Value Store",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:30:11.269Z",
+  "ttfbMs": 2986,
+  "totalLatencyMs": 69307,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 10,
+    "toolCalls": 14,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/storage/base-store.ts",
+      "src/storage/memory-store.ts",
+      "src/storage/file-store.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ MemoryStore - basic set, get, delete operations (0.5855ms)\n✔ FileStore - basic set, get, delete operations (0.1389ms)\n✔ Store key validation - rejects keys with invalid characters (0.234ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 95.0041\n",
+    "hiddenTestOutput": "✔ Hidden: Store TTL expiration across both stores (70.0568ms)\n✔ Hidden: Store namespace isolation (0.109ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 201.9666\n"
+  }
+}

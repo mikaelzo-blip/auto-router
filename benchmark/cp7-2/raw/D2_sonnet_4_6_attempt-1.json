@@ -1,0 +1,27 @@
+{
+  "caseId": "D2",
+  "family": "FAILURE_RECOVERY",
+  "name": "Behavioral Contract: Enterprise Retry Policy",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:32:26.440Z",
+  "ttfbMs": 2413,
+  "totalLatencyMs": 46242,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 7,
+    "toolCalls": 8,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/resilience/retry-policy.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.8385ms)\n✔ RetryPolicy - retries on transient failure and recovers (10.8621ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.7381\n",
+    "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.63ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (9.5158ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.8291\n"
+  }
+}
