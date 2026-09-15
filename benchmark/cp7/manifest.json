@@ -1,0 +1,303 @@
+{
+  "evaluatorVersion": "cp7-harness-2",
+  "entries": [
+    {
+      "caseId": "A1",
+      "candidate": "gemini_high",
+      "outputHash": "2fec141486a48e620436bba6612a7392f5e2631338cb3f275bfca06fd2741e43",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:14:53.111Z"
+    },
+    {
+      "caseId": "A1",
+      "candidate": "sonnet_4_6",
+      "outputHash": "8036d1108cb876c74cbe8c6462851d274cb8ce04663589801a37810741a5b9df",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:15:39.477Z"
+    },
+    {
+      "caseId": "A1",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:18:39.486Z"
+    },
+    {
+      "caseId": "P1",
+      "candidate": "sonnet_4_6",
+      "outputHash": "59c4c291ddc9540c0e2a293525ede53cf7da0b6482136ee7ca88e048582a5150",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:19:41.212Z"
+    },
+    {
+      "caseId": "P1",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:22:41.217Z"
+    },
+    {
+      "caseId": "P1",
+      "candidate": "gemini_high",
+      "outputHash": "ec7122a3c8686fba1b47b3066ad1cbb75c0dd61bd583502eb788847c5c9d8732",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:23:47.004Z"
+    },
+    {
+      "caseId": "R1",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:26:47.010Z"
+    },
+    {
+      "caseId": "R1",
+      "candidate": "gemini_high",
+      "outputHash": "145a96cfa93565e3776f799902f24f96907e862f7e3305f2473f91b5f9abb0c6",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:27:34.817Z"
+    },
+    {
+      "caseId": "R1",
+      "candidate": "sonnet_4_6",
+      "outputHash": "430ab992cb6c58e7dec5a068cb9ea3c9daa798a6340c551cdabe23105380af3e",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:28:27.873Z"
+    },
+    {
+      "caseId": "E1",
+      "candidate": "gemini_high",
+      "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timestamp": "2026-09-14T19:32:55.664Z"
+    },
+    {
+      "caseId": "E1",
+      "candidate": "sonnet_4_6",
+      "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timestamp": "2026-09-14T19:33:55.047Z"
+    },
+    {
+      "caseId": "E1",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:36:14.157Z"
+    },
+    {
+      "caseId": "A2",
+      "candidate": "sonnet_4_6",
+      "outputHash": "0f4f8c7e84c2306cdee911fa5310ef3fd7b85e38bc7d9cc0f35427e573e7082e",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:38:58.530Z"
+    },
+    {
+      "caseId": "A2",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:41:58.538Z"
+    },
+    {
+      "caseId": "A2",
+      "candidate": "gemini_high",
+      "outputHash": "4b3163dfece18a4932d55966d96f85da5d4c8c39265bc30e326f904eb868ad4d",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:43:00.212Z"
+    },
+    {
+      "caseId": "A3",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:46:00.237Z"
+    },
+    {
+      "caseId": "A3",
+      "candidate": "gemini_high",
+      "outputHash": "de8ab7e4fbe45ee5d25a089ca2dc919f97b2a501e5d188d07de8a3aa208c5b2c",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:46:56.293Z"
+    },
+    {
+      "caseId": "A3",
+      "candidate": "sonnet_4_6",
+      "outputHash": "817e1e222f8e3a48bc764a249bebd08b8c5f79b8fbe0b0e4ab9d01d4d24f5c4a",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:47:38.811Z"
+    },
+    {
+      "caseId": "A4",
+      "candidate": "gemini_high",
+      "outputHash": "43bd794fd92be1ecd9209a135fa8ec12aa6b85bfd1346caba922644b8a644e6c",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:48:28.141Z"
+    },
+    {
+      "caseId": "A4",
+      "candidate": "sonnet_4_6",
+      "outputHash": "9281c489386e6ed3d5b5cf4297576d07d2af51add3ea03bf812092a33b561926",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:49:18.801Z"
+    },
+    {
+      "caseId": "A4",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:52:18.805Z"
+    },
+    {
+      "caseId": "P2",
+      "candidate": "sonnet_4_6",
+      "outputHash": "e6a58d3dc4f9ee66b0f1e34867fdd3de9b1b5b1653dc015003eae78be1f31500",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:53:48.301Z"
+    },
+    {
+      "caseId": "P2",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T19:56:48.314Z"
+    },
+    {
+      "caseId": "P2",
+      "candidate": "gemini_high",
+      "outputHash": "9fc06699e072972d355fdb36bb5eba629a5c13fb60037746131a5160ec6b7400",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T19:58:13.700Z"
+    },
+    {
+      "caseId": "P3",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T20:01:13.709Z"
+    },
+    {
+      "caseId": "P3",
+      "candidate": "gemini_high",
+      "outputHash": "0fa4d07f44170628f9d6933c122e3b09d60ca15395f9ad9681157773928f288a",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T20:02:24.731Z"
+    },
+    {
+      "caseId": "P3",
+      "candidate": "sonnet_4_6",
+      "outputHash": "a1e58ceec7f3760196de5f52d76772822420db764eac298c0774a603731fb2a3",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T20:03:26.780Z"
+    },
+    {
+      "caseId": "P4",
+      "candidate": "gemini_high",
+      "outputHash": "849ff60ce83d11342f536bcb00555ef11c60c7bac60ee65b291998be760dd25e",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T20:04:27.436Z"
+    },
+    {
+      "caseId": "P4",
+      "candidate": "sonnet_4_6",
+      "outputHash": "28f9f79a49e35759ccda718b5a3c68302d4a00fd712c7fb45b1688e30859453d",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-14T20:05:29.526Z"
+    },
+    {
+      "caseId": "P4",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-14T20:08:29.536Z"
+    },
+    {
+      "caseId": "R2",
+      "candidate": "gemini_high",
+      "outputHash": "ed6b73f66b6620ac1f34b15b9da80cb9d2dfba3d58cc821457bc2b39a4bc4ddf",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:26:23.931Z"
+    },
+    {
+      "caseId": "R2",
+      "candidate": "sonnet_4_6",
+      "outputHash": "1fb5dd0bad9b44c457dbae569d069cdcf4df248d3a7fc135df0873f1320ead12",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:27:16.158Z"
+    },
+    {
+      "caseId": "R2",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-15T04:30:16.166Z"
+    },
+    {
+      "caseId": "R3",
+      "candidate": "gemini_high",
+      "outputHash": "ebe5f3db2f50558e64231596a1143200361dfb977a358606e1e513f8f729b559",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:30:43.997Z"
+    },
+    {
+      "caseId": "R3",
+      "candidate": "sonnet_4_6",
+      "outputHash": "533b8621ec4c84996e76c4524f1625d60b8931d96a40cd616a549596035ef8e0",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:31:27.717Z"
+    },
+    {
+      "caseId": "R3",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-15T04:34:27.722Z"
+    },
+    {
+      "caseId": "R4",
+      "candidate": "gemini_high",
+      "outputHash": "8209302ff5ca9350400a49a9eec61ed759c5f22e3f5d50fcedcc75dd547c2515",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:35:05.857Z"
+    },
+    {
+      "caseId": "R4",
+      "candidate": "sonnet_4_6",
+      "outputHash": "c01ed1708f83476ea827fdfd13925844b7cdaeb2bbc1ffc8a03fae854c0e47d9",
+      "evaluatorVersion": "cp7-harness-2",
+      "timestamp": "2026-09-15T04:35:57.878Z"
+    },
+    {
+      "caseId": "R4",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-15T04:38:57.888Z"
+    },
+    {
+      "caseId": "E2",
+      "candidate": "gemini_high",
+      "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "timestamp": "2026-09-15T04:40:34.469Z"
+    },
+    {
+      "caseId": "E2",
+      "candidate": "sonnet_4_6",
+      "diffHash": "3d3f0173eead04b417916da3ca0b2d992480930b22e6b2cce45c9770c75883f8",
+      "timestamp": "2026-09-15T04:41:38.796Z"
+    },
+    {
+      "caseId": "E2",
+      "candidate": "sol_high",
+      "timestamp": "2026-09-15T04:42:46.448Z"
+    },
+    {
+      "caseId": "E3",
+      "candidate": "gemini_high",
+      "diffHash": "6598bc9dc2cc2e5bc5ff1e0e183884ab0ad30583e15d1bf93d6d13d204f2d9a3",
+      "timestamp": "2026-09-15T04:44:52.143Z"
+    },
+    {
+      "caseId": "E3",
+      "candidate": "sonnet_4_6",
+      "diffHash": "4141579eeebc3ddb440278167d61de370d47bdbf7596e3aa46af44e033725fe1",
+      "timestamp": "2026-09-15T04:45:32.757Z"
+    },
+    {
+      "caseId": "E3",
+      "candidate": "sol_high",
+      "diffHash": "04ff96120794258b341a8eefbe22548607274ec9c89ce8603934d9eae60a4474",
+      "timestamp": "2026-09-15T04:46:17.128Z"
+    },
+    {
+      "caseId": "E4",
+      "candidate": "gemini_high",
+      "diffHash": "252ce3f0c8cbcd51f433bf1fa631da873f8501bc0064e7c61ed47524f268df0b",
+      "timestamp": "2026-09-15T04:47:39.323Z"
+    },
+    {
+      "caseId": "E4",
+      "candidate": "sonnet_4_6",
+      "diffHash": "731ca82250f82bbdc47a174d0036c9006d0b07d17ad98e2f0d916e372c5f1f3d",
+      "timestamp": "2026-09-15T04:48:46.204Z"
+    },
+    {
+      "caseId": "E4",
+      "candidate": "sol_high",
+      "diffHash": "69fe1bc8d70a8385783173db590c549268031ee23c3b3242f394a69c7463e313",
+      "timestamp": "2026-09-15T04:49:43.132Z"
+    }
+  ]
+}

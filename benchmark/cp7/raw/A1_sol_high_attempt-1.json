@@ -1,0 +1,14 @@
+{
+  "caseId": "A1",
+  "track": "architecture",
+  "name": "Offline / Delayed-Processing Document System",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-14T19:18:39.486Z",
+  "ttfbMs": 170310,
+  "totalLatencyMs": 180008,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "outputSnippet": "The operation was aborted due to timeout"
+}

@@ -1,0 +1,14 @@
+{
+  "caseId": "R3",
+  "track": "reasoning",
+  "name": "Zero-Downtime Database Migration with Phased Rollback",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-15T04:34:27.722Z",
+  "ttfbMs": 180003,
+  "totalLatencyMs": 180003,
+  "httpStatus": 0,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "outputSnippet": "The operation was aborted due to timeout"
+}

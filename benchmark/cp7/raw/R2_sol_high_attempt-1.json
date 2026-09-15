@@ -1,0 +1,14 @@
+{
+  "caseId": "R2",
+  "track": "reasoning",
+  "name": "Distributed Idempotency & Webhook Retry Correctness",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-15T04:30:16.166Z",
+  "ttfbMs": 171579,
+  "totalLatencyMs": 180007,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "outputSnippet": "The operation was aborted due to timeout"
+}

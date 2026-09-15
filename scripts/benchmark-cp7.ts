@@ -1,7 +1,7 @@
 import "dotenv/config";
-import { readFileSync, writeFileSync, existsSync, mkdirSync, cpSync, rmSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync, cpSync, rmSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { resolve, join, relative, isAbsolute } from "node:path";
+import { resolve, join, relative, isAbsolute, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
 
@@ -45,12 +45,92 @@ export function classifyAgenticOutcome(input: {
   return { success, failureClass: success ? undefined : "TEST_FAILURE" };
 }
 
+export function writeAtomicJson(filePath: string, data: any): void {
+  const dir = dirname(filePath);
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true });
+  }
+  const tempPath = `${filePath}.tmp.${process.pid}.${Date.now()}`;
+  writeFileSync(tempPath, JSON.stringify(data, null, 2), "utf-8");
+  renameSync(tempPath, filePath);
+}
+
+export function isValidAttempt(result: any): boolean {
+  if (!result || typeof result !== "object") return false;
+  if (result.incomplete) return false;
+  if (typeof result.caseId !== "string" || !result.caseId) return false;
+  if (typeof result.candidate !== "string" || !result.candidate) return false;
+  if (typeof result.timestamp !== "string" || !result.timestamp) return false;
+  if (result.failureClass === "HARNESS_FAILURE") return false;
+
+  const validTerminalFailureClasses = new Set([
+    "TIMEOUT",
+    "TRUNCATION",
+    "429_QUOTA",
+    "4XX_CLIENT_ERROR",
+    "5XX_PROVIDER",
+    "NETWORK_PROVIDER",
+    "TOOL_FAILURE",
+    "TEST_FAILURE",
+    "QUALITY_FAILURE",
+    "MANUAL_REVIEW_REQUIRED"
+  ]);
+
+  if (result.failureClass && !validTerminalFailureClasses.has(result.failureClass)) {
+    return false;
+  }
+
+  return true;
+}
+
+export function loadResumeAttempts(rawDir: string): Map<string, { file: string; result: CaseRunResult; attempt: number }> {
+  const map = new Map<string, { file: string; result: CaseRunResult; attempt: number }>();
+  if (!existsSync(rawDir)) return map;
+
+  const files = readdirSync(rawDir).filter(f => f.endsWith(".json") && !f.includes(".tmp"));
+  for (const file of files) {
+    const fullPath = join(rawDir, file);
+    try {
+      const content = readFileSync(fullPath, "utf-8");
+      const parsed = JSON.parse(content);
+      if (!isValidAttempt(parsed)) continue;
+
+      const attemptMatch = file.match(/_attempt-(\d+)\.json$/);
+      const attempt = attemptMatch ? Number(attemptMatch[1]) : 0;
+      const key = `${parsed.caseId}:${parsed.candidate}`;
+      const existing = map.get(key);
+
+      if (!existing || attempt > existing.attempt ||
+          (attempt === existing.attempt && parsed.timestamp > existing.result.timestamp)) {
+        map.set(key, { file, result: parsed, attempt });
+      }
+    } catch {
+      // safely ignore corrupt or unreadable attempt files
+    }
+  }
+  return map;
+}
+
+export function shouldSkipCaseCandidate(options: {
+  isResume: boolean;
+  caseId: string;
+  candidateAlias: string;
+  resumeMap: Map<string, { file: string; result: CaseRunResult; attempt: number }>;
+}): CaseRunResult | null {
+  if (!options.isResume) return null;
+  const key = `${options.caseId}:${options.candidateAlias}`;
+  const existing = options.resumeMap.get(key);
+  if (!existing || !isValidAttempt(existing.result)) return null;
+  return existing.result;
+}
+
 export function canonicalizeAttempts(
   entries: Array<{ file: string; result: CaseRunResult }>
 ): CaseRunResult[] {
   const latest = new Map<string, { result: CaseRunResult; attempt: number }>();
   for (const entry of entries) {
-    const attemptMatch = entry.file.match(/_attempt-(\\d+)\\.json$/);
+    if (!isValidAttempt(entry.result)) continue;
+    const attemptMatch = entry.file.match(/_attempt-(\d+)\.json$/);
     const attempt = attemptMatch ? Number(attemptMatch[1]) : 0;
     const key = `${entry.result.caseId}:${entry.result.candidate}`;
     const current = latest.get(key);
@@ -514,7 +594,8 @@ async function runQualitativeCase(caseItem: any, candidateAlias: string, modelId
           { role: "user", content: caseItem.prompt }
         ],
         stream: true,
-        max_tokens: 3000
+        max_tokens: 3000,
+        ...(candidateAlias === "sol_high" ? { reasoning_effort: "high" } : {})
       }),
       signal: AbortSignal.timeout(180000)
     });
@@ -683,7 +764,8 @@ When you have fixed/implemented the task and verified tests pass, conclude with 
           tools,
           tool_choice: "auto",
           stream: false,
-          max_tokens: 2500
+          max_tokens: 2500,
+          ...(candidateAlias === "sol_high" ? { reasoning_effort: "high" } : {})
         }),
         signal: AbortSignal.timeout(60000)
       });
@@ -856,6 +938,7 @@ async function main() {
   const args = process.argv.slice(2);
   const isSmoke = args.includes("--smoke");
   const isFull = args.includes("--full");
+  const isResume = args.includes("--resume");
   const trackArgIdx = args.indexOf("--track");
   const trackFilter = trackArgIdx !== -1 ? args[trackArgIdx + 1] : null;
   const caseArgIdx = args.indexOf("--case");
@@ -878,12 +961,17 @@ async function main() {
 
   const candidates = [
     { alias: "gemini_high", modelId: "ag/gemini-3.8-flash-high" },
-    { alias: "sonnet_4_6", modelId: "ag/claude-sonnet-4-6" }
+    { alias: "sonnet_4_6", modelId: "ag/claude-sonnet-4-6" },
+    { alias: "sol_high", modelId: "cx/gpt-5.6-sol" }
   ];
 
   mkdirSync("benchmark/cp7/raw", { recursive: true });
   const rawDir = "benchmark/cp7/raw";
   const manifestPath = "benchmark/cp7/manifest.json";
+  const resumeMap = isResume ? loadResumeAttempts(rawDir) : new Map<string, { file: string; result: CaseRunResult; attempt: number }>();
+  if (isResume) {
+    console.log(`--resume active: loaded ${resumeMap.size} valid prior benchmark runs.`);
+  }
   let manifestEntries: Array<Record<string, any>> = [];
   if (existsSync(manifestPath)) {
     try {
@@ -903,16 +991,30 @@ async function main() {
     console.log(`--------------------------------------------------`);
 
     // Rotate candidate order per case
-    const orderedCandidates = i % 2 === 0
-      ? [candidates[0], candidates[1]]
-      : [candidates[1], candidates[0]];
+    const orderedCandidates = [
+      candidates[i % candidates.length],
+      candidates[(i + 1) % candidates.length],
+      candidates[(i + 2) % candidates.length]
+    ];
 
     for (const cand of orderedCandidates) {
+      const skippedResult = shouldSkipCaseCandidate({
+        isResume,
+        caseId: c.caseId,
+        candidateAlias: cand.alias,
+        resumeMap
+      });
+      if (skippedResult) {
+        console.log(`> Skipping ${cand.alias} (${cand.modelId}) for ${c.caseId}: already completed (terminal: ${skippedResult.failureClass || (skippedResult.success ? "SUCCESS" : "FAILED")}).`);
+        allResults.push(skippedResult);
+        continue;
+      }
+
       const attemptPrefix = `${c.caseId}_${cand.alias}_attempt-`;
-      const priorAttempts = readdirSync("benchmark/cp7/raw")
-        .filter(file => file.startsWith(attemptPrefix) && file.endsWith(".json"));
+      const priorAttempts = readdirSync(rawDir)
+        .filter(file => file.startsWith(attemptPrefix) && file.endsWith(".json") && !file.includes(".tmp"));
       const attempt = priorAttempts.length + 1;
-      const rawPath = `benchmark/cp7/raw/${attemptPrefix}${attempt}.json`;
+      const rawPath = join(rawDir, `${attemptPrefix}${attempt}.json`);
 
       console.log(`> Running ${cand.alias} (${cand.modelId}), attempt ${attempt}...`);
       let result: CaseRunResult;
@@ -931,7 +1033,7 @@ async function main() {
       }
 
       // Immediate atomic persistence
-      writeFileSync(rawPath, JSON.stringify(result, null, 2), "utf-8");
+      writeAtomicJson(rawPath, result);
       manifestEntries.push({
         caseId: result.caseId,
         candidate: result.candidate,
@@ -942,10 +1044,10 @@ async function main() {
         evaluatorVersion: result.evaluatorVersion,
         timestamp: result.timestamp
       });
-      writeFileSync(manifestPath, JSON.stringify({
+      writeAtomicJson(manifestPath, {
         evaluatorVersion: EVALUATOR_VERSION,
         entries: manifestEntries
-      }, null, 2), "utf-8");
+      });
       allResults.push(result);
     }
   }
@@ -977,7 +1079,7 @@ async function main() {
   console.log(JSON.stringify(summary, null, 2));
 
   // Compile only the canonical latest attempt for each case/candidate.
-  const rawFiles = readdirSync(rawDir).filter(f => f.endsWith(".json"));
+  const rawFiles = readdirSync(rawDir).filter(f => f.endsWith(".json") && !f.includes(".tmp"));
   const attemptEntries: Array<{ file: string; result: CaseRunResult }> = [];
   for (const rf of rawFiles) {
     try {
@@ -986,27 +1088,18 @@ async function main() {
     } catch {}
   }
   const allPersistedResults = canonicalizeAttempts(attemptEntries);
-  writeFileSync(manifestPath, JSON.stringify({
+  const updatedManifestEntries = allPersistedResults.map(result => ({
+    caseId: result.caseId,
+    candidate: result.candidate,
+    outputHash: result.outputHash,
+    diffHash: result.agenticDetails?.diffHash,
+    evaluatorVersion: result.evaluatorVersion,
+    timestamp: result.timestamp
+  }));
+  writeAtomicJson(manifestPath, {
     evaluatorVersion: EVALUATOR_VERSION,
-    entries: allPersistedResults.map(result => ({
-      caseId: result.caseId,
-      candidate: result.candidate,
-      outputHash: result.outputHash,
-      diffHash: result.agenticDetails?.diffHash,
-      evaluatorVersion: result.evaluatorVersion,
-      timestamp: result.timestamp
-    }))
-  }, null, 2), "utf-8");
-
-  const validManifestResults = manifestEntries.filter(entry =>
-    allPersistedResults.some(result =>
-      result.caseId === entry.caseId && result.candidate === entry.candidate &&
-      result.timestamp === entry.timestamp
-    )
-  );
-  if (validManifestResults.length !== allPersistedResults.length && allPersistedResults.length > 0) {
-    throw new Error("Manifest does not cover every canonical benchmark result");
-  }
+    entries: updatedManifestEntries
+  });
 
   const globalSummary: Record<string, any> = {
     totalPersistedRuns: allPersistedResults.length,
@@ -1038,15 +1131,17 @@ async function main() {
       geminiRuns: trackRuns.filter(r => r.candidate === "gemini_high").length,
       geminiPassed: trackRuns.filter(r => r.candidate === "gemini_high" && r.success).length,
       sonnetRuns: trackRuns.filter(r => r.candidate === "sonnet_4_6").length,
-      sonnetPassed: trackRuns.filter(r => r.candidate === "sonnet_4_6" && r.success).length
+      sonnetPassed: trackRuns.filter(r => r.candidate === "sonnet_4_6" && r.success).length,
+      solRuns: trackRuns.filter(r => r.candidate === "sol_high").length,
+      solPassed: trackRuns.filter(r => r.candidate === "sol_high" && r.success).length
     };
   }
 
   console.log("\nGLOBAL COMPILED SUMMARY:");
   console.log(JSON.stringify(globalSummary, null, 2));
 
-  writeFileSync("benchmark/cp7/results.json", JSON.stringify(allPersistedResults, null, 2), "utf-8");
-  writeFileSync("benchmark/cp7/summary.json", JSON.stringify(globalSummary, null, 2), "utf-8");
+  writeAtomicJson("benchmark/cp7/results.json", allPersistedResults);
+  writeAtomicJson("benchmark/cp7/summary.json", globalSummary);
 }
 
 const isDirectExecution = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);

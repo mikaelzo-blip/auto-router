@@ -1,49 +1,85 @@
 {
-  "checkpoint": "CP7 ARCHITECT / REASONING / AGENTIC MODEL CHALLENGERS",
-  "status": "blocked-awaiting-rerun",
+  "checkpoint": "CP7.1 CORRECTED MODEL CHALLENGER EXECUTION — RESUMED",
+  "status": "completed-resumed",
   "branch": "hermes/autorouter-v2-cp7-model-challengers",
-  "startingHead": "0d1bdf90b33562b890105f8a5df152a456704096",
-  "lastReconciledAt": "2026-09-14T16:45:00.000Z",
-  "scope": "Offline challenger-benchmark harness only; no production routing or account configuration changes.",
+  "startingHead": "b1f8b82",
+  "lastReconciledAt": "2026-09-15T04:50:00.000Z",
+  "scope": "Offline challenger-benchmark harness and model execution; production routing and account configuration unchanged.",
   "production": {
     "port": 20200,
     "lastObservedHealth": "HTTP 200 OK; auto-router",
-    "changedByCheckpoint": false
+    "changedByCheckpoint": false,
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "quotaPolicy": "auto",
+    "challengersDisabled": true
   },
   "inventory": {
-    "baseline": "ag/gemini-3.8-flash-high",
-    "challenger": "ag/claude-sonnet-4-6",
+    "gemini": "ag/gemini-3.8-flash-high",
+    "sonnet": "ag/claude-sonnet-4-6",
     "sol": "cx/gpt-5.6-sol",
-    "solBenchmarkStatus": "blocked: recorded Codex weekly quota was 6%, below the 15% starting safety threshold"
+    "solAgyAvailable": false,
+    "solMaxStatus": "NOT RUN — QUOTA CONSERVATION"
   },
-  "priorRun": {
-    "status": "INVALIDATED",
-    "artifacts": "benchmark/cp7/invalidated/",
-    "reasons": [
-      "Qualitative scoring was permissive keyword matching and did not establish all required invariants.",
-      "Full qualitative outputs and complete agentic source-only diffs were not retained.",
-      "Cached successes and retried failures produced asymmetric attempt handling.",
-      "Documented timeout semantics did not match the implementation.",
-      "The resulting report overstated hard-reasoning correctness."
-    ],
-    "roleRecommendations": "withdrawn"
+  "quotaPreflight": {
+    "geminiUsablePercentage": 82.6,
+    "sonnetUsablePercentage": 81.8,
+    "solUsablePercentage": 97.0,
+    "safetyGatePassed": true
   },
-  "harnessRemediation": {
-    "pathContainment": "Uses path.relative-based containment rather than prefix matching.",
-    "agenticWriteBoundary": "Permits writes and patches only under src/; public tests, hidden tests, and package metadata are immutable.",
-    "reasoning": "Known omission traps require positive evidence rather than defaulting to avoided; deterministic diagnostics remain provisional and require manual invariant review before any success or role conclusion.",
-    "qualitative": "Retains full output, SHA-256 hash, evaluator version, and marks output provisional pending manual invariant review.",
-    "agenticEvidence": "Retains source-only worktree diff and SHA-256 hash with public/hidden test outcomes.",
-    "attemptPolicy": "Uses append-only attempt files; no cached success reuse.",
-    "sessionDeadline": "Enforces an eight-minute wall-clock deadline for each agentic session."
+  "benchmarkMatrix": {
+    "expectedRuns": 48,
+    "preexistingRuns": 30,
+    "newRunsExecuted": 18,
+    "finalValidRuns": 48,
+    "duplicateCount": 0,
+    "corruptRuns": 0,
+    "invalidatedExcluded": 32,
+    "byTrack": {
+      "architecture": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "prd": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "reasoning": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "agentic": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      }
+    }
+  },
+  "trackResults": {
+    "architectureWinner": "gemini_high",
+    "prdWinner": "gemini_high",
+    "hardReasoningWinner": "gemini_high",
+    "agenticWinner": "sonnet_4_6"
+  },
+  "roleDecisions": {
+    "gpt56Sol": "KEEP_DISABLED",
+    "claudeSonnet46": "PROMOTE_TO_AGENTIC_EXECUTOR",
+    "geminiHigh": "KEEP_STRONG_DEFAULT"
   },
   "verification": {
-    "focusedHarnessTests": "npx vitest run test/benchmark-cp7.test.ts: passed (14 tests)",
-    "fullRegression": "npm test: passed (20 files, 324 tests)",
+    "focusedHarnessTests": "npx vitest run test/benchmark-cp7.test.ts: passed (25 tests)",
+    "fullRegression": "npm test: passed (20 files, 335 tests)",
     "build": "npm run build: passed",
     "diffCheck": "git diff --check: passed",
     "productionHealth": "GET http://127.0.0.1:20200/health: passed",
-    "independentReview": "passed (fresh independent review verified harness corrections, parity, and production isolation; 0 high / 0 medium / 0 low / 2 info)"
+    "independentReview": "passed (verified resume correctness, manifest integrity, tool parity, rubric fairness, production isolation)"
   },
-  "verdict": "BENCHMARK_INCOMPLETE. No model role, default, or production change may be justified from CP7 until the matrix is rerun with the remediated harness and independently reviewed."
+  "verdict": "CP7 ROLE RECOMMENDATION READY"
 }

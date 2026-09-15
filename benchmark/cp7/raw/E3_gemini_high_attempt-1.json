@@ -1,0 +1,27 @@
+{
+  "caseId": "E3",
+  "track": "agentic",
+  "name": "Failure Recovery (Cache Manager Eviction Defect)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T04:44:52.143Z",
+  "ttfbMs": 2542,
+  "totalLatencyMs": 122443,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 15,
+    "failedToolCalls": 2,
+    "filesChanged": [
+      "src/cache-manager.ts"
+    ],
+    "diff": "diff --git \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\" \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-gemini_high\\\\src/cache-manager.ts\"\nindex b986444..96f3476 100644\n--- \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\"\n+++ \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-gemini_high\\\\src/cache-manager.ts\"\n@@ -19,17 +19,20 @@ export class CacheManager<T = any> {\n     const entry = this.items.get(key);\n     if (!entry) return undefined;\n \n-    if (entry.expiresAt && entry.expiresAt <= now) {\n+    if (entry.expiresAt !== undefined && entry.expiresAt <= now) {\n       this.items.delete(key);\n       return undefined;\n     }\n \n-    // Defect 1: Does not refresh LRU access order (should delete and re-insert into Map)\n+    // Refresh LRU access order on cache hit\n+    this.items.delete(key);\n+    this.items.set(key, entry);\n+\n     return entry.value;\n   }\n \n   set(key: string, value: T, ttlMs: number | undefined = this.defaultTtlMs, now: number = Date.now()): void {\n-    const expiresAt = ttlMs ? now + ttlMs : undefined;\n+    const expiresAt = ttlMs !== undefined ? now + ttlMs : undefined;\n \n     if (this.items.has(key)) {\n       this.items.delete(key);\n@@ -37,22 +40,20 @@ export class CacheManager<T = any> {\n \n     this.items.set(key, { value, expiresAt });\n \n-    if (this.items.size > this.maxSize) {\n-      // Step 1: Remove expired items\n-      for (const [k, entry] of Array.from(this.items.entries())) {\n-        if (entry.expiresAt && entry.expiresAt <= now) {\n-          this.items.delete(k);\n-        }\n+    // Prune expired items before size limits are checked\n+    for (const [k, entry] of this.items.entries()) {\n+      if (entry.expiresAt !== undefined && entry.expiresAt <= now) {\n+        this.items.delete(k);\n       }\n+    }\n \n-      // Step 2: If still over maxSize, evict LRU\n-      // Defect 2: Pop removes the newest item instead of the oldest (shift)!\n-      if (this.items.size > this.maxSize) {\n-        const keys = Array.from(this.items.keys());\n-        const victim = keys.pop(); // BUG: should be keys.shift() or first key\n-        if (victim) {\n-          this.items.delete(victim);\n-        }\n+    // If still over maxSize, evict LRU (oldest inserted / least recently used)\n+    while (this.items.size > this.maxSize) {\n+      const victim = this.items.keys().next().value;\n+      if (victim !== undefined) {\n+        this.items.delete(victim);\n+      } else {\n+        break;\n       }\n     }\n   }\n",
+    "diffHash": "6598bc9dc2cc2e5bc5ff1e0e183884ab0ad30583e15d1bf93d6d13d204f2d9a3",
+    "testsPassed": true,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "✔ CacheManager - basic set and get (0.4543ms)\n✔ CacheManager - TTL expiration (0.0697ms)\n✔ CacheManager - LRU eviction respects access order (0.0724ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 146.0296\n",
+    "hiddenTestOutput": "✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2168ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 134.1068\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:111\n✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2168ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\Projects\\router\\auto-router-v2\\tmp\\cp7-agentic\\E3-gemini_high\\test-hidden\\h"
+  }
+}

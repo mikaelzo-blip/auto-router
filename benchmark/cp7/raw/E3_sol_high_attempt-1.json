@@ -1,0 +1,27 @@
+{
+  "caseId": "E3",
+  "track": "agentic",
+  "name": "Failure Recovery (Cache Manager Eviction Defect)",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-15T04:46:17.128Z",
+  "ttfbMs": 3771,
+  "totalLatencyMs": 44369,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 5,
+    "toolCalls": 8,
+    "failedToolCalls": 2,
+    "filesChanged": [
+      "src/cache-manager.ts"
+    ],
+    "diff": "diff --git \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\" \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-sol_high\\\\src/cache-manager.ts\"\nindex b986444..6b6b612 100644\n--- \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\"\n+++ \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-sol_high\\\\src/cache-manager.ts\"\n@@ -19,41 +19,38 @@ export class CacheManager<T = any> {\n     const entry = this.items.get(key);\n     if (!entry) return undefined;\n \n-    if (entry.expiresAt && entry.expiresAt <= now) {\n+    if (this.isExpired(entry, now)) {\n       this.items.delete(key);\n       return undefined;\n     }\n \n-    // Defect 1: Does not refresh LRU access order (should delete and re-insert into Map)\n+    // Map iteration order represents least-to-most recently used. Move a hit\n+    // to the end so that a subsequent eviction does not discard it.\n+    this.items.delete(key);\n+    this.items.set(key, entry);\n+\n     return entry.value;\n   }\n \n   set(key: string, value: T, ttlMs: number | undefined = this.defaultTtlMs, now: number = Date.now()): void {\n-    const expiresAt = ttlMs ? now + ttlMs : undefined;\n+    // Expired entries must not consume capacity or cause a live entry to be\n+    // evicted when this insertion reaches the size limit.\n+    this.pruneExpired(now);\n \n-    if (this.items.has(key)) {\n-      this.items.delete(key);\n+    // Replacing an entry also makes the key the most recently used one.\n+    this.items.delete(key);\n+\n+    const expiresAt = ttlMs === undefined ? undefined : now + ttlMs;\n+    if (expiresAt !== undefined && expiresAt <= now) {\n+      return;\n     }\n \n     this.items.set(key, { value, expiresAt });\n \n-    if (this.items.size > this.maxSize) {\n-      // Step 1: Remove expired items\n-      for (const [k, entry] of Array.from(this.items.entries())) {\n-        if (entry.expiresAt && entry.expiresAt <= now) {\n-          this.items.delete(k);\n-        }\n-      }\n-\n-      // Step 2: If still over maxSize, evict LRU\n-      // Defect 2: Pop removes the newest item instead of the oldest (shift)!\n-      if (this.items.size > this.maxSize) {\n-        const keys = Array.from(this.items.keys());\n-        const victim = keys.pop(); // BUG: should be keys.shift() or first key\n-        if (victim) {\n-          this.items.delete(victim);\n-        }\n-      }\n+    while (this.items.size > this.maxSize) {\n+      const oldestKey = this.items.keys().next().value as string | undefined;\n+      if (oldestKey === undefined) break;\n+      this.items.delete(oldestKey);\n     }\n   }\n \n@@ -68,4 +65,16 @@ export class CacheManager<T = any> {\n   clear(): void {\n     this.items.clear();\n   }\n+\n+  private isExpired(entry: CacheEntry<T>, now: number): boolean {\n+    return entry.expiresAt !== undefined && entry.expiresAt <= now;\n+  }\n+\n+  private pruneExpired(now: number): void {\n+    for (const [key, entry] of this.items) {\n+      if (this.isExpired(entry, now)) {\n+        this.items.delete(key);\n+      }\n+    }\n+  }\n }\n",
+    "diffHash": "04ff96120794258b341a8eefbe22548607274ec9c89ce8603934d9eae60a4474",
+    "testsPassed": true,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "✔ CacheManager - basic set and get (0.4552ms)\n✔ CacheManager - TTL expiration (0.0801ms)\n✔ CacheManager - LRU eviction respects access order (0.0711ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 110.0307\n",
+    "hiddenTestOutput": "✖ Hidden: continuous sequential LRU eviction with 5 keys (1.9425ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.2607\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:111\n✖ Hidden: continuous sequential LRU eviction with 5 keys (1.9425ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\Projects\\router\\auto-router-v2\\tmp\\cp7-agentic\\E3-sol_high\\test-hidden\\hidd"
+  }
+}
