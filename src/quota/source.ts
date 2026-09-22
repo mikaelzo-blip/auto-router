@@ -16,6 +16,7 @@ async function mapConcurrent<T, R>(items: T[], limit: number, fn: (item: T, inde
 
 export interface NineRouterQuotaSourceOptions {
   baseUrl: string;
+  apiKey?: string;
   refreshTtlMs?: number;
   staleFallbackMs?: number;
   timeoutMs?: number;
@@ -28,6 +29,7 @@ export class NineRouterQuotaSource implements QuotaSource {
   private readonly staleFallbackMs: number;
   private readonly timeoutMs: number;
   private readonly fetchImpl: typeof fetch;
+  private readonly authHeaders: HeadersInit;
 
   private cachedSnapshot: QuotaSnapshot | null = null;
   private inFlightRefresh: Promise<QuotaSnapshot> | null = null;
@@ -39,6 +41,7 @@ export class NineRouterQuotaSource implements QuotaSource {
     this.staleFallbackMs = options.staleFallbackMs ?? 60_000;
     this.timeoutMs = options.timeoutMs ?? 5000;
     this.fetchImpl = options.fetchImpl ?? fetch;
+    this.authHeaders = options.apiKey ? { authorization: `Bearer ${options.apiKey}` } : {};
   }
 
   async getSnapshot(): Promise<QuotaSnapshot> {
@@ -121,7 +124,7 @@ export class NineRouterQuotaSource implements QuotaSource {
 
     try {
       const signal = AbortSignal.timeout(this.timeoutMs);
-      const res = await this.fetchImpl(`${this.baseUrl}/api/providers`, { signal });
+      const res = await this.fetchImpl(`${this.baseUrl}/api/providers`, { signal, headers: this.authHeaders });
       if (!res.ok) {
         throw new Error(`providers endpoint status ${res.status}`);
       }
@@ -177,7 +180,7 @@ export class NineRouterQuotaSource implements QuotaSource {
 
       try {
         const signal = AbortSignal.timeout(this.timeoutMs);
-        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
+        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal, headers: this.authHeaders });
         if (!res.ok) {
           accounts[`antigravity:${accountAlias}`] = {
             accountAlias,
@@ -411,7 +414,7 @@ export class NineRouterQuotaSource implements QuotaSource {
 
       try {
         const signal = AbortSignal.timeout(this.timeoutMs);
-        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal });
+        const res = await this.fetchImpl(`${this.baseUrl}/api/usage/${conn.id}`, { signal, headers: this.authHeaders });
         if (!res.ok) {
           accounts[`codex:${accountAlias}`] = {
             accountAlias,

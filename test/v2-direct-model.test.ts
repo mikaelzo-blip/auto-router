@@ -36,6 +36,39 @@ afterEach(() => {
 });
 
 describe("V2 direct execution model contract", () => {
+  it("reuses the configured upstream API key for the default quota source without exposing it", async () => {
+    const upstreamApiKey = "configured-upstream-test-secret";
+    vi.spyOn(globalThis, "fetch").mockImplementation((url, init) => {
+      const authorization = new Headers(init?.headers).get("authorization");
+      if (authorization !== `Bearer ${upstreamApiKey}`) {
+        return Promise.resolve(new Response("Unauthorized", { status: 401 }));
+      }
+      if (String(url).endsWith("/api/providers")) {
+        return Promise.resolve(new Response(JSON.stringify({
+          connections: [{ id: "conn-ag-1", provider: "antigravity", isActive: true }]
+        }), { status: 200 }));
+      }
+      if (String(url).endsWith("/api/usage/conn-ag-1")) {
+        return Promise.resolve(new Response(JSON.stringify({
+          quotas: { "gemini-3.8-flash-low": { remainingPercentage: 80 } }
+        }), { status: 200 }));
+      }
+      return Promise.resolve(new Response("Not found", { status: 404 }));
+    });
+    const config = makeConfig("v2");
+    config.upstreamApiKey = upstreamApiKey;
+    delete config.quotaSource;
+    const app = buildApp(config);
+
+    const response = await app.inject({ method: "GET", url: "/debug/quota" });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.json().providerHealth.antigravity).toBe("healthy");
+    expect(response.body).not.toContain(upstreamApiKey);
+
+    await app.close();
+  });
+
   it("reports the concrete V2 model as upstreamModel while preserving legacy route metadata", async () => {
     const app = buildApp(makeConfig("v2"));
 

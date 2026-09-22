@@ -150,6 +150,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const quotaTracker = new QuotaCooldownTracker();
   const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
     baseUrl: config.quotaSourceBaseUrl ?? "http://127.0.0.1:20128",
+    apiKey: config.upstreamApiKey,
     refreshTtlMs: config.quotaRefreshTtlMs ?? 30_000,
     staleFallbackMs: config.quotaStaleFallbackMs ?? 60_000,
     timeoutMs: config.quotaSourceTimeoutMs ?? 5000

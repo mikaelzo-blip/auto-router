@@ -146,6 +146,66 @@ describe("QuotaSource (9Router and Synthetic)", () => {
     source.close();
   });
 
+  it("authenticates provider and usage quota requests without exposing the configured key", async () => {
+    const upstreamApiKey = "quota-source-test-secret";
+    const fetchMock = vi.fn().mockImplementation((url: string, init?: RequestInit) => {
+      const authorization = new Headers(init?.headers).get("authorization");
+      if (authorization !== `Bearer ${upstreamApiKey}`) {
+        return Promise.resolve(new Response("Unauthorized", { status: 401 }));
+      }
+      if (url.endsWith("/api/providers")) {
+        return Promise.resolve(new Response(JSON.stringify(mockProvidersResponse), { status: 200 }));
+      }
+      if (url.endsWith("/api/usage/conn-ag-1")) {
+        return Promise.resolve(new Response(JSON.stringify(mockAgUsageResponse), { status: 200 }));
+      }
+      if (url.endsWith("/api/usage/conn-cx-1")) {
+        return Promise.resolve(new Response(JSON.stringify(mockCodexUsageResponse), { status: 200 }));
+      }
+      return Promise.resolve(new Response("Not found", { status: 404 }));
+    });
+
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      fetchImpl: fetchMock,
+      apiKey: upstreamApiKey
+    });
+
+    const snapshot = await source.getSnapshot();
+    expect(snapshot.providerHealth).toEqual({ antigravity: "healthy", codex: "healthy" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://127.0.0.1:20128/api/providers",
+      expect.objectContaining({ headers: { authorization: `Bearer ${upstreamApiKey}` } })
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://127.0.0.1:20128/api/usage/conn-ag-1",
+      expect.objectContaining({ headers: { authorization: `Bearer ${upstreamApiKey}` } })
+    );
+    expect(fetchMock).toHaveBeenCalledWith(
+      "http://127.0.0.1:20128/api/usage/conn-cx-1",
+      expect.objectContaining({ headers: { authorization: `Bearer ${upstreamApiKey}` } })
+    );
+    expect(JSON.stringify(snapshot)).not.toContain(upstreamApiKey);
+
+    source.close();
+  });
+
+  it("fails safely without manufacturing an authorization header when no key is configured", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("Unauthorized", { status: 401 }));
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      fetchImpl: fetchMock
+    });
+
+    const snapshot = await source.getSnapshot();
+
+    expect(snapshot.providerHealth).toEqual({ antigravity: "unavailable", codex: "unavailable" });
+    expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("authorization")).toBeNull();
+    expect(JSON.stringify(snapshot)).not.toContain("undefined");
+
+    source.close();
+  });
+
   it("serves from cache on subsequent calls within TTL", async () => {
     let callCount = 0;
     const fetchMock = vi.fn().mockImplementation((url: string) => {
