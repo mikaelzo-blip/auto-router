@@ -199,9 +199,46 @@ describe("QuotaSource (9Router and Synthetic)", () => {
 
     const snapshot = await source.getSnapshot();
 
-    expect(snapshot.providerHealth).toEqual({ antigravity: "unavailable", codex: "unavailable" });
+    expect(snapshot.providerHealth).toEqual({ antigravity: "degraded", codex: "degraded" });
     expect(new Headers(fetchMock.mock.calls[0]?.[1]?.headers).get("authorization")).toBeNull();
     expect(JSON.stringify(snapshot)).not.toContain("undefined");
+
+    source.close();
+  });
+
+  it("treats a management API authorization failure as unknown telemetry rather than provider exhaustion", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("Unauthorized", { status: 401 }));
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      apiKey: "quota-source-test-secret",
+      fetchImpl: fetchMock
+    });
+
+    const snapshot = await source.getSnapshot();
+
+    expect(snapshot.buckets).toEqual({});
+    expect(snapshot.providerHealth).toEqual({ antigravity: "degraded", codex: "degraded" });
+
+    source.close();
+  });
+
+  it("treats usage API authorization failures as unknown telemetry rather than provider exhaustion", async () => {
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url.endsWith("/api/providers")) {
+        return Promise.resolve(new Response(JSON.stringify(mockProvidersResponse), { status: 200 }));
+      }
+      return Promise.resolve(new Response("Unauthorized", { status: 401 }));
+    });
+    const source = new NineRouterQuotaSource({
+      baseUrl: "http://127.0.0.1:20128",
+      apiKey: "quota-source-test-secret",
+      fetchImpl: fetchMock
+    });
+
+    const snapshot = await source.getSnapshot();
+
+    expect(snapshot.buckets).toEqual({});
+    expect(snapshot.providerHealth).toEqual({ antigravity: "degraded", codex: "degraded" });
 
     source.close();
   });
@@ -255,8 +292,8 @@ describe("QuotaSource (9Router and Synthetic)", () => {
 
     const snapshot = await source.getSnapshot();
     expect(snapshot.buckets).toEqual({});
-    expect(snapshot.providerHealth["antigravity"]).toBe("unavailable");
-    expect(snapshot.providerHealth["codex"]).toBe("unavailable");
+    expect(snapshot.providerHealth["antigravity"]).toBe("degraded");
+    expect(snapshot.providerHealth["codex"]).toBe("degraded");
 
     source.close();
   });

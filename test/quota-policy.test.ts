@@ -140,6 +140,35 @@ describe("Quota Policy Evaluation & Ranking", () => {
     expect(state.status).toBe("unknown");
   });
 
+  it("9A. unavailable management telemetry leaves Gemini and Sonnet quota states unknown", () => {
+    const telemetryUnavailable: QuotaSnapshot = {
+      observedAt: Date.now(),
+      buckets: {},
+      providerHealth: { antigravity: "degraded", codex: "degraded" },
+      stale: true
+    };
+    const profiles = ["gemini-flash-low", "gemini-flash-medium", "gemini-flash-high", "sonnet-agentic"]
+      .map((id) => DEFAULT_SHADOW_PROFILES.find((profile) => profile.id === id)!);
+
+    for (const profile of profiles) {
+      expect(evaluateCandidateQuota(profile, telemetryUnavailable, tracker).status).toBe("unknown");
+    }
+
+    const ranked = filterAndRankWithQuota({
+      taskType: "code",
+      complexity: "high",
+      risk: "high",
+      minimumQualityTier: "strong",
+      requiredCapabilities: { tools: true, vision: true },
+      profiles: profiles.filter((profile) => profile.id !== "sonnet-agentic"),
+      snapshot: telemetryUnavailable,
+      cooldownTracker: tracker,
+      policy: "auto"
+    });
+
+    expect(ranked.map((profile) => profile.id)).toContain("gemini-flash-high");
+  });
+
   it("10. disabled Sol and Astra remain disabled even with 100% quota", () => {
     const snapshot = makeSnapshot({
       codex_session: { provider: "codex", remainingRatio: 1.0 },

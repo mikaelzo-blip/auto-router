@@ -131,8 +131,10 @@ export class NineRouterQuotaSource implements QuotaSource {
       const data = await res.json() as { connections?: Array<{ id: string; provider: string; isActive?: boolean; testStatus?: string }> };
       connections = (data.connections ?? []).filter((c) => c.isActive !== false);
     } catch {
-      providerHealth.antigravity = "unavailable";
-      providerHealth.codex = "unavailable";
+      // Management telemetry is optional. Its authorization, transport, or schema
+      // failure is not evidence that 9Router cannot execute a concrete model.
+      providerHealth.antigravity = "degraded";
+      providerHealth.codex = "degraded";
       return {
         observedAt: now,
         buckets: {},
