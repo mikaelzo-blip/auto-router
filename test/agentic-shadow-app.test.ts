@@ -47,10 +47,11 @@ describe("Agentic Shadow Routing Endpoints (CP7.3)", () => {
     routerMode: "v2",
     reasoningPolicy: "auto",
     quotaPolicy: "auto",
-    routing
+    routing,
+    quotaSource
   };
 
-  const app = buildApp(config, { quotaSource });
+  const app = buildApp(config);
 
   afterAll(() => app.close());
   afterEach(() => vi.restoreAllMocks());

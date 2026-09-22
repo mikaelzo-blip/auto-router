@@ -1,0 +1,109 @@
+{
+  "checkpoint": "QUOTA-AUTO PRODUCTION CUTOVER",
+  "status": "completed-successful",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "productionHead": "0d1bdf90b33562b890105f8a5df152a456704096",
+  "timestamp": "2026-09-14T14:48:00.000Z",
+  "port": 20200,
+  "productionPid": 9780,
+  "preCutoverDiscovery": {
+    "initialPortState": "127.0.0.1:20200 was running AutoRouter V1 legacy (PID 20996, cwd C:\\Projects\\router\\auto-router at commit a21c81c, /debug/quota returned 404)",
+    "preCutoverGate1Trigger": "Prerequisite difference detected per Gate 1; user authorized establishing V2 shadow baseline on 20200 first, then proceeding to auto cutover",
+    "shadowBaselineEstablished": {
+      "port": 20200,
+      "pid": 14008,
+      "health": "HTTP 200 OK",
+      "quotaPolicy": "shadow",
+      "routerMode": "v2",
+      "reasoningPolicy": "auto"
+    }
+  },
+  "cutoverExecution": {
+    "targetPolicy": "QUOTA_POLICY=auto",
+    "method": "controlled process swap via scripts/reload-production.ps1 -QuotaPolicy auto",
+    "transitionDowntimeMs": 461,
+    "activePid": 9780,
+    "postCutoverHealth": "HTTP 200 OK",
+    "verifiedConfiguration": {
+      "ROUTER_MODE": "v2",
+      "REASONING_POLICY": "auto",
+      "QUOTA_POLICY": "auto"
+    }
+  },
+  "smokeTestResults": {
+    "routine": {
+      "expectedProfile": "gemini-flash-low",
+      "actualProfile": "gemini-flash-low",
+      "model": "ag/gemini-3.8-flash-low",
+      "upstreamModel": "gemini-3.8-flash",
+      "httpStatus": 200,
+      "verdict": "PASS"
+    },
+    "normalCoding": {
+      "expectedProfile": "gemini-flash-medium",
+      "actualProfile": "gemini-flash-medium",
+      "model": "ag/gemini-3.8-flash-medium",
+      "upstreamModel": "gemini-3.8-flash",
+      "httpStatus": 200,
+      "verdict": "PASS"
+    },
+    "hardConcurrency": {
+      "expectedProfile": "gemini-flash-high",
+      "actualProfile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "upstreamModel": "gemini-3.8-flash",
+      "httpStatus": 200,
+      "verdict": "PASS"
+    },
+    "explicitReview": {
+      "expectedProfile": "gemini-flash-high",
+      "actualProfile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "quotaEffect": "conserved_reserve_luna-review",
+      "switchReason": "quota_reserve",
+      "httpStatus": 200,
+      "verdict": "PASS"
+    }
+  },
+  "accountPrioritiesAndDispatch": {
+    "9routerPort": 20128,
+    "roundRobin": "disabled (false)",
+    "healthyAccount": {
+      "alias": "healthy_account",
+      "role": "healthy",
+      "configuredPriority": 1,
+      "startingQuotaRatio": 0.8361,
+      "endingQuotaRatio": 0.8166,
+      "requestsServed": 58,
+      "utilization": "100.0%"
+    },
+    "reserveAccount": {
+      "alias": "reserve_account",
+      "role": "reserve",
+      "configuredPriority": 2,
+      "startingQuotaRatio": 0.00455,
+      "endingQuotaRatio": 0.00455,
+      "requestsServed": 0,
+      "utilization": "0.0%",
+      "conserved": true
+    }
+  },
+  "poolStatus": {
+    "geminiPool": "healthy",
+    "codexPool": "reserve"
+  },
+  "rollbackPlan": {
+    "ready": true,
+    "target": "ROUTER_MODE=v2, REASONING_POLICY=auto, QUOTA_POLICY=shadow",
+    "method": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/reload-production.ps1 -QuotaPolicy shadow",
+    "requiresCodeEditOrRebuild": false
+  },
+  "safetyInvariants": {
+    "solActivated": false,
+    "astraActivated": false,
+    "exhaustedCodexRequested": false,
+    "midStreamReplayCount": 0,
+    "duplicateToolActions": 0
+  },
+  "finalVerdict": "QUOTA-AUTO PRODUCTION SUCCESSFUL"
+}

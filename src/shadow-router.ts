@@ -212,7 +212,7 @@ function classify(request: ShadowRequest): ShadowTaskType {
     return "code";
   }
   if (
-    /research|latest|today|\bcurrent\b|news|source|web search|benchmarks?|state of the art|sota|literature|survey|releases?|trends?/.test(text)
+    /research|latest|today|\bcurrent\b|news|source|web search|benchmarks?|state of the art|sota|literature|survey|releases?|trends?|berita|terbaru|terkini|hari ini|cari (?:di )?(?:web|internet)|riset/.test(text)
   ) {
     return "research";
   }
@@ -244,8 +244,9 @@ function riskOf(request: ShadowRequest): Risk {
   if (/database|migration|delete|deploy|auth|concurr|race condition|lock/.test(text)) return "medium";
   return "low";
 }
-function floor(complexityLevel: Complexity, risk: Risk, request: ShadowRequest): QualityTier {
+function floor(taskType: ShadowTaskType, complexityLevel: Complexity, risk: Risk, request: ShadowRequest): QualityTier {
   const isInfraFailure = request.failureType === "infrastructure" || request.failureType === "timeout" || request.failureType === "429" || request.failureType === "5xx";
+  if (taskType === "research") return "strong";
   if (risk === "high" || complexityLevel === "critical") return "strong";
   if (complexityLevel === "high" || (!isInfraFailure && (request.recentFailure || request.recentTestOutcome === "failed"))) return "strong";
   if (complexityLevel === "medium") return "balanced";
@@ -306,7 +307,7 @@ export function routeShadow(request: ShadowRequest, profiles: ExecutionProfile[]
   const taskType = classify(request);
   const level = complexity(request);
   const risk = riskOf(request);
-  const minimumQualityTier = floor(level, risk, request);
+  const minimumQualityTier = floor(taskType, level, risk, request);
   const requiredCapabilities = { tools: Boolean(request.toolsProvided || /inspect|read files?|write files?|run tests?|search (the )?repo|execute|patch|implement/.test(words(textOf(request)))), vision: Boolean(request.hasVisionInput) };
   const minimumIndex = tiers.indexOf(minimumQualityTier);
 

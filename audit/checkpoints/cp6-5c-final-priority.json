@@ -1,0 +1,131 @@
+{
+  "checkpoint": "CP6.5C",
+  "status": "runtime-priority-verification-completed-reserve-conserved-quota-auto-ready",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "startingHead": "0d1bdf90b33562b890105f8a5df152a456704096",
+  "timestamp": "2026-09-14T13:37:00.000Z",
+  "accountPriorities": {
+    "healthy_account": {
+      "alias": "healthy_account",
+      "role": "healthy",
+      "configuredPriority": 1,
+      "startingPercentage": 97.71,
+      "endingPercentage": 92.51,
+      "requestsServed": 25,
+      "status": "healthy",
+      "servingActive": true
+    },
+    "reserve_account": {
+      "alias": "reserve_account",
+      "role": "reserve",
+      "configuredPriority": 2,
+      "startingPercentage": 0.455,
+      "endingPercentage": 0.455,
+      "requestsServed": 0,
+      "status": "reserve",
+      "conserved": true
+    },
+    "roundRobin": "disabled",
+    "observation": "Structured local 9Router APIs confirm healthy_account = Priority 1 and reserve_account = Priority 2. Round Robin is OFF. Live runtime dispatch routed 100% of normal traffic (25/25 requests across routine, coding, hard concurrency, and review) to healthy_account; reserve_account received 0 requests and was completely conserved."
+  },
+  "candidateStates": {
+    "gemini-flash-low": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9251,
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "gemini-flash-medium": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9251,
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "gemini-flash-high": {
+      "status": "healthy",
+      "effectiveRemainingRatio": 0.9251,
+      "poolStatus": "healthy",
+      "usableAccounts": 2
+    },
+    "terra": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "limitingBuckets": ["codex_unavailable"],
+      "poolStatus": "exhausted",
+      "usableAccounts": 0
+    },
+    "luna-review": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "limitingBuckets": ["codex_unavailable"],
+      "poolStatus": "exhausted",
+      "usableAccounts": 0
+    },
+    "sol": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "enabled": false
+    },
+    "astra": {
+      "status": "exhausted",
+      "effectiveRemainingRatio": 0.0,
+      "enabled": false
+    }
+  },
+  "providerPools": {
+    "antigravity": {
+      "status": "healthy",
+      "usableAccounts": 2,
+      "totalAccounts": 2,
+      "constrainedAccounts": 1,
+      "exhaustedAccounts": 0,
+      "bestRemainingRatio": 0.9251
+    },
+    "codex": {
+      "status": "exhausted",
+      "usableAccounts": 0,
+      "totalAccounts": 1,
+      "constrainedAccounts": 0,
+      "exhaustedAccounts": 1,
+      "bestRemainingRatio": 0.0
+    }
+  },
+  "canaryAutoTesting": {
+    "port": 20206,
+    "routine": {
+      "profile": "gemini-flash-low",
+      "model": "ag/gemini-3.8-flash-low",
+      "status": 200,
+      "responseModel": "gemini-3.8-flash"
+    },
+    "normalCoding": {
+      "profile": "gemini-flash-medium",
+      "model": "ag/gemini-3.8-flash-medium",
+      "status": 200,
+      "responseModel": "gemini-3.8-flash"
+    },
+    "hardConcurrency": {
+      "profile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "status": 200,
+      "responseModel": "gemini-3.8-flash"
+    },
+    "review": {
+      "profile": "gemini-flash-high",
+      "model": "ag/gemini-3.8-flash-high",
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "status": 200,
+      "responseModel": "gemini-3.8-flash"
+    },
+    "cleanShutdown": true
+  },
+  "regression": {
+    "testFiles": 19,
+    "testsPassed": 310,
+    "testsFailed": 0,
+    "build": "clean",
+    "diffCheck": "clean"
+  },
+  "recommendation": "ENABLE QUOTA_POLICY=auto"
+}

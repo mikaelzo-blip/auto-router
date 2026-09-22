@@ -123,12 +123,29 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const READINESS_CACHE_MS = 15_000;
   const shadowStore = createSessionStore(15 * 60_000);
   const rawProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
-  const shadowProfiles = rawProfiles.map((p) => {
-    if (p.id === "sonnet-agentic" && config.sonnetAgenticEnabled) {
-      return { ...p, enabled: true, enabledForExecution: true };
-    }
-    return p;
-  });
+  const shadowProfiles = rawProfiles
+    .map((p) => {
+      if (p.id === "sonnet-agentic" && config.sonnetAgenticEnabled) {
+        return { ...p, enabled: true, enabledForExecution: true };
+      }
+      return p;
+    })
+    .filter((profile) => config.routerMode !== "v2" || !profile.model.startsWith("ar-"));
+
+  function v2FallbackModels(requirements: { vision: boolean; tools: boolean }): string[] {
+    const fallbackModel = config.routing.globalFallbackModel;
+    const fallbackCapabilities = config.routing.modelCapabilities[fallbackModel];
+    return fallbackModel.startsWith("ar-") || !fallbackCapabilities || !supportsRequirements(fallbackCapabilities, requirements)
+      ? []
+      : [fallbackModel];
+  }
+
+  function v2CandidateModels(requirements: { vision: boolean; tools: boolean }): string[] {
+    const profileModels = shadowProfiles
+      .filter((profile) => profile.enabled && supportsRequirements(profile.hardCapabilities, requirements))
+      .map((profile) => profile.model);
+    return uniqueModels([...profileModels, ...v2FallbackModels(requirements)]);
+  }
 
   const quotaTracker = new QuotaCooldownTracker();
   const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
@@ -210,6 +227,10 @@ export function buildApp(config: AppConfig): FastifyInstance {
   }
 
   function configuredUpstreams(): string[] {
+    if (config.routerMode === "v2") {
+      return v2CandidateModels({ vision: false, tools: false });
+    }
+
     const models: string[] = [];
 
     for (const route of Object.values(config.routing.routes)) {
@@ -472,6 +493,11 @@ export function buildApp(config: AppConfig): FastifyInstance {
         try {
           shadowV2 = computeShadow(request.body, request.headers["x-session-id"]?.toString());
         } catch {
+          if (config.routerMode === "v2") {
+            return reply.code(503).send(
+              openAiError("V2 execution profile unavailable", "model_unavailable")
+            );
+          }
           shadowV2 = { error: "shadow routing unavailable" };
         }
 
@@ -531,8 +557,13 @@ export function buildApp(config: AppConfig): FastifyInstance {
           ? shadowProfiles.find((p) => p.id === "sonnet-agentic") ?? baselineProfile
           : baselineProfile;
 
+        const debugModel = config.routerMode === "v2"
+          ? effectiveProfile.model
+          : actual.upstreamModel;
+
         return {
           ...actual,
+          ...(config.routerMode === "v2" ? { upstreamModel: debugModel } : {}),
           actual: { route: actual.route, upstreamModel: actual.upstreamModel },
           selectedProfile: effectiveProfile.id,
           selectedModel: effectiveProfile.model,
@@ -718,7 +749,12 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
         shadowResult = computeShadow(request.body, request.headers["x-session-id"]?.toString());
       } catch (error) {
-        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed");
+        if (config.routerMode === "v2") {
+          return reply.code(503).send(
+            openAiError("V2 execution profile unavailable", "model_unavailable")
+          );
+        }
       }
 
       // Automatic grounded search hanya untuk virtual model "auto".
@@ -815,6 +851,17 @@ export function buildApp(config: AppConfig): FastifyInstance {
                   answerText.trim() +
                   sourceText;
 
+                const groundedModel = config.routerMode === "v2"
+                  ? (shadowResult
+                    ? shadowProfiles.find((profile) => profile.id === shadowResult.selectedProfile)?.model
+                    : undefined) ?? v2CandidateModels({ vision: false, tools: false })[0]
+                  : decision.upstreamModel;
+                if (!groundedModel) {
+                  return reply.code(503).send(
+                    openAiError("V2 execution profile unavailable", "model_unavailable")
+                  );
+                }
+
                 reply.header(
                   "x-auto-router-route",
                   decision.route
@@ -822,7 +869,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
                 reply.header(
                   "x-auto-router-model",
-                  decision.upstreamModel
+                  groundedModel
                 );
 
                 reply.header(
@@ -843,7 +890,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
                   created:
                     Math.floor(Date.now() / 1000),
                   model:
-                    decision.upstreamModel,
+                    groundedModel,
 
                   choices: [{
                     index: 0,
@@ -867,19 +914,24 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       let selectedModel = decision.upstreamModel;
-      let selectionCandidates = uniqueModels(
-        config.routing.routes[
-          decision.route
-        ]?.selectionPriority ?? [
-          decision.upstreamModel,
-          config.routing.globalFallbackModel
-        ]
-      ).filter((model) =>
-        supportsRequirements(
-          config.routing.modelCapabilities[model]!,
-          decision.requirements
-        )
-      );
+      let selectionCandidates = config.routerMode === "v2"
+        ? v2CandidateModels(decision.requirements)
+        : uniqueModels(
+          config.routing.routes[
+            decision.route
+          ]?.selectionPriority ?? [
+            decision.upstreamModel,
+            config.routing.globalFallbackModel
+          ]
+        ).filter((model) =>
+          supportsRequirements(
+            config.routing.modelCapabilities[model]!,
+            decision.requirements
+          )
+        );
+      if (config.routerMode === "v2" && selectionCandidates[0]) {
+        selectedModel = selectionCandidates[0];
+      }
 
       let quotaDecision: QuotaDecisionResult | undefined;
       let quotaSnapshot: any | undefined;
@@ -929,7 +981,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             const altModels = quotaRanked
               .filter((p) => p.id !== profile.id)
               .map((p) => p.model);
-            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
           }
         } else {
           const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
@@ -938,7 +990,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             const altModels = shadowResult.alternatives
               .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
               .filter((m): m is string => Boolean(m));
-            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
           }
         }
       }
@@ -1011,7 +1063,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       if (config.routerMode === "v2" && config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet) {
         selectedModel = "ag/claude-sonnet-4-6";
         const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
-        candidates = uniqueModels([selectedModel, geminiHighModel, config.routing.globalFallbackModel]);
+        candidates = uniqueModels([selectedModel, geminiHighModel, ...v2FallbackModels(shadowResult?.requiredCapabilities ?? { vision: false, tools: false })]);
         forwarded = {
           ...forwarded,
           model: selectedModel
@@ -1542,7 +1594,12 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
         shadowResult = computeShadow(routingRequest, request.headers["x-session-id"]?.toString());
       } catch (error) {
-        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed; production route unchanged");
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed");
+        if (config.routerMode === "v2") {
+          return reply.code(503).send(
+            openAiError("V2 execution profile unavailable", "model_unavailable")
+          );
+        }
       }
 
       const clientEffort = normalizeReasoningEffort(body.reasoning_effort ?? (body.reasoning as any)?.effort);
@@ -1588,19 +1645,24 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       let selectedModel = decision.upstreamModel;
-      let selectionCandidates = uniqueModels(
-        config.routing.routes[
-          decision.route
-        ]?.selectionPriority ?? [
-          decision.upstreamModel,
-          config.routing.globalFallbackModel
-        ]
-      ).filter((model) =>
-        supportsRequirements(
-          config.routing.modelCapabilities[model]!,
-          decision.requirements
-        )
-      );
+      let selectionCandidates = config.routerMode === "v2"
+        ? v2CandidateModels(decision.requirements)
+        : uniqueModels(
+          config.routing.routes[
+            decision.route
+          ]?.selectionPriority ?? [
+            decision.upstreamModel,
+            config.routing.globalFallbackModel
+          ]
+        ).filter((model) =>
+          supportsRequirements(
+            config.routing.modelCapabilities[model]!,
+            decision.requirements
+          )
+        );
+      if (config.routerMode === "v2" && selectionCandidates[0]) {
+        selectedModel = selectionCandidates[0];
+      }
 
       let quotaDecision: QuotaDecisionResult | undefined;
       let quotaSnapshot: any | undefined;
@@ -1650,7 +1712,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             const altModels = quotaRanked
               .filter((p) => p.id !== profile.id)
               .map((p) => p.model);
-            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
           }
         } else {
           const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
@@ -1659,7 +1721,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
             const altModels = shadowResult.alternatives
               .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
               .filter((m): m is string => Boolean(m));
-            selectionCandidates = uniqueModels([profile.model, ...altModels, config.routing.globalFallbackModel]);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
           }
         }
       }
@@ -1682,7 +1744,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       if (config.routerMode === "v2" && config.sonnetAgenticEnabled && agenticShadow?.wouldUseSonnet) {
         selectedModel = "ag/claude-sonnet-4-6";
         const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
-        candidates = uniqueModels([selectedModel, geminiHighModel, config.routing.globalFallbackModel]);
+        candidates = uniqueModels([selectedModel, geminiHighModel, ...v2FallbackModels(shadowResult?.requiredCapabilities ?? { vision: false, tools: false })]);
         forwardedBody = {
           ...forwardedBody,
           model: selectedModel
