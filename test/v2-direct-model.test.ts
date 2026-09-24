@@ -86,7 +86,7 @@ describe("V2 direct execution model contract", () => {
       { prompt: "Hello world", profile: "gemini-flash-low", model: "ag/gemini-3.8-flash-low" },
       { prompt: "Write a TypeScript debounce helper", profile: "gemini-flash-medium", model: "ag/gemini-3.8-flash-medium" },
       { prompt: "Design an event-driven payment architecture", profile: "gemini-flash-high", model: "ag/gemini-3.8-flash-high" },
-      { prompt: agenticPrompt, profile: "sonnet-agentic", model: "ag/claude-sonnet-4-6" }
+      { prompt: agenticPrompt, profile: "luna-agentic", model: "cx/gpt-6-luna" }
     ];
 
     for (const testCase of cases) {
@@ -222,6 +222,46 @@ describe("V2 direct execution model contract", () => {
     expect(body.configuredModels).not.toContain("ar-code");
     expect(body.configuredModels).toContain("ag/gemini-3.8-flash-high");
     expect(body.missingModels).not.toContain("ar-code");
+
+    await app.close();
+  });
+
+  it("skips remaining cx agentic candidates after a classified provider quota failure", async () => {
+    const attemptedModels: string[] = [];
+    vi.spyOn(globalThis, "fetch").mockImplementation((url, init) => {
+      if (String(url).includes("/chat/completions")) {
+        const model = (JSON.parse(String(init?.body)) as { model: string }).model;
+        attemptedModels.push(model);
+        if (model === "cx/gpt-6-luna") {
+          return Promise.resolve(new Response(JSON.stringify({ error: { code: "insufficient_quota", message: "provider quota exhausted" } }), { status: 429 }));
+        }
+        if (model === "ag/claude-sonnet-4-6") {
+          return Promise.resolve(new Response(JSON.stringify({ error: { code: "temporarily_unavailable" } }), { status: 503 }));
+        }
+        if (model === "ag/gemini-3.8-flash-high") {
+          return Promise.resolve(new Response(JSON.stringify({
+            id: "chatcmpl-fallback-success",
+            object: "chat.completion",
+            choices: [{ index: 0, message: { role: "assistant", content: "ok" }, finish_reason: "stop" }]
+          }), { status: 200, headers: { "content-type": "application/json" } }));
+        }
+        return Promise.resolve(new Response(JSON.stringify({ error: { code: "unexpected_model" } }), { status: 503 }));
+      }
+      return Promise.resolve(new Response("{}", { status: 200 }));
+    });
+
+    const config = makeConfig("v2");
+    config.sonnetAgenticEnabled = true;
+    const app = buildApp(config);
+    const response = await app.inject({
+      method: "POST",
+      url: "/v1/chat/completions",
+      payload: { model: "auto", messages: [{ role: "user", content: agenticPrompt }] }
+    });
+
+    expect(response.statusCode).toBe(200);
+    expect(attemptedModels).toEqual(["cx/gpt-6-luna", "ag/claude-sonnet-4-6", "ag/gemini-3.8-flash-high"]);
+    expect(response.headers["x-auto-router-model"]).toBe("ag/gemini-3.8-flash-high");
 
     await app.close();
   });

@@ -119,9 +119,9 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
   });
 
   // --------------------------------------------------------------------------
-  // Case 4: Agentic multi-file implementation -> Sonnet 4.6
+  // Case 4: Agentic multi-file implementation -> GPT-6 Luna
   // --------------------------------------------------------------------------
-  it("Case 4: Agentic multi-file implementation routes to Sonnet 4.6 (ag/claude-sonnet-4-6)", async () => {
+  it("Case 4: Agentic multi-file implementation routes to GPT-6 Luna (cx/gpt-6-luna)", async () => {
     const res = await app.inject({
       method: "POST",
       url: "/debug/route",
@@ -138,13 +138,13 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
 
     expect(res.statusCode).toBe(200);
     const body = res.json();
-    expect(body.selectedProfile).toBe("sonnet-agentic");
-    expect(body.selectedModel).toBe("ag/claude-sonnet-4-6");
+    expect(body.selectedProfile).toBe("luna-agentic");
+    expect(body.selectedModel).toBe("cx/gpt-6-luna");
     expect(body.shadowAgentic.wouldUseSonnet).toBe(true);
     expect(body.shadowAgentic.agenticIntent).toBe("execution");
   });
 
-  it("Case 4 (live dispatch): Forwards to Sonnet 4.6 on /v1/chat/completions when enabled", async () => {
+  it("Case 4 (live dispatch): Forwards to GPT-6 Luna on /v1/chat/completions when enabled", async () => {
     let capturedUpstreamPayload: any = null;
 
     vi.spyOn(globalThis, "fetch").mockImplementation((url, init) => {
@@ -154,7 +154,7 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
         return Promise.resolve(
           new Response(
             JSON.stringify({
-              id: "chatcmpl-sonnet-agentic",
+              id: "chatcmpl-luna-agentic",
               object: "chat.completion",
               created: Date.now(),
               model: capturedUpstreamPayload.model,
@@ -188,9 +188,9 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
     });
 
     expect(res.statusCode).toBe(200);
-    expect(capturedUpstreamPayload.model).toBe("ag/claude-sonnet-4-6");
-    expect(res.headers["x-auto-router-model"]).toBe("ag/claude-sonnet-4-6");
-    expect(res.headers["x-auto-router-profile"]).toBe("sonnet-agentic");
+    expect(capturedUpstreamPayload.model).toBe("cx/gpt-6-luna");
+    expect(res.headers["x-auto-router-model"]).toBe("cx/gpt-6-luna");
+    expect(res.headers["x-auto-router-profile"]).toBe("luna-agentic");
     expect(res.headers["x-auto-router-shadow-agentic-eligible"]).toBe("true");
   });
 
@@ -261,8 +261,8 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
       if (u.includes("/chat/completions")) {
         const payload = JSON.parse((init?.body as string) || "{}");
         attemptedModels.push(payload.model);
-        if (payload.model === "ag/claude-sonnet-4-6") {
-          return Promise.resolve(new Response(JSON.stringify({ error: { message: "Claude service overloaded" } }), { status: 503 }));
+        if (payload.model === "cx/gpt-6-luna" || payload.model === "ag/claude-sonnet-4-6" || payload.model === "cx/gpt-6-sol") {
+          return Promise.resolve(new Response(JSON.stringify({ error: { message: "Luna service overloaded" } }), { status: 503 }));
         }
         return Promise.resolve(
           new Response(
@@ -301,7 +301,7 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
     });
 
     expect(res.statusCode).toBe(200);
-    expect(attemptedModels).toEqual(["ag/claude-sonnet-4-6", "ag/gemini-3.8-flash-high"]);
+    expect(attemptedModels).toEqual(["cx/gpt-6-luna", "ag/claude-sonnet-4-6", "cx/gpt-6-sol", "ag/gemini-3.8-flash-high"]);
     expect(res.headers["x-auto-router-model"]).toBe("ag/gemini-3.8-flash-high");
     expect(res.headers["x-auto-router-profile"]).toBe("gemini-flash-high");
   });
@@ -312,7 +312,7 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
   it("Case 6: Agentic task followed by summary/passing tests de-escalates to Gemini", async () => {
     const sessionId = "sess-de-escalate-test";
 
-    // Turn 1: Agentic task -> Sonnet 4.6
+    // Turn 1: Agentic task -> GPT-6 Luna
     const res1 = await app.inject({
       method: "POST",
       url: "/debug/route",
@@ -330,8 +330,8 @@ describe("Sonnet 4.6 Authoritative Agentic Executor (Production Checkpoint)", ()
 
     expect(res1.statusCode).toBe(200);
     const body1 = res1.json();
-    expect(body1.selectedProfile).toBe("sonnet-agentic");
-    expect(body1.selectedModel).toBe("ag/claude-sonnet-4-6");
+    expect(body1.selectedProfile).toBe("luna-agentic");
+    expect(body1.selectedModel).toBe("cx/gpt-6-luna");
 
     // Turn 2: Follow-up summary request -> de-escalate back to Gemini
     const res2 = await app.inject({

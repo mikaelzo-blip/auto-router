@@ -28,6 +28,7 @@ export interface AppConfig {
   quotaThresholds?: QuotaThresholds;
   quotaSource?: QuotaSource;
   sonnetAgenticEnabled?: boolean;
+  agenticPrimaryEnabled?: boolean;
   upstreamBaseUrl: string;
   upstreamApiKey?: string;
   classifierModel?: string;
@@ -102,7 +103,8 @@ export async function loadConfig(): Promise<AppConfig> {
     reserveExit
   };
 
-  const sonnetAgenticEnabled = (process.env.SONNET_AGENTIC_ENABLED ?? "false").toLowerCase() === "true";
+  const agenticPrimaryEnabled = (process.env.AGENTIC_PRIMARY_ENABLED ?? process.env.SONNET_AGENTIC_ENABLED ?? "false").toLowerCase() === "true";
+  const sonnetAgenticEnabled = agenticPrimaryEnabled;
 
   return {
     host,
@@ -116,6 +118,7 @@ export async function loadConfig(): Promise<AppConfig> {
     quotaSourceTimeoutMs,
     quotaThresholds,
     sonnetAgenticEnabled,
+    agenticPrimaryEnabled,
     upstreamBaseUrl,
     upstreamApiKey: process.env.UPSTREAM_API_KEY || undefined,
     classifierModel: process.env.CLASSIFIER_MODEL || undefined,

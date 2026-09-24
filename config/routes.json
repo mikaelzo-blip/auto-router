@@ -282,6 +282,18 @@
     }
   },
   "modelCapabilities": {
+    "cx/gpt-6-luna": {
+      "vision": true,
+      "tools": true
+    },
+    "cx/gpt-6-sol": {
+      "vision": true,
+      "tools": true
+    },
+    "ag/claude-sonnet-4-6": {
+      "vision": true,
+      "tools": true
+    },
     "cx/gpt-5.6-sol": {
       "vision": true,
       "tools": true

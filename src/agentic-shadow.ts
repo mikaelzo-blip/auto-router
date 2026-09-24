@@ -18,6 +18,8 @@ export interface AgenticEvaluationInput {
   toolsProvided?: boolean;
   claudeQuotaStatus?: CandidateQuotaStatus | "unavailable";
   claudeQuotaRatio?: number;
+  agenticQuotaStatus?: CandidateQuotaStatus | "unavailable";
+  agenticQuotaRatio?: number;
 }
 
 export interface ShadowAgenticDecision {
@@ -27,6 +29,7 @@ export interface ShadowAgenticDecision {
   shadowAgenticProfile: string;
   shadowAgenticModel: string;
   wouldUseSonnet: boolean;
+  wouldUseLuna?: boolean;
   shadowAgenticReason: string;
   shadowAgenticConfidence: "high" | "medium" | "low";
   agenticIntent: AgenticIntentType;
@@ -34,6 +37,8 @@ export interface ShadowAgenticDecision {
   agenticExclusions: string[];
   claudeQuotaStatus?: CandidateQuotaStatus | "unavailable";
   claudeQuotaRatio?: number;
+  agenticQuotaStatus?: CandidateQuotaStatus | "unavailable";
+  agenticQuotaRatio?: number;
 }
 
 export interface AgenticSessionState {
@@ -224,7 +229,7 @@ export function evaluateAgenticShadow(
     }
   }
 
-  // Quota eligibility gate for Claude Antigravity pool
+  // Quota eligibility gate for agentic primary model (cx/gpt-6-luna or fallback pool)
   const quotaStatus = input.claudeQuotaStatus ?? "healthy";
   const quotaRatio = input.claudeQuotaRatio ?? 1.0;
 
