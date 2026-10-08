@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { writeFileSync, readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { routeShadow, type ShadowTaskType, type Complexity, type Risk, type QualityTier } from "../src/shadow-router.js";
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
+import { routeShadow, type ShadowTaskType, type Complexity, type Risk, type QualityTier } from "../../src/shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
 
 export interface CanaryTelemetryRecord {
   sessionId: string;

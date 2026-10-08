@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { readFileSync, writeFileSync, existsSync, unlinkSync } from "node:fs";
 import { resolve } from "node:path";
-import { evaluateCaseOutput, type CorpusCaseItem } from "../src/benchmark/rubrics.js";
+import { evaluateCaseOutput, type CorpusCaseItem } from "../../src/benchmark/rubrics.js";
 
 export const HEAD_TO_HEAD_CANDIDATES = [
   "ag/gemini-3.8-flash-high",

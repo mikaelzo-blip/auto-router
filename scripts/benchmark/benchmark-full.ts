@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { BenchmarkRunner, PRIMARY_CALIBRATION_CANDIDATES } from "../src/benchmark/harness.js";
-import type { BenchmarkFilterOptions } from "../src/benchmark/types.js";
+import { BenchmarkRunner, PRIMARY_CALIBRATION_CANDIDATES } from "../../src/benchmark/harness.js";
+import type { BenchmarkFilterOptions } from "../../src/benchmark/types.js";
 
 function parseArgs(): BenchmarkFilterOptions {
   const args = process.argv.slice(2);

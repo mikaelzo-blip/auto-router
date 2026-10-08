@@ -12,8 +12,8 @@ import { evaluateCaseOutput, type CorpusCaseItem } from "../src/benchmark/rubric
 import { BenchmarkRunner } from "../src/benchmark/harness.js";
 import type { BenchmarkRecord } from "../src/benchmark/types.js";
 import { validateProfileCoverage, routeShadow, type ExecutionProfile } from "../src/shadow-router.js";
-import { runComparison } from "../scripts/compare-legacy-v2.js";
-import { runSessionSimulation, CANONICAL_TRAJECTORIES } from "../scripts/simulate-sessions.js";
+import { runComparison } from "../scripts/benchmark/compare-legacy-v2.js";
+import { runSessionSimulation, CANONICAL_TRAJECTORIES } from "../scripts/shadow/simulate-sessions.js";
 
 describe("CP3A Benchmark Harness & Taxonomy", () => {
   describe("1. Failure classification", () => {

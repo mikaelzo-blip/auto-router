@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { routeRequest } from "../src/router.js";
-import { routeShadow, type ShadowRequest } from "../src/shadow-router.js";
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
-import type { RoutingConfig } from "../src/types.js";
+import { routeRequest } from "../../src/router.js";
+import { routeShadow, type ShadowRequest } from "../../src/shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
+import type { RoutingConfig } from "../../src/types.js";
 
 interface CorpusCase {
   caseId: string;

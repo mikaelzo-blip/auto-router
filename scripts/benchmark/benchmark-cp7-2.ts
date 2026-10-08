@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync, renameSync, existsSync, mkdirSync, cpSync,
 import { createHash } from "node:crypto";
 import { resolve, join, relative, isAbsolute, dirname } from "node:path";
 import { execSync } from "node:child_process";
-import { NineRouterQuotaSource } from "../src/quota/source.js";
+import { NineRouterQuotaSource } from "../../src/quota/source.js";
 
 const baseUrl = (process.env.UPSTREAM_BASE_URL || "http://127.0.0.1:20128/v1").replace(/\/$/, "");
 const apiKey = process.env.UPSTREAM_API_KEY || "";

@@ -1,8 +1,8 @@
-import { NineRouterQuotaSource } from "../src/quota/source.js";
-import { evaluateCandidateQuota, resolveQuotaDecision, DEFAULT_QUOTA_THRESHOLDS } from "../src/quota/policy.js";
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
-import { QuotaCooldownTracker } from "../src/quota/cooldown.js";
-import { routeShadow, createSessionStore } from "../src/shadow-router.js";
+import { NineRouterQuotaSource } from "../../src/quota/source.js";
+import { evaluateCandidateQuota, resolveQuotaDecision, DEFAULT_QUOTA_THRESHOLDS } from "../../src/quota/policy.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
+import { QuotaCooldownTracker } from "../../src/quota/cooldown.js";
+import { routeShadow, createSessionStore } from "../../src/shadow-router.js";
 
 async function main() {
   console.log("=== STEP 5: VERIFY GEMINI POOL & STEP 6: CODEX EXHAUSTION ===");

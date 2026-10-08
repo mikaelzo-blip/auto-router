@@ -4,7 +4,7 @@ import {
   evaluateAgenticShadow,
   createAgenticSessionStore,
   type AgenticEvaluationInput
-} from "../src/agentic-shadow.js";
+} from "../../src/agentic-shadow.js";
 
 interface CorpusCase {
   id: string;

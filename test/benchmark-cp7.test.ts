@@ -15,7 +15,7 @@ import {
   writeAtomicJson,
   loadResumeAttempts,
   shouldSkipCaseCandidate
-} from "../scripts/benchmark-cp7.js"; // or .ts via tsx/vitest
+} from "../scripts/benchmark/benchmark-cp7.js"; // or .ts via tsx/vitest
 
 
 describe("CP7 Agentic Session Deadline", () => {

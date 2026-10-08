@@ -1,6 +1,6 @@
-import { buildApp } from "../src/app.js";
-import { loadConfig } from "../src/config.js";
-import { NineRouterQuotaSource } from "../src/quota/source.js";
+import { buildApp } from "../../src/app.js";
+import { loadConfig } from "../../src/config.js";
+import { NineRouterQuotaSource } from "../../src/quota/source.js";
 
 async function main() {
   console.log("=== CP6.5B NON-PRODUCTION CANARY AUTO TESTING ===");

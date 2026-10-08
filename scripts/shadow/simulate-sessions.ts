@@ -1,5 +1,5 @@
-import { createSessionStore, routeShadow, type ShadowRequest, type ExecutionProfile } from "../src/shadow-router.js";
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
+import { createSessionStore, routeShadow, type ShadowRequest, type ExecutionProfile } from "../../src/shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
 
 export interface SessionTurn {
   step: string;

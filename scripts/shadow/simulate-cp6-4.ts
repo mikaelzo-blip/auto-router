@@ -1,9 +1,9 @@
-import { NineRouterQuotaSource, SyntheticQuotaSource } from "../src/quota/source.js";
-import { resolveQuotaDecision, filterAndRankWithQuota, evaluateCandidateQuota, DEFAULT_QUOTA_THRESHOLDS } from "../src/quota/policy.js";
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
-import { QuotaCooldownTracker } from "../src/quota/cooldown.js";
-import { routeShadow, createSessionStore } from "../src/shadow-router.js";
-import type { AccountQuotaSnapshot, QuotaSnapshot, QuotaBucket } from "../src/quota/types.js";
+import { NineRouterQuotaSource, SyntheticQuotaSource } from "../../src/quota/source.js";
+import { resolveQuotaDecision, filterAndRankWithQuota, evaluateCandidateQuota, DEFAULT_QUOTA_THRESHOLDS } from "../../src/quota/policy.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
+import { QuotaCooldownTracker } from "../../src/quota/cooldown.js";
+import { routeShadow, createSessionStore } from "../../src/shadow-router.js";
+import type { AccountQuotaSnapshot, QuotaSnapshot, QuotaBucket } from "../../src/quota/types.js";
 
 function makeAccount(
   accountAlias: string,

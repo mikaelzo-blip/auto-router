@@ -1,5 +1,5 @@
-import { DEFAULT_SHADOW_PROFILES } from "../src/shadow-profiles.js";
-import { routeShadow, type ShadowRequest } from "../src/shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "../../src/shadow-profiles.js";
+import { routeShadow, type ShadowRequest } from "../../src/shadow-router.js";
 
 const cases: Array<[string, ShadowRequest]> = [
   ["simple-chat", { sessionId: "chat", messages: [{ role: "user", content: "hello" }], policy: "balanced" }],

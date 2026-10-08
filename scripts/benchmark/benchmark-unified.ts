@@ -1,15 +1,12 @@
 import "dotenv/config";
-import { BenchmarkRunner, PRIMARY_CALIBRATION_CANDIDATES, DEFAULT_SUBSET_CASES } from "../src/benchmark/harness.js";
-import type { BenchmarkFilterOptions } from "../src/benchmark/types.js";
+import { BenchmarkRunner, PRIMARY_CALIBRATION_CANDIDATES } from "../../src/benchmark/harness.js";
+import type { BenchmarkFilterOptions } from "../../src/benchmark/types.js";
 
 function parseArgs(): BenchmarkFilterOptions {
   const args = process.argv.slice(2);
   const options: BenchmarkFilterOptions = {
     resume: false,
-    attempts: 1,
-    caseIds: [...DEFAULT_SUBSET_CASES],
-    models: [...PRIMARY_CALIBRATION_CANDIDATES],
-    outputPath: "benchmark/subset-results.json"
+    attempts: 1
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -38,24 +35,19 @@ function parseArgs(): BenchmarkFilterOptions {
 
 async function main() {
   const options = parseArgs();
-  const runner = new BenchmarkRunner({ outputPath: options.outputPath });
-  console.log("=== SUBSET BENCHMARK (5 cases x 9 models = 45 units) ===");
-  console.log("Configuration:", {
-    cases: options.caseIds,
-    models: options.models?.length,
-    resume: options.resume,
-    outputPath: options.outputPath
-  });
+  const runner = new BenchmarkRunner();
+  console.log("=== AUTOROUTER V2 UNIFIED BENCHMARK HARNESS ===");
+  console.log("Options:", JSON.stringify(options, null, 2));
 
   const summary = await runner.run(options);
-  console.log("\n=== SUBSET BENCHMARK SUMMARY ===");
-  console.log(`Total Records: ${summary.totalRecords}`);
-  console.log(`Operational Success Rate: ${(summary.overallOperationalSuccessRate * 100).toFixed(1)}%`);
-  console.log(`Quality Success Rate When Executed: ${(summary.overallQualitySuccessRateWhenExecuted * 100).toFixed(1)}%`);
-  console.log(`Denominator Uniform: ${summary.denominatorUniform ? "YES" : "NO"}`);
+  console.log("\n=== SUMMARY ===");
+  console.log(`Total records: ${summary.totalRecords}`);
+  console.log(`Operational success rate: ${(summary.overallOperationalSuccessRate * 100).toFixed(1)}%`);
+  console.log(`Quality success rate when executed: ${(summary.overallQualitySuccessRateWhenExecuted * 100).toFixed(1)}%`);
+  console.log(`Denominator uniform: ${summary.denominatorUniform ? "YES" : "NO"}`);
 }
 
 main().catch((err) => {
-  console.error("Subset benchmark failed:", err);
+  console.error("Benchmark runner failed:", err);
   process.exit(1);
 });

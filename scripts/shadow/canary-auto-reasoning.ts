@@ -1,8 +1,8 @@
 import "dotenv/config";
 import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
-import { buildApp } from "../src/app.js";
-import { loadConfig } from "../src/config.js";
+import { buildApp } from "../../src/app.js";
+import { loadConfig } from "../../src/config.js";
 
 interface CanaryCase {
   id: string;

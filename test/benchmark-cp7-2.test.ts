@@ -13,7 +13,7 @@ import {
   shouldSkipCaseCandidate,
   writeAtomicJson,
   isValidAttempt
-} from "../scripts/benchmark-cp7-2.js";
+} from "../scripts/benchmark/benchmark-cp7-2.js";
 
 describe("CP7.2 Agentic Session Deadline & Invariants", () => {
   it("enforces the eight-minute wall-clock limit strictly", () => {
