@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-03",
+  "shape": "regression repair",
+  "taskName": "LRU regression repair",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T12:09:06.435Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 5,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 18623,
+  "ttfbMs": 3039,
+  "score": 1,
+  "filesChanged": [
+    "src/cache/lru-cache.ts"
+  ],
+  "publicOutputSnippet": "✔ LruCache - basic set and get (0.4099ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0837ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 96.2474\n",
+  "hiddenOutputSnippet": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.4367ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0696ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.5159\n"
+}

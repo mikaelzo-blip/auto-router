@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-4",
+  "category": "HARD_REASONING",
+  "taskName": "Multi-Tenant Quota & Capacity Optimization",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:17:30.348Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 7024,
+  "ttfbMs": 4864,
+  "usage": {
+    "promptTokens": 2723,
+    "completionTokens": 1648,
+    "reasoningTokens": 1224,
+    "totalTokens": 4371
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "### 1. Request Allocation\n\n* **Provider Alpha:** 60 requests\n* **Provider Beta:** 10 requests\n* **Provider Gamma:** 30 requests\n\n**Justification:** Beta is cheapest ($0.002/req) but exceeds the 600ms latency threshold (800ms), capping its volume at 10 to maintain the 90% SLA. Alpha is the next cheapest ($0.004/req) and meets the SLA (400ms), saturated at its 60 request limit. Gamma handles the rem"
+}

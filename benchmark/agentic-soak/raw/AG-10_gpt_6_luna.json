@@ -1,0 +1,25 @@
+{
+  "taskId": "AG-10",
+  "shape": "security-sensitive change",
+  "taskName": "Revoked session cross-module security fix",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T12:17:09.907Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 20527,
+  "ttfbMs": 3743,
+  "score": 1,
+  "filesChanged": [
+    "src/session-service.ts",
+    "src/token-validator.ts"
+  ],
+  "publicOutputSnippet": "✔ SessionAuth - valid active session token validates successfully (0.4789ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.2013ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.2172\n",
+  "hiddenOutputSnippet": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.5364ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.0789ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 134.9525\n"
+}

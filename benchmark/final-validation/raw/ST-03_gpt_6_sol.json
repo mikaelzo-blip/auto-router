@@ -1,0 +1,24 @@
+{
+  "taskId": "ST-03",
+  "category": "STRONG",
+  "taskName": "Tenant pool starvation isolation",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:27:28.954Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 1,
+  "elapsedMs": 22312,
+  "ttfbMs": 3099,
+  "usage": {
+    "promptTokens": 2537,
+    "completionTokens": 693,
+    "reasoningTokens": 0,
+    "totalTokens": 3230
+  },
+  "rawResponse": "A single shared FIFO pool limits total connections but not who uses them. T1 can occupy every connection with long reports and fill the wait queue with more reports. Interactive requests from other tenants then wait behind T1 even when they are cheap. A larger pool postpones saturation; it does not provide isolation, and PostgreSQL still has a 150-connection limit.\n\n**Admission and scheduling**\n\n1. Set a database connection budget below 150, reserving connections for administration, migrations, background maintenance, and other clients. Enforce the budget across *all* application instances, not once per instance.\n2. Partition capacity into an interactive reserve and a bounded report allocation. Reports cannot borrow the interactive reserve. Keep a small shared allocation for eligible tenants so idle capacity need not sit unused.\n3. Require a tenant-aware permit **before** a request enters the connection pool. Cap each tenant’s active reports, active connections, and queued requests. Admission is atomic across instances; fail closed or use conservative local quotas if its coordinator is unavailable. Reject excess work with a retryable response rather than allowing an unbounded queue.\n4. Schedule admitted work across tenant queues using round-robin or weighted fair queuing, with separate interactive and report classes. Bound each class’s queue length and wait time. Give interactive work priority without permanently starving reports.\n\nThe invariant is: **T1’s active connections are capped below the application connection budget, and its reports cannot use the interactive reserve.** A permit must cover a connection for its full checkout lifetime, including transaction time. Release it on every success, error, cancellation, and disconnect path. Bound pool waiters too; otherwise queued requests can exhaust application memory even though connections are capped. Audit every database access path so none bypasses admission.\n\n**Per-tenant protections**\n\n- Set report concurrency and cost limits independently of interactive limits. Estimate cost where practical; a query-count limit alone does not constrain database CPU or I/O.\n- Apply queue-wait, statement-execution, and transaction timeouts separately. Cancel timed-out queries and roll back their transactions; verify that cancelled connections are returned healthy.\n- Open a tenant-and-workload circuit breaker on sustained timeouts, errors, or budget exhaustion. Shed new reports for a cooldown period, then allow limited probes. Do not trip T1’s interactive traffic solely because its reports are failing.\n\nConnection isolation is not compute isolation: a few T1 queries can still saturate PostgreSQL CPU, memory, or I/O. Query timeouts, workload cost controls, and, if needed, replicas or asynchronous report execution address that separate risk.\n\n**Operator observability**\n\nExpose active and idle connections against the budget; permits, queue depth, queue age, admission rejections, and pool wait time by tenant and workload; plus query duration, cancellations, timeout rates, breaker state, and database CPU/I/O. Alert on interactive queue age, exhausted reserves, long-held connections, and tenants repeatedly hitting caps. Use controlled tenant labels or top-tenant views to avoid unbounded metrics cardinality.\n\n**Dedicated-pool trade-off**\n\nA dedicated T1 report pool can make its connection ceiling simple and explicit, but dedicated pools for 500 tenants strand idle capacity and can collectively exceed `max_connections` unless globally budgeted. Shared physical connections with tenant-aware permits and fair queues use capacity more efficiently. Dedicate pools only for exceptional workloads; retain the same global budget and admission rules."
+}

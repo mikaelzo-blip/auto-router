@@ -1,0 +1,28 @@
+{
+  "taskId": "ST-08",
+  "category": "STRONG",
+  "taskName": "Ambiguous evidence incident decision",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:32:29.030Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Failed to identify connection timeout as a symptom/hypothesis rather than conclusion",
+    "Omitted safe, reversible first mitigation (e.g. toggle feature flag)",
+    "Omitted essential diagnostic data collection (pg_stat_activity, pool depth, APM traces)"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.4,
+  "elapsedMs": 10354,
+  "ttfbMs": 1582,
+  "usage": {
+    "promptTokens": 2560,
+    "completionTokens": 340,
+    "reasoningTokens": 0,
+    "totalTokens": 2900
+  },
+  "rawResponse": "**What can be concluded:** API p99 increased sharply after a deployment, and at least one request timed out waiting for a DB connection. Dashboard A reports high DB CPU. Dashboard B’s five-minute sampling may miss a short spike; its 35% reading does not resolve the discrepancy. The feature-flag change is a plausible trigger, even without a query-text change, because it may alter request volume, concurrency, or which queries execute.\n\n**What cannot be concluded:** The DB is the sole bottleneck, the connection pool is saturated, the feature flag caused the regression, or any query plan changed. One timeout and the available CPU readings do not establish a single root cause.\n\n**First safe mitigation:** If the flag supports immediate reversal, restore its pre-deployment value through the flag control plane. Limit the change to that flag, and watch API p99, error rate, connection-wait timeouts, and DB CPU. Avoid increasing pool size or DB load without evidence; either could worsen contention.\n\n**Next evidence:** Align the dashboards’ timestamps, aggregation windows, and CPU definitions. Collect request rate and in-flight requests; pool active, idle, pending, and wait-time metrics; DB active sessions, wait events, and CPU at finer resolution; query rates and plans; and flag exposure by tenant or cohort.\n\n**Rollback criteria:** Keep the reversal if p99 and timeouts improve without unacceptable functional impact. If the flag cannot be reversed independently, roll back the deployment when the incident remains severe, the rollback is known safe, and the deployment is the strongest actionable change. If neither action improves the metrics, stop treating the deployment as the established cause and continue investigating."
+}

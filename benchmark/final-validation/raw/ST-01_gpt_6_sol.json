@@ -1,0 +1,26 @@
+{
+  "taskId": "ST-01",
+  "category": "STRONG",
+  "taskName": "Multi-region checkout: saga versus transactional outbox",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:23:37.607Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [
+    "Omitted Transactional Outbox pattern or CDC"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.8,
+  "elapsedMs": 13681,
+  "ttfbMs": 1624,
+  "usage": {
+    "promptTokens": 2559,
+    "completionTokens": 534,
+    "reasoningTokens": 0,
+    "totalTokens": 3093
+  },
+  "rawResponse": "Application retries do not make a PostgreSQL commit and a Kafka publish atomic. A broker outage can leave an Order committed without an event, and a retry can publish the event twice.\n\n1. **Transaction boundary:** In one PostgreSQL transaction, insert the Order and an `OrderCreated` outbox row with a stable event ID. Commit both or neither. Do not include Kafka in this transaction. For a multi-region deployment, keep the Order and its outbox row in the same region’s database transaction; route a given order to one owning region.\n\n2. **Publisher:** A background publisher reads committed outbox rows and publishes them to Kafka, using `orderId` as the partition key. It records delivery progress only after Kafka acknowledges the publish. Retry broker failures with backoff; leave the row pending during an outage. A crash after Kafka acknowledges but before progress is recorded causes a duplicate publish. Treat outbox delivery as **at least once**, not exactly once. Make publisher claims recoverable with a lease or equivalent mechanism.\n\n3. **Idempotency keys:** Require a checkout idempotency key scoped to the customer. Enforce its uniqueness in PostgreSQL and return the original order for a repeated request with the same payload; reject reuse with a different payload. Keep the outbox event ID stable across publish retries. Use stable operation IDs for payment authorization, inventory reservation, and compensation calls so retries do not repeat their effects.\n\n4. **Consumer deduplication:** Each consumer records processed event IDs under a uniqueness constraint. Apply its local state change and record the processed ID in the **same local database transaction**, then acknowledge the Kafka record. A duplicate event becomes a no-op. For an external payment or inventory API, pass the stable operation ID to that API; local deduplication alone cannot prevent a repeated external call after a crash.\n\n5. **Saga recovery:** Persist saga state and step outcomes. If `PaymentSucceeded` arrives and inventory is rejected, transition the saga to `RefundPending` (or `VoidPending` if the authorization has not settled), issue compensation with a stable compensation ID, and mark the Order failed only under the chosen business-state policy. Retry compensation until it succeeds or requires manual intervention; emit the final outcome from durable state.\n\n6. **Compensation timeout:** A timeout is **unknown outcome**, not failure. Do not issue a new, differently keyed refund. Query the payment provider by compensation ID or retry with the same idempotency key. Reconcile asynchronously and escalate if the provider cannot establish the result. Keep the saga pending and the Order’s customer-visible state accurate until the financial outcome is confirmed."
+}

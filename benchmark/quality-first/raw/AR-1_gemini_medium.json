@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-1",
+  "category": "ARCHITECTURE",
+  "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:19:32.317Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 16840,
+  "ttfbMs": 4240,
+  "usage": {
+    "promptTokens": 2610,
+    "completionTokens": 3464,
+    "reasoningTokens": 977,
+    "totalTokens": 6074
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "### System Overview\n\n```\n                      +---------------------------------------+\n                      |   External Providers (Stripe/Adyen)   |\n                      +---------------------------------------+\n                                          |\n                                    [HTTP POST]\n                                          v\n+----------------------------------------------"
+}

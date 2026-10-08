@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-1",
+  "category": "HARD_REASONING",
+  "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:14:07.812Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 8223,
+  "ttfbMs": 6283,
+  "usage": {
+    "promptTokens": 2813,
+    "completionTokens": 1217,
+    "reasoningTokens": 807,
+    "totalTokens": 4030
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "### 1. Commit Outcome and Mechanism\n\nT2 succeeds in committing. It does not fail with SQLSTATE 40001.\n\n**PostgreSQL REPEATABLE READ Mechanism:**\nPostgreSQL implements `REPEATABLE READ` via Snapshot Isolation (SI), not Serializable Snapshot Isolation (SSI). Under SI:\n* A transaction sees a snapshot of data committed before its first non-transaction-control query.\n* Write conflicts are checked stric"
+}

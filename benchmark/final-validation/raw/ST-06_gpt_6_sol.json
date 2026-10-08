@@ -1,0 +1,24 @@
+{
+  "taskId": "ST-06",
+  "category": "STRONG",
+  "taskName": "Retry storm and recovery design",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:30:35.789Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 1,
+  "elapsedMs": 22576,
+  "ttfbMs": 1844,
+  "usage": {
+    "promptTokens": 2512,
+    "completionTokens": 869,
+    "reasoningTokens": 0,
+    "totalTokens": 3381
+  },
+  "rawResponse": "**Goal:** Stop clients from amplifying the outage, preserve work during the 90-second failure, and let the dependency recover under controlled load.\n\n### Client behavior\n\n1. **Classify the result.** Retry transient failures: `503`, `502`, `504`, connection resets, and timeouts, subject to the operation’s deadline and idempotency rules. Treat `429` separately and honor `Retry-After`. Do not retry validation errors, malformed requests, authentication or authorization failures (`401`, `403`), permanent `404` responses, unsupported operations, or other documented permanent errors. Do not blindly retry a non-idempotent request after an ambiguous timeout: the dependency may have committed it.\n\n2. **Limit attempts and time.** Use a per-attempt timeout, an overall deadline, and an attempt cap. Retry only when the remaining deadline can accommodate the next delay and attempt. For synchronous requests, keep the retry budget small; move durable work to the queue rather than holding a caller open through a 90-second outage.\n\n3. **Use bounded exponential backoff with full jitter.** For retry number \\(n\\), choose a delay uniformly in `[0, min(cap, base × 2^n)]`. For example, use a 1-second base and a 30-second cap. Add a **global retry budget**, such as at most one retry per ten new requests; backoff alone does not prevent ten thousand workers from producing excessive load. Honor a valid `Retry-After` as a minimum delay, with jitter to avoid synchronized wake-ups.\n\n4. **Bound concurrency and trip a circuit breaker.** Set a per-dependency limit on in-flight requests and a bounded wait for a slot. When recent failures exceed a threshold with sufficient sample volume, open the breaker for a cooldown. While open, fail synchronous calls fast and defer queued work without contacting the dependency. In half-open state, admit only a small number of probes; close after sustained success, otherwise reopen with a bounded cooldown. Apply the concurrency limit to probes and retries as well as first attempts. Return capacity gradually after closure rather than releasing the entire backlog.\n\n### Queue behavior\n\n- **Schedule retries; do not hot-loop.** On a retryable failure or open breaker, requeue with a delayed next-attempt time and jitter. Release the worker slot. Use shared rate and concurrency controls across workers; ten thousand independent local limits do not provide a global bound.\n- **Preserve queue invariants.** Acknowledge a message only after successful processing or durable transfer to a retry queue or dead-letter queue (DLQ). Set visibility timeouts or leases longer than the processing attempt, and renew them when necessary. Expect redelivery after crashes.\n- **Expire or isolate exhausted work.** Send a message to the DLQ when its attempt cap, processing deadline, or maximum age is reached, or when the failure is permanent. Retain its payload reference, error class, attempt history, and timestamps. Provide a manual replay path that fixes the cause first, then re-enqueues at a controlled rate; do not replay the entire DLQ into a recovering dependency.\n- **Make processing idempotent.** Give each logical operation a stable idempotency key, reused across attempts and redeliveries. The dependency should atomically associate that key with its result, or the consumer should deduplicate against durable state. Retain deduplication records longer than the queue’s maximum delivery and replay window. Without downstream idempotency, an ambiguous timeout cannot be made safe by retry policy alone.\n\n### Metrics and controls\n\nTrack request rate, in-flight count, admission rejects, retry rate and attempts, backoff delays, response codes and error classes, timeout rate, circuit state and probe outcomes, and dependency latency. Track queue depth, oldest-message age, scheduled-retry count, processing age, DLQ arrivals, and replay rate. Alert on rising queue age, sustained open circuits, exhausted retry budgets, and DLQ growth—not merely on `503` counts.\n\nThe key recovery invariant is that **total admitted load, including probes, retries, and replay, stays below the dependency’s safe recovery capacity**. Queue growth during the 90-second outage is acceptable; an unbounded retry rate is not."
+}

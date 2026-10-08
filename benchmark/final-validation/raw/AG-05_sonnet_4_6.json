@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-05",
+  "category": "AGENTIC",
+  "taskName": "Async upstream adapter migration",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:40:06.566Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 8,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 16917,
+  "ttfbMs": 2036,
+  "score": 1,
+  "filesChanged": [
+    "src/upstream/adapter.ts"
+  ],
+  "publicOutputSnippet": "✔ UpstreamAdapter - successfully fetches resource using modern v2 client (0.8656ms)\n✔ UpstreamAdapter - rejects with clean error when resource is not found (404) (0.2961ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 160.8431\n",
+  "hiddenOutputSnippet": "✔ Hidden: UpstreamAdapter - network failure propagates descriptive error (0.6476ms)\n✔ Hidden: UpstreamAdapter - preserves returned resource object identity and payload structure (0.0909ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.0783\n"
+}

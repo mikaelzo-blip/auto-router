@@ -1,0 +1,26 @@
+{
+  "taskId": "AG-2",
+  "category": "AGENTIC",
+  "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+  "isTrap": false,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:38:08.816Z",
+  "operationalSuccess": false,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 182197,
+  "ttfbMs": 3707,
+  "iterations": 12,
+  "toolCalls": 11,
+  "failedToolCalls": 3,
+  "reasoningErrors": [
+    "Network/timeout error: The operation was aborted due to timeout"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "error": "The operation was aborted due to timeout"
+  }
+}

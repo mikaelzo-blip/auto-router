@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-2",
+  "category": "AGENTIC",
+  "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:38:34.830Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 26012,
+  "ttfbMs": 2003,
+  "iterations": 6,
+  "toolCalls": 9,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/events/dispatcher.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ EventBus - exact topic subscription (0.7719ms)\n✔ EventBus - single-level wildcard subscription (*) (0.0937ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.1956ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.0937\n",
+    "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4909ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.4057ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.6219\n"
+  }
+}

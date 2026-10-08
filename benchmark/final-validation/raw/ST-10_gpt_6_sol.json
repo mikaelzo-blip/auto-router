@@ -1,0 +1,27 @@
+{
+  "taskId": "ST-10",
+  "category": "STRONG",
+  "taskName": "Authorization cache revocation trap",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:34:09.923Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Failed to explain the pre-commit cache invalidation race condition",
+    "Omitted cache reconciliation / TTL safeguard"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.6,
+  "elapsedMs": 10944,
+  "ttfbMs": 1350,
+  "usage": {
+    "promptTokens": 2524,
+    "completionTokens": 458,
+    "reasoningTokens": 0,
+    "totalTokens": 2982
+  },
+  "rawResponse": "### The race\n\nA revocation transaction updates PostgreSQL but has not committed. The developer runs `DEL` on the Redis permission key. A concurrent authorization request misses the cache, reads the **old committed permission** from PostgreSQL, and writes it back to Redis. The revocation then commits. Redis now contains stale authorization until another invalidation or expiry. `DEL` before commit does not prevent that refill.\n\n### Safe revocation path\n\n1. **Make PostgreSQL authoritative.** In one transaction, revoke the permission and increment a monotonically increasing permission version for the affected principal or authorization scope. Commit both changes atomically.\n2. **Record invalidation in the same transaction.** Insert an outbox event containing the scope and new version, or use CDC on the committed change. A worker publishes the version after commit, retries failures, and tolerates duplicate or out-of-order events.\n3. **Fence cache writes and reads.** Maintain a Redis version floor per scope, advanced only with an atomic maximum operation. Cache entries carry their version. A reader rejects an entry below the floor; a cache refill must not publish data below the floor, including when its PostgreSQL read began before commit. An older event must never lower the floor.\n4. **Close the delivery gap.** Outbox/CDC delivery is asynchronous: a request can still accept an old cached entry after PostgreSQL commit but before the floor advances. If that gap is unacceptable, sensitive actions must check the current permission and version against PostgreSQL at the decision point, or use an authorization path with a synchronous, durable revocation barrier. Post-commit `DEL` alone reduces the window but does not eliminate delayed delivery, refill races, or Redis failures.\n5. **Fail closed when freshness cannot be established.** For sensitive actions, deny or defer if PostgreSQL cannot be checked, the required version floor is unavailable, or the authorization state is ambiguous. Do not fall back to an unverified cached allow. Use short cache lifetimes and monitor outbox lag as additional bounds and detection, not as the correctness mechanism.\n\nThe key invariant is that an allow decision for a sensitive action must be based on authorization state proven current enough for that action; cache invalidation is not that proof."
+}

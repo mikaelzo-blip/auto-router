@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-1",
+  "category": "NORMAL_CODING",
+  "taskName": "Token Bucket with Fractional Burst Refill",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:09:54.240Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 5026,
+  "ttfbMs": 1488,
+  "usage": {
+    "promptTokens": 2705,
+    "completionTokens": 395,
+    "reasoningTokens": 0,
+    "totalTokens": 3100
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (1.2007ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.1122ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0901ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 203.5546\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.4153ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0644ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.054ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 123.6424\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private capacity: number;\n  private refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | null;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    this.capacity = capacity;\n    this.refillRatePerSec = refillRatePerSec;\n    this.tokens = capacity;\n    this.lastRefillMs = null;\n  }\n\n  private refill(nowMs: number"
+}

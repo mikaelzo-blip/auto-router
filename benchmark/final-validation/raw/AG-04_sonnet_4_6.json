@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-04",
+  "category": "AGENTIC",
+  "taskName": "Saga compensation repair",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:39:03.880Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 23095,
+  "ttfbMs": 2692,
+  "score": 1,
+  "filesChanged": [
+    "src/saga.ts"
+  ],
+  "publicOutputSnippet": "✔ FulfillmentSaga - successful order confirms all steps (0.4779ms)\n✔ FulfillmentSaga - payment failure triggers compensating inventory rollback (0.0929ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.7817\n",
+  "hiddenOutputSnippet": "✔ Hidden: FulfillmentSaga - delivery failure compensates both payment and inventory (0.4673ms)\n✔ Hidden: FulfillmentSaga - out of stock fails fast without charging or dispatching (0.0745ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 123.6898\n"
+}

@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-3",
+  "category": "HARD_REASONING",
+  "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:15:32.290Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 2442,
+  "ttfbMs": 1608,
+  "usage": {
+    "promptTokens": 2598,
+    "completionTokens": 48,
+    "reasoningTokens": 0,
+    "totalTokens": 2646
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "No valid schedule exists. The dependencies form the cycle **T2 → T3 → T4 → T5 → T2**, so no topological ordering is possible. T1 and T6 cannot resolve this cycle."
+}

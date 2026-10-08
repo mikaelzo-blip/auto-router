@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-3",
+  "category": "HARD_REASONING",
+  "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:15:53.761Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 8605,
+  "ttfbMs": 838,
+  "usage": {
+    "promptTokens": 2670,
+    "completionTokens": 409,
+    "reasoningTokens": 0,
+    "totalTokens": 3079
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "## Analysis\n\n### Dependency Graph\n\n```\nT1 → T2 → T3 → T4 → T5 → T2  (cycle)\nT6 (isolated)\n```\n\n### Cycle Detection\n\nTrace the directed edges:\n\n```\nT2 → T3 → T4 → T5 → T2\n```\n\nT2 depends on T5. T5 depends on T4. T4 depends on T3. T3 depends on T2. T2 depends on T3 — completing the cycle.\n\n**Exact cycle:** `T2 → T3 → T4 → T5 → T2`\n\n### Verdict\n\n**A valid schedule is impossible.**\n\nTopological orderi"
+}

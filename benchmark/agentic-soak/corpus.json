@@ -1,0 +1,141 @@
+{
+  "benchmark": "FINAL REAL-WORK AGENTIC SOAK — SOL vs LUNA vs SONNET",
+  "version": "1.0.0",
+  "evaluatorVersion": "agentic-soak-1.0.0",
+  "policy": {
+    "productionRoutingChanges": false,
+    "nineRouterChanges": false,
+    "timeoutChanges": false,
+    "automaticPromotion": false,
+    "maxIterations": 20,
+    "timeoutSeconds": 300,
+    "perUnitInfraRetries": 1
+  },
+  "models": [
+    { "id": "cx/gpt-6-sol", "alias": "gpt_6_sol", "name": "GPT-6 Sol" },
+    { "id": "cx/gpt-6-luna", "alias": "gpt_6_luna", "name": "GPT-6 Luna" },
+    { "id": "ag/claude-sonnet-4-6", "alias": "sonnet_4_6", "name": "Claude Sonnet 4.6" }
+  ],
+  "tasks": [
+    {
+      "id": "AG-01",
+      "shape": "multi-file bug repair",
+      "name": "Wildcard event bus multi-file feature",
+      "fixture": "B1",
+      "publicTest": "test/wildcard-events.test.ts",
+      "hiddenTest": "b1-wildcard-events-hidden.test.ts",
+      "prompt": "Implement `*` single-segment and `#` multi-segment subscriptions across `src/events/dispatcher.ts` and `src/events/event-bus.ts`, preserving exact topics and unsubscribe behavior. Inspect tests, change only src/, then run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-02",
+      "shape": "feature implementation",
+      "name": "Payment validation and idempotency feature",
+      "fixture": "B2",
+      "publicTest": "test/payment-processor.test.ts",
+      "hiddenTest": "b2-payment-processor-hidden.test.ts",
+      "prompt": "Implement validation and idempotency across `src/payments/validator.ts` and `src/payments/processor.ts`: non-positive amount is INVALID_AMOUNT; non-ISO-3 currency is INVALID_CURRENCY; empty recipient is MISSING_RECIPIENT; duplicate idempotencyKey returns the original response without charging twice. Inspect tests and preserve existing behavior. Use run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-03",
+      "shape": "regression repair",
+      "name": "LRU regression repair",
+      "fixture": "D1",
+      "publicTest": "test/lru-cache.test.ts",
+      "hiddenTest": "d1-lru-cache-hidden.test.ts",
+      "prompt": "Repair the flawed cache sizing and eviction logic in `src/cache/lru-cache.ts` with true least-recently-used eviction on both read and write access. Preserve API and behavior outside the defect. Inspect tests, change only src/, and run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-04",
+      "shape": "test-fix loop",
+      "name": "Rate limiter bug repair",
+      "fixture": "A1",
+      "publicTest": "test/rate-limiter.test.ts",
+      "hiddenTest": "a1-rate-limiter-hidden.test.ts",
+      "prompt": "The test suite in `test/rate-limiter.test.ts` fails for `src/rate-limiter.ts`. Reproduce it with run_tests, inspect the contract, fix the root cause only in src/, and run_tests again. Tests and metadata are immutable.",
+      "trap": false
+    },
+    {
+      "id": "AG-05",
+      "shape": "refactor with behavioral preservation",
+      "name": "Async upstream adapter migration",
+      "fixture": "F1",
+      "publicTest": "test/upstream-adapter.test.ts",
+      "hiddenTest": "f1-upstream-adapter-hidden.test.ts",
+      "prompt": "Migrate `src/upstream/adapter.ts` from legacy callback V1Client usage to Promise-based V2Client with async/await while preserving getResource public behavior and error handling. Inspect source and tests, modify only src/, and run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-06",
+      "shape": "async/concurrency fix",
+      "name": "Concurrent reservation and idempotency repair",
+      "fixture": "E2",
+      "publicTest": "test/reservation-lock.test.ts",
+      "hiddenTest": "e2-concurrency-lock-hidden.test.ts",
+      "prompt": "Fix `src/concurrency/reservation-lock.ts` so competing reservations cannot over-allocate and repeated idempotencyKey requests return the cached result without deducting balance again. Inspect the repository and tests, modify only src/, then run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-07",
+      "shape": "state-machine modification",
+      "name": "Saga compensation repair",
+      "fixture": "S2",
+      "publicTest": "test/saga.test.ts",
+      "hiddenTest": "s2-saga-hidden.test.ts",
+      "prompt": "`src/saga.ts` reserves inventory, charges payment, and dispatches delivery. Repair compensating behavior so failures leave no leaked reservation or payment. Preserve successful behavior and test with run_tests. Modify only src/.",
+      "trap": false
+    },
+    {
+      "id": "AG-08",
+      "shape": "error/retry behavior",
+      "name": "Retry policy hidden contract",
+      "fixture": "D2",
+      "publicTest": "test/retry-policy.test.ts",
+      "hiddenTest": "d2-retry-policy-hidden.test.ts",
+      "prompt": "Public retry tests pass. Harden `src/resilience/retry-policy.ts`: fail fast for 401, 403, and errors where isRetryable is false, but retain retries for transient network failures and 429. Preserve current API and verify with run_tests. Tests are immutable.",
+      "trap": true
+    },
+    {
+      "id": "AG-09",
+      "shape": "parser/data transformation",
+      "name": "Billing calculator tax & discount allocation",
+      "fixture": "C1",
+      "publicTest": "test/billing-calculator.test.ts",
+      "hiddenTest": "c1-billing-calculator-hidden.test.ts",
+      "prompt": "The test suite in `test/billing-calculator.test.ts` fails for `src/billing/calculator.ts` when percentage discounts are applied because tax is computed on the pre-discount taxable amount. Update `src/billing/calculator.ts` so that discounts are allocated proportionally to taxable line items before computing sales tax, while preserving existing discount codes and safely handling empty items. Modify only src/, and verify with run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-10",
+      "shape": "security-sensitive change",
+      "name": "Revoked session cross-module security fix",
+      "fixture": "A2",
+      "publicTest": "test/session-auth.test.ts",
+      "hiddenTest": "a2-session-auth-hidden.test.ts",
+      "prompt": "Fix revoked session handling across `src/session-service.ts` and `src/token-validator.ts`. Expired and malformed tokens must retain their existing behavior. Inspect source and tests, modify only src/, then run_tests.",
+      "trap": false
+    },
+    {
+      "id": "AG-11",
+      "shape": "cross-module API contract change",
+      "name": "Safe schema migrator 3-phase rollout",
+      "fixture": "E1",
+      "publicTest": "test/migrator.test.ts",
+      "hiddenTest": "e1-migrator-hidden.test.ts",
+      "prompt": "Review `src/db/migrator.ts` and its migration contract. Public tests pass, but harden the three-phase migration behavior against incomplete backfill (enforcing NOT NULL must fail if null rows exist) and repeated nullable-column calls. Do not modify tests. Use run_tests to preserve existing behavior.",
+      "trap": true
+    },
+    {
+      "id": "AG-12",
+      "shape": "one adversarial misleading-test task",
+      "name": "Transaction engine atomic rollback trap",
+      "fixture": "S1",
+      "publicTest": "test/engine.test.ts",
+      "hiddenTest": "s1-engine-hidden.test.ts",
+      "prompt": "`src/engine.ts` handles financial transfers between accounts, but currently leaves account balances corrupted if recording into the ledger fails. Repair `src/engine.ts` so that all transfers are strictly atomic (balances are never modified if any part of the transfer or ledger record fails), insufficient funds are rejected cleanly without mutating state or recording to ledger, and conservation of money is preserved across transfers. Inspect source and tests, modify only src/, and run_tests.",
+      "trap": true
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "taskId": "ST-08",
+  "category": "STRONG",
+  "taskName": "Ambiguous evidence incident decision",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:32:42.748Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Failed to state that evidence is insufficient to determine root cause",
+    "Failed to identify connection timeout as a symptom/hypothesis rather than conclusion",
+    "Omitted safe, reversible first mitigation (e.g. toggle feature flag)"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.4,
+  "elapsedMs": 13717,
+  "ttfbMs": 1331,
+  "usage": {
+    "promptTokens": 2560,
+    "completionTokens": 533,
+    "reasoningTokens": 0,
+    "totalTokens": 3093
+  },
+  "rawResponse": "**What can be concluded**\n\n- API p99 degraded sharply, from 300 ms to 8 s, around 09:00.\n- DB CPU may have been high: Dashboard A reports 92%. Dashboard B’s five-minute sampling can miss a brief spike, so its 35% reading does not rule one out. Confirm timestamps, aggregation, and metric definitions.\n- The 08:55 deployment is temporally associated, but the feature-flag change does not establish causation. Unchanged query text does not rule out changed query volume, parameter distribution, plan selection, or concurrency.\n- One connection-wait timeout establishes that at least one request encountered pool acquisition delay. It does not establish pool exhaustion as the primary cause.\n- The evidence cannot distinguish among DB saturation, pool contention, changed workload, downstream latency, or another cause. There is no basis to assign a tenant or query-plan cause.\n\n**First safe mitigation**\n\nDisable the changed feature flag, if it can be done independently and safely, and verify the effective flag state. This is a reversible, targeted action that tests the deployment-associated change without assuming a root cause. Keep other variables unchanged during the initial observation. If the flag cannot be isolated or disabling it has material risk, do not perform a broad rollback blindly; use the service’s established incident procedure.\n\n**Next evidence to collect**\n\nCollect timestamp-aligned data at one-minute or finer resolution before and after the mitigation:\n\n- API latency and error rate by endpoint; request rate and concurrency.\n- Connection-pool active, idle, maximum, and waiting counts; acquisition latency and timeout counts.\n- DB CPU, active sessions, wait events, lock waits, I/O, and connection counts.\n- Slow-query samples, query fingerprints, execution counts, latency, and plans for the affected interval.\n- Feature-flag evaluation rates and request characteristics, with privacy-safe tenant-level aggregation if available.\n- Deployment and configuration timestamps; downstream dependency latency and errors.\n\nPreserve logs and metrics before changing more variables. Compare the same interval and workload across the flag change.\n\n**Rollback criteria**\n\nRoll back the deployment if the degradation began after it, disabling the flag is unavailable or fails to restore service, and rollback is operationally safe. Trigger rollback sooner if error rate or latency exceeds the service’s incident threshold, or if DB/pool saturation threatens broader impact. After any mitigation, assess against a comparable traffic window: require sustained recovery in p99, errors, and pool wait time, and check that DB health has not worsened. If rollback does not improve those signals, stop treating the deployment as the established cause and continue diagnosis."
+}

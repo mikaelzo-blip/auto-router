@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-1",
+  "category": "ARCHITECTURE",
+  "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:18:42.309Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 38110,
+  "ttfbMs": 1694,
+  "usage": {
+    "promptTokens": 2595,
+    "completionTokens": 1391,
+    "reasoningTokens": 0,
+    "totalTokens": 3986
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "## Architecture\n\n```text\nPayment providers\n  → regional webhook gateways\n  → durable ingress log\n  → partitioned event processors\n  → transactional ledger + event inbox/outbox\n  → downstream consumers\n```\n\nReturn `2xx` only after the event is durably recorded. Never wait for ledger processing before acknowledging. Use a replicated log or durable queue with configured replication, retention, and ca"
+}

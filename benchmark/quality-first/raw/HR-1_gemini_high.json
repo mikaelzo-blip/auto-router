@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-1",
+  "category": "HARD_REASONING",
+  "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:14:16.741Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 8928,
+  "ttfbMs": 6241,
+  "usage": {
+    "promptTokens": 2813,
+    "completionTokens": 1569,
+    "reasoningTokens": 1278,
+    "totalTokens": 4382
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "1. **T2 succeeds in committing.** It does not fail with SQLSTATE 40001.\nPostgreSQL implements `REPEATABLE READ` via Snapshot Isolation without tracking predicate dependencies. Serialization failures (SQLSTATE 40001) under this level occur only when a transaction attempts to update, delete, or lock a row that has already been modified and committed by a concurrent transaction since the snapshot was"
+}

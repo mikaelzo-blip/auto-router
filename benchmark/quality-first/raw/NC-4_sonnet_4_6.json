@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-4",
+  "category": "NORMAL_CODING",
+  "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:13:38.022Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 15898,
+  "ttfbMs": 1957,
+  "usage": {
+    "promptTokens": 2828,
+    "completionTokens": 1357,
+    "reasoningTokens": 0,
+    "totalTokens": 4185
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (1.1646ms)\n✔ Semver - pre-release has lower precedence than normal version (0.177ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 148.8149\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (0.6239ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.2782ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.0844ms)\n✔ Hidden: Semver - invalid semver string throws error (0.3206ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.9616\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport function compareSemver(v1: string, v2: string): -1 | 0 | 1 {\n  const parsed1 = parse(v1);\n  const parsed2 = parse(v2);\n\n  // Compare major, minor, patch\n  for (const key of ['major', 'minor', 'patch'] as const) {\n    if (parsed1[key] < parsed2[key]) return -1;\n    if (parsed1[key] > parsed2[key]) return 1;\n  }\n\n  // Same major.minor.patch: compare pre-release\n  const pre1 = pa"
+}

@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-08",
+  "shape": "error/retry behavior",
+  "taskName": "Retry policy hidden contract",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T12:14:34.168Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 4,
+  "toolCalls": 3,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 11745,
+  "ttfbMs": 2195,
+  "score": 1,
+  "filesChanged": [
+    "src/resilience/retry-policy.ts"
+  ],
+  "publicOutputSnippet": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4092ms)\n✔ RetryPolicy - retries on transient failure and recovers (8.8238ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 110.7365\n",
+  "hiddenOutputSnippet": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6121ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (11.9425ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 141.592\n"
+}

@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-03",
+  "category": "AGENTIC",
+  "taskName": "Concurrent reservation and idempotency repair",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:37:29.325Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 9,
+  "toolCalls": 11,
+  "failedToolCalls": 2,
+  "prematureSuccess": false,
+  "elapsedMs": 34516,
+  "ttfbMs": 3239,
+  "score": 1,
+  "filesChanged": [
+    "src/concurrency/reservation-lock.ts"
+  ],
+  "publicOutputSnippet": "✔ ReservationLock - basic sequential reservation (29.4188ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (30.7766ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 174.516\n",
+  "hiddenOutputSnippet": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (11.8853ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (159.7938ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skippe"
+}

@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-11",
+  "shape": "cross-module API contract change",
+  "taskName": "Safe schema migrator 3-phase rollout",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T12:18:09.860Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 30700,
+  "ttfbMs": 4539,
+  "score": 1,
+  "filesChanged": [
+    "src/db/migrator.ts"
+  ],
+  "publicOutputSnippet": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.7284ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.559\n",
+  "hiddenOutputSnippet": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.6271ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.0913ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.4077\n"
+}

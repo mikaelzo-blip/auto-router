@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-2",
+  "category": "NORMAL_CODING",
+  "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:10:04.179Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 9534,
+  "ttfbMs": 2298,
+  "usage": {
+    "promptTokens": 2690,
+    "completionTokens": 400,
+    "reasoningTokens": 0,
+    "totalTokens": 3090
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (0.7793ms)\n✔ MoneyAllocator - basic proportional division (0.0794ms)\n✔ MoneyAllocator - zero total cents (0.0531ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 156.6729\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7757ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0881ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0617ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.269ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.168\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (!Number.isSafeInteger(totalCents)) {\n    throw new Error(\"totalCents must be a safe integer\");\n  }\n  if (totalCents < 0) {\n    throw new Error(\"totalCents must be non-negative\");\n  }\n  if (ratios.length === 0) {\n    throw new Error(\"ratios must not be empty\");\n  }\n  if (ratios.some((ratio) => !Numbe"
+}

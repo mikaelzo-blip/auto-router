@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-2",
+  "category": "NORMAL_CODING",
+  "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:10:45.786Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 5645,
+  "ttfbMs": 1437,
+  "usage": {
+    "promptTokens": 2765,
+    "completionTokens": 387,
+    "reasoningTokens": 0,
+    "totalTokens": 3152
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (1.0263ms)\n✔ MoneyAllocator - basic proportional division (0.0807ms)\n✔ MoneyAllocator - zero total cents (0.0539ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.7251\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7561ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0803ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0591ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2572ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 139.7713\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (totalCents < 0) {\n    throw new Error('non-negative');\n  }\n  if (ratios.length === 0) {\n    throw new Error('empty');\n  }\n  if (ratios.some(r => r < 0)) {\n    throw new Error('non-negative');\n  }\n  const sumRatios = ratios.reduce((a, b) => a + b, 0);\n  if (sumRatios <= 0) {\n    throw new Error('posi"
+}

@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-09",
+  "shape": "parser/data transformation",
+  "taskName": "Billing calculator tax & discount allocation",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T12:16:14.247Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 4,
+  "toolCalls": 4,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 29846,
+  "ttfbMs": 1873,
+  "score": 1,
+  "filesChanged": [
+    "src/billing/calculator.ts"
+  ],
+  "publicOutputSnippet": "✔ BillingCalculator - standard invoice without discount (0.6676ms)\n✔ BillingCalculator - invoice with percentage discount (0.1485ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 89.7119\n",
+  "hiddenOutputSnippet": "✔ Hidden: BillingCalculator - non-taxable item proportion in tax calculation (0.4328ms)\n✔ Hidden: BillingCalculator - empty items array handling (0.0703ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.8863\n"
+}

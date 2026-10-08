@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-4",
+  "category": "AGENTIC",
+  "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:47:53.110Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 137236,
+  "ttfbMs": 3394,
+  "iterations": 17,
+  "toolCalls": 16,
+  "failedToolCalls": 5,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/concurrency/reservation-lock.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ ReservationLock - basic sequential reservation (22.4805ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (30.5618ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 153.935\n",
+    "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (11.0385ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (156.9585ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 299.6967\n"
+  }
+}

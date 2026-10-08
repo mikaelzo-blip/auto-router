@@ -1,0 +1,36 @@
+{
+  "taskId": "AG-4",
+  "category": "AGENTIC",
+  "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+  "isTrap": true,
+  "trapAvoided": false,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:54:14.700Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 185690,
+  "ttfbMs": 2632,
+  "iterations": 20,
+  "toolCalls": 22,
+  "failedToolCalls": 4,
+  "prematureSuccess": false,
+  "reasoningErrors": [
+    "Public test suite failed",
+    "Hidden acceptance test suite failed"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": false,
+    "hiddenTestsPassed": false,
+    "filesChanged": [
+      "src/concurrency/reservation-lock.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "\n",
+    "hiddenTestOutput": "\n"
+  }
+}

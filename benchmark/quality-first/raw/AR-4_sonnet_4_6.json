@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-4",
+  "category": "ARCHITECTURE",
+  "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:29:20.376Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 52016,
+  "ttfbMs": 1455,
+  "usage": {
+    "promptTokens": 2684,
+    "completionTokens": 3000,
+    "reasoningTokens": 0,
+    "totalTokens": 5684
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "# Zero-Downtime NOT NULL FK Column Migration: `journal_entries`\n\n## 1. Why Naive ALTER TABLE Causes Downtime\n\n**`ALTER TABLE journal_entries ADD COLUMN reconciliation_id UUID NOT NULL DEFAULT ... REFERENCES reconciliation_batches(id);`** acquires `AccessExclusiveLock` on `journal_entries`.\n\nThree independent failure paths:\n\n**A. Lock acquisition itself**\nPostgreSQL lock acquisition queues behind a"
+}

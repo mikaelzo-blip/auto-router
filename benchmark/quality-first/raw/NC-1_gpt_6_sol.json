@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-1",
+  "category": "NORMAL_CODING",
+  "taskName": "Token Bucket with Fractional Burst Refill",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:09:28.581Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 11596,
+  "ttfbMs": 7588,
+  "usage": {
+    "promptTokens": 2631,
+    "completionTokens": 479,
+    "reasoningTokens": 0,
+    "totalTokens": 3110
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.4358ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0642ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0595ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 150.3055\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.468ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0731ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0534ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.8957\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private readonly capacity: number;\n  private readonly refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | undefined;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    if (!Number.isFinite(capacity) || capacity < 0) {\n      throw new RangeError(\"capacity must be a finite, non-negative number\");\n    }\n    if ("
+}

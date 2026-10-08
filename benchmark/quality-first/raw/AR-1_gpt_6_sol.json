@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-1",
+  "category": "ARCHITECTURE",
+  "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:19:15.476Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 33166,
+  "ttfbMs": 1506,
+  "usage": {
+    "promptTokens": 2595,
+    "completionTokens": 1072,
+    "reasoningTokens": 0,
+    "totalTokens": 3667
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "## Core invariant\n\nA valid webhook is acknowledged only after its raw payload is durably stored. A financial effect is committed only in the same database transaction that records its unique ledger effect ID. Delivery, processing, and retries remain at-least-once; **the ledger mutation is exactly once**.\n\n## Ingestion path\n\n`Provider → stateless webhook gateway → durable inbox → keyed processing q"
+}

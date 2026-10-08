@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-06",
+  "shape": "async/concurrency fix",
+  "taskName": "Concurrent reservation and idempotency repair",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T12:12:02.615Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 6,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 22344,
+  "ttfbMs": 3281,
+  "score": 1,
+  "filesChanged": [
+    "src/concurrency/reservation-lock.ts"
+  ],
+  "publicOutputSnippet": "✔ ReservationLock - basic sequential reservation (26.6197ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (14.9619ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.2021\n",
+  "hiddenOutputSnippet": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (7.0772ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (15.4868ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped "
+}

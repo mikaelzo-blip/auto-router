@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-4",
+  "category": "HARD_REASONING",
+  "taskName": "Multi-Tenant Quota & Capacity Optimization",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:17:45.165Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 14815,
+  "ttfbMs": 1569,
+  "usage": {
+    "promptTokens": 2764,
+    "completionTokens": 744,
+    "reasoningTokens": 0,
+    "totalTokens": 3508
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "## Analysis\n\n**SLA constraint first:** Requests meeting ≤ 600ms latency are those sent to Alpha (400ms) or Gamma (200ms). Beta at 800ms fails the SLA. So the number of requests routed to Beta is capped at 10 (since ≥ 90 must meet SLA, at most 10 can miss it).\n\n**Cost per request at 2,000 tokens:**\n- Alpha: $0.002/1K × 2K = **$0.004/request**\n- Beta: $0.001/1K × 2K = **$0.002/request**\n- Gamma: $0."
+}

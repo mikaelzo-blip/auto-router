@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-2",
+  "category": "NORMAL_CODING",
+  "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:10:39.742Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 9501,
+  "ttfbMs": 4768,
+  "usage": {
+    "promptTokens": 2702,
+    "completionTokens": 2619,
+    "reasoningTokens": 2162,
+    "totalTokens": 5321
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (1.2496ms)\n✔ MoneyAllocator - basic proportional division (0.1091ms)\n✔ MoneyAllocator - zero total cents (0.0568ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 150.6687\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7625ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0875ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0587ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2666ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 137.5175\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (totalCents < 0) {\n    throw new Error('totalCents must be non-negative');\n  }\n  if (ratios.length === 0) {\n    throw new Error('ratios must not be empty');\n  }\n\n  let totalRatio = 0;\n  for (const ratio of ratios) {\n    if (ratio < 0) {\n      throw new Error('ratios must be non-negative');\n    }\n    "
+}

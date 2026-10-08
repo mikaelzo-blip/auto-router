@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-2",
+  "category": "AGENTIC",
+  "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:33:41.532Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 33952,
+  "ttfbMs": 3792,
+  "iterations": 6,
+  "toolCalls": 8,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/events/dispatcher.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ EventBus - exact topic subscription (0.7444ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1015ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.0868ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 108.9973\n",
+    "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4993ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.3886ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 137.8994\n"
+  }
+}

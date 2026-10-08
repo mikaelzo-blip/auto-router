@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-04",
+  "category": "AGENTIC",
+  "taskName": "Saga compensation repair",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:38:40.783Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 5,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 17432,
+  "ttfbMs": 1818,
+  "score": 1,
+  "filesChanged": [
+    "src/saga.ts"
+  ],
+  "publicOutputSnippet": "✔ FulfillmentSaga - successful order confirms all steps (0.4574ms)\n✔ FulfillmentSaga - payment failure triggers compensating inventory rollback (0.0786ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.4109\n",
+  "hiddenOutputSnippet": "✔ Hidden: FulfillmentSaga - delivery failure compensates both payment and inventory (0.4432ms)\n✔ Hidden: FulfillmentSaga - out of stock fails fast without charging or dispatching (0.0723ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.9619\n"
+}

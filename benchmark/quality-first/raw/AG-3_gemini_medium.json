@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-3",
+  "category": "AGENTIC",
+  "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:40:35.998Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 47741,
+  "ttfbMs": 3927,
+  "iterations": 14,
+  "toolCalls": 13,
+  "failedToolCalls": 1,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/resilience/retry-policy.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4244ms)\n✔ RetryPolicy - retries on transient failure and recovers (17.9835ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 115.999\n",
+    "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (1.0487ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (10.2463ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 140.6127\n"
+  }
+}

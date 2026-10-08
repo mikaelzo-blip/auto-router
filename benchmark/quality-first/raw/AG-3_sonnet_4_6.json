@@ -1,0 +1,26 @@
+{
+  "taskId": "AG-3",
+  "category": "AGENTIC",
+  "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+  "isTrap": false,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:44:21.154Z",
+  "operationalSuccess": false,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 69997,
+  "ttfbMs": 3216,
+  "iterations": 5,
+  "toolCalls": 6,
+  "failedToolCalls": 0,
+  "reasoningErrors": [
+    "Network/timeout error: The operation was aborted due to timeout"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "error": "The operation was aborted due to timeout"
+  }
+}

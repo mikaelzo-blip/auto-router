@@ -1,0 +1,300 @@
+{
+  "benchmark": "QUALITY-FIRST AUTOROUTER BENCHMARK",
+  "version": "1.0.0",
+  "totalTasks": 16,
+  "categories": {
+    "NORMAL_CODING": "A. NORMAL CODING (4 tasks)",
+    "HARD_REASONING": "B. HARD REASONING (4 tasks)",
+    "ARCHITECTURE": "C. ARCHITECTURE / DESIGN (4 tasks)",
+    "AGENTIC": "D. AGENTIC EXECUTION (4 tasks)"
+  },
+  "tasks": [
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "name": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "prompt": "Implement a TypeScript class `TokenBucket` in `src/token-bucket.ts`.\nRequirements:\n- Export class `TokenBucket` with constructor `(capacity: number, refillRatePerSec: number)`\n- Initial tokens = capacity\n- Method `consume(tokens: number, nowMs: number): boolean`: refills tokens based on elapsed time since last refill, then if available tokens >= requested tokens, deducts them and returns true; otherwise returns false without modifying tokens.\n- Method `getTokens(nowMs: number): number`: returns current available tokens after refilling up to nowMs.\n- Precision: Fractional tokens must accumulate smoothly (e.g. 0.5 tokens/sec over 2000ms yields 1.0 token). Tokens cannot exceed capacity.\n- Clock resilience: If nowMs is less than last refill timestamp (e.g. clock skew), do not reduce tokens or error.\nProvide ONLY valid TypeScript code in a ```typescript ... ``` block.",
+      "fixtureDir": "benchmark/quality-first/fixtures/normal-coding/nc-1",
+      "sourceFile": "src/token-bucket.ts",
+      "publicTest": "test/token-bucket.test.ts",
+      "hiddenTest": "test-hidden/token-bucket-hidden.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Exports TokenBucket class with constructor(capacity, refillRatePerSec)",
+          "Initializes tokens at capacity",
+          "Calculates refill accurately from elapsed time in seconds",
+          "Clamps accumulated tokens to capacity",
+          "Returns boolean on consume and only deducts if sufficient tokens",
+          "Handles clock skew gracefully"
+        ]
+      }
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "name": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapDescription": "Naive rounding or floating point division loses or invents pennies when ratios have repeating decimals. Must use largest remainder method guaranteeing exact sum conservation.",
+      "prompt": "Implement a TypeScript function `allocateMoney(totalCents: number, ratios: number[]): number[]` in `src/money-allocator.ts`.\nRequirements:\n- Distribute an integer amount of `totalCents` into an array of integer cents strictly proportional to the provided `ratios`.\n- CONSERVATION INVARIANT: The sum of the returned array MUST strictly equal `totalCents`. Not a single cent may be lost or created.\n- Use the Largest Remainder (Hare-Niemeyer) method: compute exact unrounded allocations, floor each to integer, and distribute any remainder cents one by one to the allocations with the largest fractional remainders (ties broken by lower original index).\n- Validation:\n  * If `totalCents < 0`, throw an Error with 'non-negative'\n  * If `ratios` is empty, throw an Error with 'empty'\n  * If any ratio < 0, throw an Error with 'non-negative'\n  * If sum of ratios <= 0, throw an Error with 'positive'\n  * If `totalCents === 0`, return an array of zeros with length equal to ratios.length.\nProvide ONLY valid TypeScript code in a ```typescript ... ``` block.",
+      "fixtureDir": "benchmark/quality-first/fixtures/normal-coding/nc-2",
+      "sourceFile": "src/money-allocator.ts",
+      "publicTest": "test/money-allocator.test.ts",
+      "hiddenTest": "test-hidden/money-allocator-hidden.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Exports allocateMoney(totalCents, ratios)",
+          "Enforces exact sum conservation (sum === totalCents)",
+          "Applies largest remainder allocation for remainder pennies",
+          "Throws descriptive errors on negative totalCents, empty ratios, negative ratios, or zero sum"
+        ]
+      }
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "name": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "prompt": "Implement a generic TypeScript class `LRUCacheWithTTL<K, V>` in `src/lru-ttl.ts`.\nRequirements:\n- Export class `LRUCacheWithTTL<K, V>` with constructor `(capacity: number, ttlMs: number)`.\n- Method `get(key: K, nowMs?: number): V | undefined`:\n  * If key is absent, return undefined.\n  * If item has expired (`nowMs - createdAt > ttlMs`), purge it from cache and return undefined. Expired access MUST NOT promote the entry.\n  * If valid, mark as most recently used and return its value.\n- Method `put(key: K, value: V, nowMs?: number): void`:\n  * If key exists, update value, refresh timestamp to nowMs, and mark as most recently used.\n  * If inserting a new key when cache is at capacity: FIRST purge any expired entries. If still at capacity, evict the least recently used valid entry. Then insert the new item as most recently used.\n- Method `size(nowMs?: number): number`: returns count of non-expired entries.\nProvide ONLY valid TypeScript code in a ```typescript ... ``` block.",
+      "fixtureDir": "benchmark/quality-first/fixtures/normal-coding/nc-3",
+      "sourceFile": "src/lru-ttl.ts",
+      "publicTest": "test/lru-ttl.test.ts",
+      "hiddenTest": "test-hidden/lru-ttl-hidden.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Exports generic LRUCacheWithTTL<K, V>",
+          "Enforces TTL expiration on get and size",
+          "Does not promote expired entry to MRU",
+          "Prioritizes purging expired entries before evicting valid LRU entries",
+          "Updates existing key with new timestamp and MRU promotion"
+        ]
+      }
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "name": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "prompt": "Implement a TypeScript function `compareSemver(v1: string, v2: string): -1 | 0 | 1` in `src/semver.ts`.\nRequirements:\n- Adheres to the full SemVer 2.0.0 specification.\n- Formats: `MAJOR.MINOR.PATCH` with optional `-PRERELEASE` and optional `+BUILD`.\n- Precedence rules:\n  1. Compare major, minor, and patch numerically.\n  2. When major, minor, patch match: a normal version has HIGHER precedence than a pre-release version (`1.0.0-alpha < 1.0.0`).\n  3. Pre-release identifiers are dot-separated (e.g. `1.0.0-alpha.1`). Identifiers of only digits are compared NUMERICALLY ('10' > '2'); identifiers with letters are compared lexically by ASCII sort order.\n  4. Numeric identifiers have LOWER precedence than non-numeric identifiers.\n  5. Larger set of pre-release fields has higher precedence than smaller set if preceding identifiers are equal.\n  6. Build metadata (`+...`) MUST be completely ignored in precedence.\n- Returns -1 if v1 < v2, 1 if v1 > v2, 0 if v1 == v2.\n- Throws an Error with 'invalid' for malformed version strings.\nProvide ONLY valid TypeScript code in a ```typescript ... ``` block.",
+      "fixtureDir": "benchmark/quality-first/fixtures/normal-coding/nc-4",
+      "sourceFile": "src/semver.ts",
+      "publicTest": "test/semver.test.ts",
+      "hiddenTest": "test-hidden/semver-hidden.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Exports compareSemver(v1, v2)",
+          "Compares major/minor/patch numerically",
+          "Pre-release version ranks lower than normal release version",
+          "Compares numeric pre-release identifiers numerically, not alphabetically ('10' > '2')",
+          "Ignores build metadata entirely",
+          "Throws on invalid version formats"
+        ]
+      }
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "name": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "prompt": "Consider two concurrent transactions T1 and T2 executed on PostgreSQL under the REPEATABLE READ isolation level.\nInitial State: Table `accounts` has row id=10 (balance: 100, user_id: 1) and row id=20 (balance: 100, user_id: 1).\nApplication Invariant: The sum of balances for user_id = 1 must remain >= 0.\n\nExecution Sequence:\nTime 1: T1 begins under REPEATABLE READ.\nTime 2: T2 begins under REPEATABLE READ.\nTime 3: T1 executes: `SELECT sum(balance) FROM accounts WHERE user_id = 1;` (sees 200, invariant holds to deduct up to 200).\nTime 4: T2 executes: `SELECT sum(balance) FROM accounts WHERE user_id = 1;` (sees 200, invariant holds to deduct up to 200).\nTime 5: T1 executes: `UPDATE accounts SET balance = balance - 150 WHERE id = 10;`\nTime 6: T2 executes: `UPDATE accounts SET balance = balance - 150 WHERE id = 20;`\nTime 7: T1 commits.\nTime 8: T2 commits.\n\nQuestions to answer definitively:\n1. Does T2 succeed in committing, or does it fail with a serialization failure (SQLSTATE 40001)? Explain the exact mechanism in PostgreSQL's REPEATABLE READ implementation.\n2. Is the application invariant violated upon commit of both transactions? Name the exact concurrency anomaly.\n3. Under what PostgreSQL transaction isolation level would this anomaly be automatically prevented without manual locking?",
+      "expectedAnswer": "1. T2 SUCCEEDS in committing without error. Under PostgreSQL REPEATABLE READ (Snapshot Isolation), first-committer-wins conflict detection only checks whether concurrent transactions attempt to UPDATE/DELETE the EXACT SAME row. Because T1 updated id=10 and T2 updated id=20 (disjoint rows), there is no row conflict. SQLSTATE 40001 is NOT raised under REPEATABLE READ for disjoint row updates.\n2. YES, the application invariant is violated (sum of balances becomes -100). The exact anomaly is WRITE SKEW (Adya's G2-item anomaly).\n3. SERIALIZABLE isolation level (PostgreSQL SSI - Serializable Snapshot Isolation) automatically tracks read-write dependencies (SIREAD locks) and will abort one of the transactions with SQLSTATE 40001.",
+      "rubric": {
+        "keyCriteria": [
+          "Definitively states T2 succeeds and commits (no serialization failure under REPEATABLE READ)",
+          "Explains that PostgreSQL REPEATABLE READ only blocks concurrent updates to the same row, and id=10 and id=20 are disjoint",
+          "Confirms SQLSTATE 40001 is not raised under REPEATABLE READ for disjoint rows",
+          "Identifies the anomaly as Write Skew",
+          "Identifies SERIALIZABLE (SSI) as the isolation level that automatically detects and prevents this"
+        ]
+      }
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "name": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "prompt": "A distributed key-value store with nodes [A, B, C] tracks updates using vector clocks [vA, vB, vC] and physical wall-clock timestamps (NTP).\n\nChronological events:\n1. Node A writes key X = 'v1' at physical wall-clock 10:00:01 with vector clock [1, 0, 0].\n2. Node B receives the replica from A and writes key X = 'v2' at local physical wall-clock 10:00:00 (Node B's clock has backward NTP drift) with vector clock [1, 1, 0].\n3. Simultaneously, during a network partition that isolates Node C, Node C writes key X = 'v3' at physical wall-clock 10:00:05 with vector clock [0, 0, 1].\n4. The partition heals, and nodes exchange vector clocks to reconcile state.\n\nQuestions:\n1. What is the causal relationship between X='v2' ([1, 1, 0]) and X='v3' ([0, 0, 1])? Are they causally ordered or concurrent?\n2. Under a naive Last-Write-Wins (LWW) policy using physical wall-clock timestamps, which value wins, and what anomaly occurs?\n3. Under causal ordering, what must the system do when reconciling these versions?\n4. What is the exact merged vector clock after reconciling both versions?",
+      "expectedAnswer": "1. CONCURRENT (neither causally precedes the other; [1, 1, 0] is neither component-wise <= nor >= [0, 0, 1]).\n2. Under LWW, X='v3' wins because its physical timestamp 10:00:05 is greater than Node B's skewed timestamp 10:00:00. This causes silent data loss of v2 (a classic wall-clock skew anomaly where causally dependent updates can be overwritten by uncoordinated concurrent writes).\n3. Under causal ordering, the system detects a concurrent conflict and must invoke a conflict resolution strategy (e.g. creating siblings/multivalue, application-defined merge, or CRDT rule) rather than silently overwriting.\n4. Merged vector clock: [1, 1, 1] (component-wise max: max(1,0)=1, max(1,0)=1, max(0,1)=1).",
+      "rubric": {
+        "keyCriteria": [
+          "Identifies causal relationship as CONCURRENT / conflict",
+          "Explains that under LWW, v3 falsely wins due to physical timestamp 10:00:05 vs 10:00:00, causing silent data loss",
+          "States that causal ordering detects the conflict and requires explicit conflict resolution or sibling preservation",
+          "Provides exact merged vector clock [1, 1, 1]"
+        ]
+      }
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "name": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapDescription": "A circular dependency exists among tasks. Any model attempting to output a valid topological schedule instead of recognizing the cycle has failed the trap.",
+      "prompt": "A continuous integration pipeline has 6 build tasks: T1, T2, T3, T4, T5, T6.\nDependencies:\n- T2 requires T1 to complete first (T1 -> T2)\n- T3 requires T2 to complete first (T2 -> T3)\n- T4 requires T3 to complete first (T3 -> T4)\n- T5 requires T4 to complete first (T4 -> T5)\n- In the ancillary config, T2 also requires T5 to complete first (T5 -> T2)\n- T6 has no dependencies.\n\nQuestion:\nProvide the valid topological execution order for these tasks that minimizes makespan across 2 worker threads, OR if a valid schedule is impossible, explicitly state why and identify the exact cycle.",
+      "expectedAnswer": "A valid schedule is IMPOSSIBLE. The dependency graph contains a directed cycle (circular dependency): T2 -> T3 -> T4 -> T5 -> T2. A topological sort requires a Directed Acyclic Graph (DAG); because this graph contains a cycle, no valid execution order exists and the pipeline would deadlock.",
+      "rubric": {
+        "keyCriteria": [
+          "Definitively states that scheduling / execution is IMPOSSIBLE",
+          "Identifies the directed cycle: T2 -> T3 -> T4 -> T5 -> T2 (or set {T2, T3, T4, T5})",
+          "Does NOT output a naive execution schedule for the cyclic tasks (trap avoidance)"
+        ]
+      }
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "name": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "prompt": "An AI proxy routes 100 incoming requests arriving in a 1-minute window across 3 upstream providers: Alpha, Beta, and Gamma.\nEach request consumes an average of 2,000 tokens (2K tokens).\n\nProvider characteristics:\n- Provider Alpha: Cost = $0.002 per 1,000 tokens. Max capacity = 60 requests/minute. Latency = 400ms.\n- Provider Beta: Cost = $0.001 per 1,000 tokens. Max capacity = 30 requests/minute. Latency = 800ms.\n- Provider Gamma: Cost = $0.005 per 1,000 tokens. Max capacity = unlimited. Latency = 200ms.\n\nSLA Constraint: At least 90% of all requests (>= 90 requests) MUST complete with latency <= 600ms.\nObjective: Find the allocation (requests to Alpha, Beta, Gamma) that minimizes total dollar cost while satisfying provider capacities and the 90% SLA.\n\nProvide:\n1. Exact request count for Alpha, Beta, and Gamma.\n2. Total dollar cost for the 100 requests.\n3. The exact percentage of requests meeting the <= 600ms latency SLA.",
+      "expectedAnswer": "1. Allocation: Alpha = 60 requests, Beta = 10 requests, Gamma = 30 requests.\nReasoning: Beta latency (800ms) violates the 600ms SLA. Because 90% (90 requests) must meet the SLA, at most 10 requests can exceed 600ms. Therefore, Beta can handle at most 10 requests. Alpha meets the SLA (400ms <= 600ms) and is the cheapest SLA-compliant provider ($0.002 vs $0.005), so Alpha is maxed at 60 requests. The remaining 30 requests must meet the SLA, so they must be assigned to Gamma (200ms <= 600ms).\n2. Total Cost: $0.56\n- Alpha: 60 req * 2K tokens * $0.002 / 1K = $0.24\n- Beta: 10 req * 2K tokens * $0.001 / 1K = $0.02\n- Gamma: 30 req * 2K tokens * $0.005 / 1K = $0.30\nTotal = $0.24 + $0.02 + $0.30 = $0.56.\n3. SLA compliance: 90.0% (60 Alpha + 30 Gamma = 90 out of 100).",
+      "rubric": {
+        "keyCriteria": [
+          "Allocates exactly Alpha=60, Beta=10, Gamma=30",
+          "Calculates exact total cost = $0.56 (56 cents)",
+          "Recognizes that Beta's 800ms latency caps it at 10 requests due to the 90% SLA floor",
+          "Reports SLA compliance as exactly 90%"
+        ]
+      }
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "name": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "prompt": "Design an ingestion engine for handling 10,000 webhook events/sec from external payment processors (e.g. Stripe, Adyen).\nRequirements & Failure Modes to address:\n1. Upstream providers guarantee at-least-once delivery; duplicates and out-of-order events frequently arrive under high load.\n2. Concurrent duplicate deliveries of the same payment event can arrive within milliseconds of each other.\n3. Downstream financial ledger mutations must occur exactly once.\n4. Design must withstand sudden downstream outages without dropping events.\n\nDetail:\n- Data model and storage for idempotency tracking\n- Concurrency control mechanism for simultaneous duplicate webhooks\n- Event lifecycle state machine\n- Out-of-order event ordering strategy\n- Failure recovery and backpressure architecture",
+      "rubric": {
+        "keyCriteria": [
+          "Defines idempotency table with unique constraint on idempotency key with TTL/expiration",
+          "Uses atomic state transition (INSERT ON CONFLICT / SELECT FOR UPDATE) to serialize concurrent identical requests",
+          "Defines clear state machine (e.g. PENDING -> PROCESSING -> COMPLETED -> FAILED)",
+          "Handles out-of-order arrivals using monotonic event versions or timestamps",
+          "Decouples ingestion from processing via durable queue/stream with backpressure",
+          "Includes Dead Letter Queue (DLQ) and exponential retry policy"
+        ]
+      }
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "name": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapDescription": "Proposing a single shared FIFO connection pool allows a noisy tenant to starve all other tenants. Must explicitly reject naive shared FIFO pool and implement fair per-tenant resource quotas.",
+      "prompt": "You are designing the database connectivity layer for a B2B SaaS application supporting 500 tenants sharing a PostgreSQL database cluster.\nProblem:\nTenant 1 occasionally runs unindexed report queries or experiences traffic spikes generating 100 concurrent connections, exhausting the database connection limit (max_connections = 150) and starving all other 499 tenants.\n\nAddress:\n1. Analyze why a standard shared connection pool (e.g. default HikariCP / generic pg pool with single FIFO queue) fails under this workload.\n2. Propose an architectural connection management strategy that guarantees fair access, tenant isolation, and noisy neighbor containment.\n3. Detail how query timeouts, circuit breaking, and connection rationing should be enforced per tenant.\n4. Address trade-offs between shared pooling with quotas vs dedicated connection pools per tenant.",
+      "rubric": {
+        "keyCriteria": [
+          "Explicitly analyzes why a standard shared FIFO pool causes complete starvation under noisy neighbor load",
+          "Rejects naive unpartitioned shared pool as unacceptable for multi-tenant SLA (trap avoidance)",
+          "Implements per-tenant connection reservations / quotas / fair queueing (e.g. deficit round robin or token bucket per tenant)",
+          "Configures tenant-scoped query execution timeouts (statement_timeout) and circuit breakers",
+          "Articulates tradeoffs between connection reservation overhead and pool efficiency"
+        ]
+      }
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "name": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "prompt": "Design an e-commerce checkout orchestration system coordinating three distributed microservices: Order Service, Payment Service, and Inventory Service.\nRequirements & Challenges:\n1. Distributed transactions (2PC/XA) are prohibited; you must use an event-driven Saga pattern.\n2. Dual-Write problem: When a service updates its local database and publishes an event to the message bus, crashes can cause the DB write to succeed but the event to never publish, or vice versa.\n3. Compensating transactions: If Payment succeeds but Inventory reservation fails, Payment must be refunded.\n4. Network timeouts during compensation: What happens if the refund call to Payment times out?\n\nProvide:\n- Concrete architecture addressing the Dual-Write problem\n- Saga orchestration mechanism (orchestrated vs choreographed) and persistent state tracking\n- Compensation semantics and idempotency requirements\n- Failure recovery protocol during transient or prolonged network partitions",
+      "rubric": {
+        "keyCriteria": [
+          "Solves the Dual-Write problem using Transactional Outbox pattern or Change Data Capture (CDC)",
+          "Defines persistent Saga execution coordinator with state log to survive orchestrator crashes",
+          "Defines explicit forward actions and compensating actions with mandatory idempotency",
+          "Specifies handling for compensation timeouts (indefinite retry with exponential backoff and DLQ/manual escalation)",
+          "Analyzes trade-offs of orchestrated saga vs choreography"
+        ]
+      }
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "name": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "prompt": "You are tasked with migrating a 100-million row partitioned PostgreSQL ledger table `journal_entries` in a 24/7 financial application.\nTask: Add a new NOT NULL column `reconciliation_id UUID` with a foreign key referencing `reconciliation_batches(id)` and a computed default for historical records, without incurring table locks that block concurrent writes or reads.\n\nAddress:\n1. Why does a naive `ALTER TABLE journal_entries ADD COLUMN reconciliation_id UUID NOT NULL REFERENCES ... DEFAULT ...;` cause application downtime?\n2. Detail the phased Expand-Contract migration plan across multiple deployments.\n3. Detail the safe data backfill strategy for 100M rows avoiding replication lag and transaction lock spikes.\n4. Show the exact sequence of DDL and application changes from initial state to full enforcement and cleanup.",
+      "rubric": {
+        "keyCriteria": [
+          "Explains that naive ALTER TABLE acquires ACCESS EXCLUSIVE lock and rewrites the table / validates entire table blocking writes",
+          "Implements multi-phase Expand-Contract pattern",
+          "Adds column as NULLABLE without default first",
+          "Uses application dual-writing or triggers for newly inserted rows",
+          "Backfills existing 100M rows in bounded batches with sleep/throttling to prevent replication lag and bloat",
+          "Adds constraint using NOT VALID followed by VALIDATE CONSTRAINT, and creates index CONCURRENTLY"
+        ]
+      }
+    },
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "name": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "prompt": "The test suite in `test/rate-limiter.test.ts` is failing for `src/rate-limiter.ts`. Run `run_tests` to reproduce the error. Inspect the implementation and test contract, identify the root cause of the unexpected rate limiting behavior, fix the defect in `src/rate-limiter.ts`, and run `run_tests` to confirm all tests pass cleanly.",
+      "fixtureCaseDir": "benchmark/cp7-2/fixtures/cases/A1",
+      "hiddenTestFile": "benchmark/cp7-2/fixtures/hidden/a1-rate-limiter-hidden.test.ts",
+      "testFile": "test/rate-limiter.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Diagnoses inverted timestamp prune filter in src/rate-limiter.ts",
+          "Fixes active filter to keep timestamps >= windowStart",
+          "Passes public test suite",
+          "Passes hidden boundary and multi-key acceptance tests"
+        ]
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "name": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "prompt": "Implement wildcard topic subscriptions across `src/events/dispatcher.ts` and `src/events/event-bus.ts`. Subscribers must be able to subscribe to single-segment wildcard patterns (`*`, e.g. `order.*` matching `order.created` but not `order.us.created`) and multi-segment wildcard patterns (`#`, e.g. `audit.#` matching `audit.user.login`). Existing exact topic subscribers and unsubscribe behavior must remain fully intact. Use `run_tests` to verify your implementation.",
+      "fixtureCaseDir": "benchmark/cp7-2/fixtures/cases/B1",
+      "hiddenTestFile": "benchmark/cp7-2/fixtures/hidden/b1-wildcard-events-hidden.test.ts",
+      "testFile": "test/wildcard-events.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Supports single-segment '*' wildcard matching",
+          "Supports multi-segment '#' wildcard matching",
+          "Preserves exact topic subscription and unsubscribe behavior",
+          "Passes public test suite and hidden acceptance tests"
+        ]
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "name": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "prompt": "Inspect `src/resilience/retry-policy.ts` and `test/retry-policy.test.ts`. Complete the implementation of `RetryPolicy` so that it supports exponential backoff with configurable jitter, retry count limits, and transient error discrimination. Verify your implementation passes all tests with `run_tests`.",
+      "fixtureCaseDir": "benchmark/cp7-2/fixtures/cases/D2",
+      "hiddenTestFile": "benchmark/cp7-2/fixtures/hidden/d2-retry-policy-hidden.test.ts",
+      "testFile": "test/retry-policy.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Implements exponential backoff delay calculation",
+          "Applies jitter to prevent thundering herd",
+          "Enforces max retry attempts",
+          "Passes public and hidden retry tests"
+        ]
+      }
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "name": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "trapDescription": "Releasing a reservation lock without verifying ownership/fencing token allows an expired lease to release a newer thread's lock. Must strictly verify fencing token on release.",
+      "prompt": "Inspect `src/concurrency/reservation-lock.ts` and `test/reservation-lock.test.ts`. Implement concurrent reservation locking with inventory balance checks and idempotency. Critical constraint: When releasing or cancelling a reservation, the system MUST verify the caller's idempotency key/fencing token so that a delayed release from an expired lease cannot accidentally release a newly acquired lock belonging to another transaction. Use `run_tests` to verify your work.",
+      "fixtureCaseDir": "benchmark/cp7-2/fixtures/cases/E2",
+      "hiddenTestFile": "benchmark/cp7-2/fixtures/hidden/e2-concurrency-lock-hidden.test.ts",
+      "testFile": "test/reservation-lock.test.ts",
+      "rubric": {
+        "keyCriteria": [
+          "Prevents double-spending under concurrent reservations",
+          "Maintains accurate balance deduction",
+          "Verifies idempotency key / token on release (trap avoidance)",
+          "Passes public and hidden concurrency tests"
+        ]
+      }
+    }
+  ]
+}

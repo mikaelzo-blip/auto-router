@@ -1,0 +1,216 @@
+{
+  "benchmark": "FINAL PRODUCTION VALIDATION — GPT-6 SOL + GPT-6 LUNA",
+  "version": "1.0.0",
+  "evaluatorVersion": "final-validation-1.0.0",
+  "policy": {
+    "productionRoutingChanges": false,
+    "nineRouterChanges": false,
+    "timeoutChanges": false,
+    "automaticPromotion": false,
+    "perUnitInfraRetries": 1
+  },
+  "strong": {
+    "models": ["cx/gpt-6-sol", "cx/gpt-6-luna", "ag/gemini-3.8-flash-high"],
+    "tasks": [
+      {
+        "id": "ST-01",
+        "name": "Multi-region checkout: saga versus transactional outbox",
+        "trap": true,
+        "prompt": "A multi-region checkout service writes an Order row in PostgreSQL, then publishes OrderCreated to Kafka for payment and inventory workers. During a broker outage, an engineer proposes wrapping the DB write and Kafka publish in application-level retry code and calling it atomic. Design the safe path. State the required transaction boundary, how the publisher runs and is retried, idempotency keys, consumer deduplication, saga recovery after PaymentSucceeded but InventoryRejected, and what happens when the compensation call times out. Do not propose 2PC/XA or a cross-region synchronous distributed transaction.",
+        "oracle": {
+          "mandatory": ["transactional outbox or CDC", "outbox written in the same transaction as order", "idempotent publisher/consumer", "durable saga state", "compensation retry and escalation after timeout"],
+          "criticalMistakes": ["claims application retry makes DB plus Kafka atomic", "uses 2PC/XA", "omits durable recovery"],
+          "constraints": ["no 2PC/XA", "no cross-region synchronous transaction"]
+        }
+      },
+      {
+        "id": "ST-02",
+        "name": "Debug a PostgreSQL oversell incident",
+        "prompt": "Production logs show two successful reservation requests for SKU W, each quantity 7, while available stock was 10. Both requests executed: SELECT available FROM inventory WHERE sku=$1; then UPDATE inventory SET reserved=reserved+$2 WHERE sku=$1. The service uses PostgreSQL READ COMMITTED. Diagnose the precise race, give one atomic SQL remediation and one locking remediation, and state retry behavior for lock/serialization failures. Preserve a non-negative available invariant.",
+        "oracle": {
+          "mandatory": ["lost update or check-then-act race", "atomic conditional UPDATE with available/reserved predicate or equivalent", "SELECT FOR UPDATE alternative", "bounded retry for 40001/40P01 or lock timeout", "non-negative invariant"],
+          "criticalMistakes": ["says READ COMMITTED prevents this", "recommends only an in-process mutex"],
+          "constraints": ["PostgreSQL", "READ COMMITTED"]
+        }
+      },
+      {
+        "id": "ST-03",
+        "name": "Tenant pool starvation isolation",
+        "trap": true,
+        "prompt": "A SaaS has 500 tenants and PostgreSQL max_connections=150. Tenant T1 can enqueue 100 expensive report queries while other tenants serve interactive traffic. Analyze why a single shared FIFO pool is insufficient. Propose admission control and fair scheduling, per-tenant query limits/timeouts/circuit breakers, operator observability, and tradeoffs with dedicated pools. Guarantee that one tenant cannot consume all connection capacity. Do not solve this with a larger global pool only.",
+        "oracle": {
+          "mandatory": ["rejects unpartitioned FIFO shared pool", "per-tenant quota/reservation or fair queue", "tenant-scoped statement timeout", "circuit breaker/admission control", "metrics by tenant"],
+          "criticalMistakes": ["larger global pool as sole remedy", "shared FIFO described as fair"],
+          "constraints": ["max_connections 150", "prevent noisy-neighbor starvation"]
+        }
+      },
+      {
+        "id": "ST-04",
+        "name": "Webhook signature boundary under proxying",
+        "prompt": "A payment webhook arrives through a CDN and reverse proxy. The provider signs the exact raw HTTP body with HMAC-SHA256. The current handler trusts X-Forwarded-For, parses then JSON-stringifies the body before verification, and compares signatures with ===. Identify the security boundaries and give a safe verification sequence, including replay defense and secret rotation. Do not rely on client IP as authentication.",
+        "oracle": {
+          "mandatory": ["verify raw bytes before parsing", "constant-time signature comparison", "timestamp/replay window or event id deduplication", "trusted-proxy configuration", "secret rotation accepts active and previous secret"],
+          "criticalMistakes": ["JSON stringify before verifying", "client IP as authentication", "ordinary string equality for MAC"],
+          "constraints": ["HMAC-SHA256", "CDN and reverse proxy"]
+        }
+      },
+      {
+        "id": "ST-05",
+        "name": "Zero-downtime ledger migration",
+        "prompt": "A 24/7 PostgreSQL financial ledger has 100M journal_entries rows. Add reconciliation_id UUID referencing reconciliation_batches(id), ultimately NOT NULL, with no write outage. Give phased expand-contract deployment steps, safe bounded backfill, index and foreign-key validation sequence, rollback posture, and replication-lag controls. A computed default is available only in application code, not as a stable SQL constant.",
+        "oracle": {
+          "mandatory": ["add nullable column first", "dual write or trigger for new rows", "bounded/throttled batch backfill", "CREATE INDEX CONCURRENTLY", "foreign key NOT VALID then VALIDATE", "enforce NOT NULL after verification"],
+          "criticalMistakes": ["single ALTER with NOT NULL and computed default", "unbounded one-transaction backfill"],
+          "constraints": ["100M rows", "no write outage"]
+        }
+      },
+      {
+        "id": "ST-06",
+        "name": "Retry storm and recovery design",
+        "prompt": "A dependency returns 503 for 90 seconds. Ten thousand workers retry immediately, causing a retry storm that prevents recovery. Design the client and queue behavior: retry classification, bounded exponential backoff with jitter, concurrency limits, circuit breaking, deadlines, DLQ/manual recovery, idempotency, and metrics. Explain which errors must not retry.",
+        "oracle": {
+          "mandatory": ["bounded exponential backoff with jitter", "retry only transient failures", "concurrency/bulkhead limit", "circuit breaker", "deadlines", "DLQ/manual path", "idempotency"],
+          "criticalMistakes": ["infinite immediate retries", "retries all 4xx including auth/validation"],
+          "constraints": ["503 for 90 seconds", "10,000 workers"]
+        }
+      },
+      {
+        "id": "ST-07",
+        "name": "Idempotent payments API contract",
+        "prompt": "Design POST /payments for clients that may retry after a network timeout. Specify request/response semantics, idempotency-key scope, request fingerprint conflict handling, storage state transitions, concurrent duplicate behavior, response replay, retention, and observability. A duplicate key with a different amount must never silently reuse the first payment.",
+        "oracle": {
+          "mandatory": ["idempotency key scoped to principal/endpoint", "request fingerprint", "unique constraint or atomic acquisition", "in-progress/complete state", "same-key same-request response replay", "conflict for different request", "retention and observability"],
+          "criticalMistakes": ["key alone without request mismatch detection", "two concurrent charges possible"],
+          "constraints": ["network timeout retries", "different amount must conflict"]
+        }
+      },
+      {
+        "id": "ST-08",
+        "name": "Ambiguous evidence incident decision",
+        "trap": true,
+        "prompt": "At 09:00, API p99 rose from 300ms to 8s. Dashboard A shows DB CPU 92%; Dashboard B, sampled every five minutes, shows 35%. A deployment at 08:55 changed a feature flag but no query text. One log line says timeout waiting for connection. There is no per-tenant breakdown, no pool utilization metric, and no query plan. State what can and cannot be concluded, the first safe mitigation, the next evidence to collect, and rollback criteria. Do not claim a single root cause from this evidence.",
+        "oracle": {
+          "mandatory": ["explicit uncertainty", "connection-pool exhaustion is a hypothesis not a conclusion", "safe reversible mitigation", "collect pool utilization/wait, DB sessions, query latency/plan, tenant breakdown", "objective rollback criteria"],
+          "criticalMistakes": ["asserts definite root cause", "irreversible schema/config change without evidence"],
+          "constraints": ["evidence is incomplete"]
+        }
+      },
+      {
+        "id": "ST-09",
+        "name": "Latency regression diagnosis",
+        "prompt": "After enabling response compression, p99 latency doubles only for 2MB JSON responses. CPU is high on application pods but network egress is lower. Small responses are unchanged. Give a diagnosis plan, likely mechanism, measurements to confirm it, and remediation options that preserve correctness. Do not remove compression globally without evidence.",
+        "oracle": {
+          "mandatory": ["compression CPU cost/algorithm or level is a likely hypothesis", "measure CPU profiling and compression time by payload size", "compare compressed/uncompressed end-to-end", "selective threshold or async/offload/config tuning", "preserve correctness"],
+          "criticalMistakes": ["claims network is bottleneck despite lower egress", "global removal without evidence"],
+          "constraints": ["only 2MB JSON", "small responses unchanged"]
+        }
+      },
+      {
+        "id": "ST-10",
+        "name": "Authorization cache revocation trap",
+        "trap": true,
+        "prompt": "Permissions live in PostgreSQL and are cached in Redis. A developer invalidates Redis before committing a permission revocation transaction. Explain the race that can recreate stale authorization, then design a safe revocation path including cache versioning/fencing, transaction boundary, outbox/CDC or post-commit invalidation, and emergency fail-safe behavior for sensitive actions. Do not claim Redis DEL before commit is sufficient.",
+        "oracle": {
+          "mandatory": ["pre-commit invalidation race", "post-commit invalidation or transactional outbox/CDC", "monotonic version/fencing", "sensitive-action fail-safe", "observability/reconciliation"],
+          "criticalMistakes": ["pre-commit DEL is sufficient", "eventual consistency accepted without sensitive-action control"],
+          "constraints": ["revocation", "Redis plus PostgreSQL"]
+        }
+      }
+    ]
+  },
+  "agentic": {
+    "models": ["cx/gpt-6-sol", "cx/gpt-6-luna", "ag/claude-sonnet-4-6"],
+    "tasks": [
+      {
+        "id": "AG-01",
+        "name": "Rate limiter bug repair",
+        "fixture": "A1",
+        "publicTest": "test/rate-limiter.test.ts",
+        "hiddenTest": "a1-rate-limiter-hidden.test.ts",
+        "prompt": "The test suite in `test/rate-limiter.test.ts` fails for `src/rate-limiter.ts`. Reproduce it with run_tests, inspect the contract, fix the root cause only in src/, and run_tests again. Tests and metadata are immutable.",
+        "trap": false
+      },
+      {
+        "id": "AG-02",
+        "name": "Payment validation and idempotency feature",
+        "fixture": "B2",
+        "publicTest": "test/payment-processor.test.ts",
+        "hiddenTest": "b2-payment-processor-hidden.test.ts",
+        "prompt": "Implement validation and idempotency across `src/payments/validator.ts` and `src/payments/processor.ts`: non-positive amount is INVALID_AMOUNT; non-ISO-3 currency is INVALID_CURRENCY; empty recipient is MISSING_RECIPIENT; duplicate idempotencyKey returns the original response without charging twice. Inspect tests and preserve existing behavior. Use run_tests.",
+        "trap": false
+      },
+      {
+        "id": "AG-03",
+        "name": "Concurrent reservation and idempotency repair",
+        "fixture": "E2",
+        "publicTest": "test/reservation-lock.test.ts",
+        "hiddenTest": "e2-concurrency-lock-hidden.test.ts",
+        "prompt": "Fix `src/concurrency/reservation-lock.ts` so competing reservations cannot over-allocate and repeated idempotencyKey requests return the cached result without deducting balance again. Inspect the repository and tests, modify only src/, then run_tests.",
+        "trap": false
+      },
+      {
+        "id": "AG-04",
+        "name": "Saga compensation repair",
+        "fixture": "S2",
+        "publicTest": "test/saga.test.ts",
+        "hiddenTest": "s2-saga-hidden.test.ts",
+        "prompt": "`src/saga.ts` reserves inventory, charges payment, and dispatches delivery. Repair compensating behavior so failures leave no leaked reservation or payment. Preserve successful behavior and test with run_tests. Modify only src/.",
+        "trap": false
+      },
+      {
+        "id": "AG-05",
+        "name": "Async upstream adapter migration",
+        "fixture": "F1",
+        "publicTest": "test/upstream-adapter.test.ts",
+        "hiddenTest": "f1-upstream-adapter-hidden.test.ts",
+        "prompt": "Migrate `src/upstream/adapter.ts` from legacy callback V1Client usage to Promise-based V2Client with async/await while preserving getResource public behavior. Inspect source and tests, modify only src/, and run_tests.",
+        "trap": false
+      },
+      {
+        "id": "AG-06",
+        "name": "Safe schema migrator hidden regression",
+        "fixture": "E1",
+        "publicTest": "test/migrator.test.ts",
+        "hiddenTest": "e1-migrator-hidden.test.ts",
+        "prompt": "Review `src/db/migrator.ts` and its migration contract. Public tests pass, but harden the three-phase migration behavior against incomplete backfill and repeated nullable-column calls. Do not modify tests. Use run_tests to preserve existing behavior.",
+        "trap": true
+      },
+      {
+        "id": "AG-07",
+        "name": "Wildcard event bus multi-file feature",
+        "fixture": "B1",
+        "publicTest": "test/wildcard-events.test.ts",
+        "hiddenTest": "b1-wildcard-events-hidden.test.ts",
+        "prompt": "Implement `*` single-segment and `#` multi-segment subscriptions across `src/events/dispatcher.ts` and `src/events/event-bus.ts`, preserving exact topics and unsubscribe behavior. Inspect tests, change only src/, then run_tests.",
+        "trap": false
+      },
+      {
+        "id": "AG-08",
+        "name": "Retry policy hidden contract",
+        "fixture": "D2",
+        "publicTest": "test/retry-policy.test.ts",
+        "hiddenTest": "d2-retry-policy-hidden.test.ts",
+        "prompt": "Public retry tests pass. Harden `src/resilience/retry-policy.ts`: fail fast for 401, 403, and errors where isRetryable is false, but retain retries for transient network failures and 429. Preserve current API and verify with run_tests. Tests are immutable.",
+        "trap": true
+      },
+      {
+        "id": "AG-09",
+        "name": "LRU regression repair",
+        "fixture": "D1",
+        "publicTest": "test/lru-cache.test.ts",
+        "hiddenTest": "d1-lru-cache-hidden.test.ts",
+        "prompt": "Repair the flawed cache sizing logic in `src/cache/lru-cache.ts` with true least-recently-used eviction. Preserve API and behavior outside the defect. Inspect tests, change only src/, and run_tests.",
+        "trap": false
+      },
+      {
+        "id": "AG-10",
+        "name": "Revoked session cross-module security fix",
+        "fixture": "A2",
+        "publicTest": "test/session-auth.test.ts",
+        "hiddenTest": "a2-session-auth-hidden.test.ts",
+        "prompt": "Fix revoked session handling across `src/session-service.ts` and `src/token-validator.ts`. Expired and malformed tokens must retain their existing behavior. Inspect source and tests, modify only src/, then run_tests.",
+        "trap": false
+      }
+    ]
+  }
+}

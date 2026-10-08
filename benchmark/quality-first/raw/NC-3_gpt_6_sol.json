@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-3",
+  "category": "NORMAL_CODING",
+  "taskName": "LRU Cache with TTL Eviction Priority",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:11:17.898Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 19779,
+  "ttfbMs": 8384,
+  "usage": {
+    "promptTokens": 2684,
+    "completionTokens": 513,
+    "reasoningTokens": 0,
+    "totalTokens": 3197
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.4241ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.0842ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 140.449\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.4586ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.1351ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.097ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 124.9203\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport class LRUCacheWithTTL<K, V> {\n  private readonly entries = new Map<K, { value: V; createdAt: number }>();\n\n  constructor(\n    private readonly capacity: number,\n    private readonly ttlMs: number,\n  ) {\n    if (!Number.isSafeInteger(capacity) || capacity <= 0) {\n      throw new RangeError(\"capacity must be a positive safe integer\");\n    }\n    if (!Number.isFinite(ttlMs) || ttl"
+}

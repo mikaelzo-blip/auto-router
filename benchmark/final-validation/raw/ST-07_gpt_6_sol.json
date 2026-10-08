@@ -1,0 +1,24 @@
+{
+  "taskId": "ST-07",
+  "category": "STRONG",
+  "taskName": "Idempotent payments API contract",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:31:37.361Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 1,
+  "elapsedMs": 18468,
+  "ttfbMs": 1649,
+  "usage": {
+    "promptTokens": 2507,
+    "completionTokens": 739,
+    "reasoningTokens": 0,
+    "totalTokens": 3246
+  },
+  "rawResponse": "## `POST /payments` contract\n\nRequire an `Idempotency-Key` header for every payment creation request. The client generates a high-entropy key for one intended payment and reuses it unchanged after a timeout. A new intended payment requires a new key.\n\nA successful request returns `201 Created` with the payment ID, status, and `Location: /payments/{id}`. A timeout does not tell the client whether the payment was created; the client retries with the same key rather than issuing a new one.\n\n## Key scope and request matching\n\nScope each key to the authenticated merchant account and `POST /payments`. Enforce uniqueness on `(merchant_id, operation, idempotency_key)`. Do not scope by individual API credential: credential rotation must not turn a retry into a second payment.\n\nStore a fingerprint of the validated, canonical payment parameters, including amount, currency, destination, and every field that can affect payment creation. Canonicalization must define treatment of omitted defaults, numeric formats, and field ordering. Exclude transport-only fields such as tracing headers.\n\nIf an existing key has a different fingerprint, return `409 Conflict` with a stable `idempotency_key_conflict` error. Do not create, modify, or return the prior payment as though it matched. **Changing the amount while reusing a key always produces this conflict.**\n\n## Durable state and concurrency\n\nPersist an idempotency record with these states:\n\n| State | Meaning | Retry with matching fingerprint |\n|---|---|---|\n| `PROCESSING` | One request owns execution. | Return `409 Conflict` with `Retry-After`, or wait briefly for completion. Do not start another execution. |\n| `COMPLETED` | A terminal HTTP response is stored. | Replay that response. |\n\nCreate the `PROCESSING` record through an atomic insert guarded by the unique constraint. Compare fingerprints before deciding how to handle a duplicate. Use a lease or fencing token for worker recovery so that an expired worker cannot commit after its replacement.\n\nCreate the payment and store the terminal response in the same database transaction when possible. If a processor call crosses that transaction boundary, use a durable outbox and send the scoped idempotency key as the processor’s idempotency key. A worker crash must not authorize a second external charge. If the processor cannot deduplicate or resolve an uncertain call, keep the record in `PROCESSING` for reconciliation; do not blindly retry the charge.\n\n## Response replay and retention\n\nFor `COMPLETED`, replay the stored HTTP status, response body, and relevant headers, including the payment ID and `Location`. This includes stored payment declines and post-execution errors. Validate authentication and authorization on every retry; never replay a response across merchants. Pre-execution validation failures need not consume a key because no payment execution began.\n\nRetain the key, fingerprint, and replayable result for at least the published client retry window and the maximum period in which an external outcome can remain uncertain. After that window, either reject reuse of old keys or document that reuse can create a new payment. Retaining a key tombstone and fingerprint prevents a changed-amount request from being accepted after response data expires.\n\n## Observability\n\nRecord the scoped key or a non-reversible hash, fingerprint, payment ID, state, attempt count, processor reference, lease generation, and timestamps. Emit metrics for replay, in-progress duplicates, fingerprint conflicts, expired leases, and uncertain processor outcomes. Never log sensitive payment fields or raw keys. Trace each retry to the same idempotency record and alert on records stuck in `PROCESSING` beyond the reconciliation threshold."
+}

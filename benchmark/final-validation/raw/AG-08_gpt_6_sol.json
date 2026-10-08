@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-08",
+  "category": "AGENTIC",
+  "taskName": "Retry policy hidden contract",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:43:27.833Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 4,
+  "toolCalls": 3,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 13550,
+  "ttfbMs": 2745,
+  "score": 1,
+  "filesChanged": [
+    "src/resilience/retry-policy.ts"
+  ],
+  "publicOutputSnippet": "✔ RetryPolicy - succeeds on first attempt without retrying (0.5689ms)\n✔ RetryPolicy - retries on transient failure and recovers (15.7623ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 111.1912\n",
+  "hiddenOutputSnippet": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.7469ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (15.3223ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 160.0098\n"
+}

@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-1",
+  "category": "HARD_REASONING",
+  "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:14:34.738Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 17995,
+  "ttfbMs": 1403,
+  "usage": {
+    "promptTokens": 2871,
+    "completionTokens": 789,
+    "reasoningTokens": 0,
+    "totalTokens": 3660
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "## Answer\n\n---\n\n### 1. Does T2 commit or fail with SQLSTATE 40001?\n\n**T2 commits successfully.**\n\nPostgreSQL's REPEATABLE READ uses MVCC with snapshot isolation. The write-conflict detection rule for REPEATABLE READ is:\n\n> If T2 attempts to UPDATE a row whose latest committed version was written by a transaction that committed *after* T2's snapshot was taken, T2 is aborted with SQLSTATE 40001 (\"co"
+}

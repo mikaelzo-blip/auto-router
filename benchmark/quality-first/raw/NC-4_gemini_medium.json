@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-4",
+  "category": "NORMAL_CODING",
+  "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:13:07.430Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 16194,
+  "ttfbMs": 9400,
+  "usage": {
+    "promptTokens": 2751,
+    "completionTokens": 2595,
+    "reasoningTokens": 1723,
+    "totalTokens": 5346
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (0.5672ms)\n✔ Semver - pre-release has lower precedence than normal version (0.118ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 126.3856\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (0.61ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.1301ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.055ms)\n✔ Hidden: Semver - invalid semver string throws error (0.2432ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.2138\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nconst SEMVER_REGEX =\n  /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/;\n\ninterface ParsedSemVer {\n  major: bigint;\n  minor: bigint;\n  patch: bigint;\n  prerelease: string[] | null;\n}\n\nfunction parseSemver(v: string): ParsedSemVer {\n  const match = SEMVE"
+}

@@ -1,0 +1,35 @@
+{
+  "taskId": "AG-3",
+  "category": "AGENTIC",
+  "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:43:11.156Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0.5,
+  "elapsedMs": 155157,
+  "ttfbMs": 2677,
+  "iterations": 20,
+  "toolCalls": 20,
+  "failedToolCalls": 5,
+  "prematureSuccess": false,
+  "reasoningErrors": [
+    "Hidden acceptance test suite failed"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": false,
+    "filesChanged": [
+      "src/resilience/retry-policy.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "PARENT_DIR: [\n  'agentic-AG-1-gemini_high',\n  'agentic-AG-1-gemini_medium',\n  'agentic-AG-1-gpt_6_luna',\n  'agentic-AG-1-gpt_6_sol',\n  'agentic-AG-1-sonnet_4_6',\n  'agentic-AG-2-gemini_high',\n  'agentic-AG-2-gemini_medium',\n  'agentic-AG-2-gpt_6_luna',\n  'agentic-AG-2-gpt_6_sol',\n  'agentic-AG-2-sonnet_4_6',\n  'agentic-AG-3-gemini_high',\n  'agentic-AG-3-gemini_medium',\n  'agentic-AG-3-gpt_6_luna',",
+    "hiddenTestOutput": "PARENT_DIR: [\n  'agentic-AG-1-gemini_high',\n  'agentic-AG-1-gemini_medium',\n  'agentic-AG-1-gpt_6_luna',\n  'agentic-AG-1-gpt_6_sol',\n  'agentic-AG-1-sonnet_4_6',\n  'agentic-AG-2-gemini_high',\n  'agentic-AG-2-gemini_medium',\n  'agentic-AG-2-gpt_6_luna',\n  'agentic-AG-2-gpt_6_sol',\n  'agentic-AG-2-sonnet_4_6',\n  'agentic-AG-3-gemini_high',\n  'agentic-AG-3-gemini_medium',\n  'agentic-AG-3-gpt_6_luna',"
+  }
+}

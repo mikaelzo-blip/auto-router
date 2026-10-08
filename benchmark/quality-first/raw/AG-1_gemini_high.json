@@ -1,0 +1,26 @@
+{
+  "taskId": "AG-1",
+  "category": "AGENTIC",
+  "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+  "isTrap": false,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:32:23.670Z",
+  "operationalSuccess": false,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 71048,
+  "ttfbMs": 6368,
+  "iterations": 3,
+  "toolCalls": 2,
+  "failedToolCalls": 1,
+  "reasoningErrors": [
+    "Network/timeout error: The operation was aborted due to timeout"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "error": "The operation was aborted due to timeout"
+  }
+}

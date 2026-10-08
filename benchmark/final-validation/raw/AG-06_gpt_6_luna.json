@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-06",
+  "category": "AGENTIC",
+  "taskName": "Safe schema migrator hidden regression",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:40:54.926Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 5,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 22033,
+  "ttfbMs": 2284,
+  "score": 1,
+  "filesChanged": [
+    "src/db/migrator.ts"
+  ],
+  "publicOutputSnippet": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.5394ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 116.9291\n",
+  "hiddenOutputSnippet": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.6359ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.0886ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.8264\n"
+}

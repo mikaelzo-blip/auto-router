@@ -1,0 +1,28 @@
+{
+  "taskId": "ST-09",
+  "category": "STRONG",
+  "taskName": "Latency regression diagnosis",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:33:10.741Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Omitted CPU profiling / timing breakdown for compression step",
+    "Omitted comparative benchmark of compressed vs uncompressed 2MB payloads",
+    "Omitted maintaining compression where beneficial without global shutdown"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.4,
+  "elapsedMs": 14967,
+  "ttfbMs": 1703,
+  "usage": {
+    "promptTokens": 2507,
+    "completionTokens": 535,
+    "reasoningTokens": 0,
+    "totalTokens": 3042
+  },
+  "rawResponse": "**Likely mechanism:** Compressing a 2 MB JSON body consumes application-pod CPU on the response path. At high concurrency, compression workers contend for CPU or hit pod CPU throttling, increasing p99 latency. Lower egress and unchanged small-response latency fit this pattern, but do not establish whether time is spent compressing, waiting for CPU, or both.\n\n**Diagnosis plan**\n\n1. **Compare like-for-like requests.** Group by route, uncompressed body size, `Content-Encoding`, compression level, pod, and load. Compare p50/p95/p99 latency, not only aggregate p99. Verify whether small bodies bypass compression through a size threshold.\n2. **Split response time into phases.** Measure application work before serialization, JSON serialization, compression, time to first byte, and response write time. Record per-request CPU time and wall time for compression. If compression wall time greatly exceeds CPU time, investigate contention or throttling.\n3. **Check capacity at the same load.** Inspect pod CPU utilization, CPU throttled time, run-queue delay, garbage-collection pauses, and concurrent compressions. Profile representative pods to identify the compressor and any allocation or copying overhead.\n4. **Run a controlled comparison.** On a small canary, compare current settings with lower compression levels, alternative supported encodings, and a higher size threshold. Keep request mix and offered load comparable. Measure p99 latency, CPU per response, compressed bytes, and egress cost. Include a no-compression canary for these large responses as a baseline; do not disable compression globally.\n\n**Confirm the hypothesis** if the added tail time is concentrated in compression or CPU wait, rises with concurrent large responses, and falls in the canary when compression CPU cost falls. If compression time is low, examine serialization, buffering, downstream backpressure, and network write time instead.\n\n**Remediation, subject to measurements:**\n\n- Lower the compression level for large JSON when the CPU and p99 savings outweigh the extra bytes.\n- Bound concurrent compressions or provision more CPU; check CPU limits if throttling is material. A concurrency bound must not merely move the delay into an unmeasured queue.\n- Test a faster encoding where clients advertise support, with correct `Accept-Encoding` negotiation and `Vary: Accept-Encoding`.\n- Apply a route- and size-specific policy if large-body compression has negative net value; retain compression elsewhere.\n\nPreserve response bytes after decompression, `Content-Encoding`, and correct `Content-Length` handling. Do not compress a body twice. Validate streaming behavior and compare error rates as well as latency during rollout."
+}
