@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$Project = "C:\Projects\router\auto-router"
+$Project = "C:\Projects\router\auto-router-v2"
 $Nine    = "http://127.0.0.1:20128"
 
 Set-Location $Project
