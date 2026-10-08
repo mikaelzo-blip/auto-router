@@ -1,0 +1,79 @@
+{
+  "checkpoint": "QUOTA-AUTO PRODUCTION CUTOVER",
+  "timestamp": "2026-09-14T14:45:00.000Z",
+  "observationWindow": {
+    "durationMinutes": 10,
+    "productionPort": 20200,
+    "productionPid": 9780,
+    "requestsObserved": 37,
+    "httpSuccesses": 36,
+    "httpFailures": 1,
+    "timeouts": 1,
+    "routingFailures": 0,
+    "quotaTelemetryFailures": 0,
+    "quotaTelemetryTimeouts": 0
+  },
+  "modelDistribution": {
+    "gemini-flash-low": 8,
+    "gemini-flash-medium": 10,
+    "gemini-flash-high": 19
+  },
+  "reasoningDistribution": {
+    "minimal": 8,
+    "low": 10,
+    "medium": 8,
+    "high": 11
+  },
+  "quotaPolicyTelemetry": {
+    "activePolicy": "auto",
+    "quotaDrivenSwitches": 1,
+    "avoidedExhaustedOrReserveModels": [
+      "luna-review"
+    ],
+    "noEligibleModelEvents": 0,
+    "cooldownEvents": 0
+  },
+  "multiAccountPoolStates": {
+    "antigravity": {
+      "status": "healthy",
+      "bestRemainingRatio": 0.8166,
+      "usableAccounts": 2,
+      "totalAccounts": 2,
+      "healthyAccount": {
+        "alias": "healthy_account",
+        "priority": 1,
+        "status": "healthy",
+        "startingQuotaRatio": 0.8361,
+        "endingQuotaRatio": 0.8166,
+        "requestsServed": 58,
+        "utilizationPercentage": 100.0
+      },
+      "reserveAccount": {
+        "alias": "reserve_account",
+        "priority": 2,
+        "status": "reserve",
+        "startingQuotaRatio": 0.00455,
+        "endingQuotaRatio": 0.00455,
+        "requestsServed": 0,
+        "utilizationPercentage": 0.0,
+        "conserved": true
+      }
+    },
+    "codex": {
+      "status": "reserve",
+      "bestRemainingRatio": 0.06,
+      "usableAccounts": 1,
+      "totalAccounts": 1,
+      "weeklyRemaining": 6,
+      "weeklyLimit": 100
+    }
+  },
+  "safetyInvariants": {
+    "solActivated": false,
+    "astraActivated": false,
+    "exhaustedCodexAttempted": false,
+    "midStreamReplayCount": 0,
+    "duplicateToolEvents": 0,
+    "streamSafetyStatus": "verified"
+  }
+}

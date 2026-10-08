@@ -1,0 +1,2425 @@
+[
+  {
+    "caseId": "hard-01-pg-concurrency",
+    "name": "PostgreSQL transaction concurrency & row locking",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:45:19.974Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 16731,
+    "timeToFirstByteMs": 3677,
+    "promptTokens": 2143,
+    "completionTokens": 4824,
+    "reasoningTokens": 2753,
+    "contentSnippet": "Here is a complete, production-grade guide and implementation for concurrent inventory reservation in PostgreSQL using TypeScript.  ---  ### 1. Why `SELECT ...` Followed by App Logic & `UPDATE` Fails ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:dirty read",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"dirty read\""
+        },
+        {
+          "name": "critical_invariant:pessimistic_locking",
+          "passed": true,
+          "reason": "Uses SELECT FOR UPDATE / NOWAIT pessimistic row locking"
+        },
+        {
+          "name": "correctness:defensive_balance_check",
+          "passed": true,
+          "reason": "Enforces defensive inventory reservation check"
+        },
+        {
+          "name": "unsafe_alternative_rejection:serialization_retry",
+          "passed": true,
+          "reason": "Handles serialization failure 40001 with retry"
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:40001",
+          "passed": true,
+          "reason": "Found invariant \"40001\""
+        },
+        {
+          "name": "invariant_term:retry",
+          "passed": true,
+          "reason": "Found invariant \"retry\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-01-pg-concurrency",
+    "name": "PostgreSQL transaction concurrency & row locking",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:45:47.514Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 27538,
+    "timeToFirstByteMs": 27538,
+    "promptTokens": 2622,
+    "completionTokens": 1448,
+    "reasoningTokens": 0,
+    "contentSnippet": "```ts import type { Pool, PoolClient } from \"pg\";  type Tx = Pick<PoolClient, \"query\">;  class InsufficientInventoryError extends Error {} class InventoryNotFoundError extends Error {}  export async f",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:dirty read",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"dirty read\""
+        },
+        {
+          "name": "critical_invariant:pessimistic_locking",
+          "passed": true,
+          "reason": "Uses SELECT FOR UPDATE / NOWAIT pessimistic row locking"
+        },
+        {
+          "name": "correctness:defensive_balance_check",
+          "passed": true,
+          "reason": "Enforces defensive inventory reservation check"
+        },
+        {
+          "name": "unsafe_alternative_rejection:serialization_retry",
+          "passed": true,
+          "reason": "Handles serialization failure 40001 with retry"
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:40001",
+          "passed": true,
+          "reason": "Found invariant \"40001\""
+        },
+        {
+          "name": "invariant_term:retry",
+          "passed": true,
+          "reason": "Found invariant \"retry\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-01-pg-concurrency",
+    "name": "PostgreSQL transaction concurrency & row locking",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:46:32.517Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 50804,
+    "timeToFirstByteMs": 45002,
+    "promptTokens": 2622,
+    "completionTokens": 1784,
+    "reasoningTokens": 0,
+    "contentSnippet": "Under PostgreSQL `READ COMMITTED`, inventory checks and updates must be protected by a row lock—or expressed as one atomic conditional update—to prevent concurrent reservations from overselling.  ## W",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:dirty read",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"dirty read\""
+        },
+        {
+          "name": "critical_invariant:pessimistic_locking",
+          "passed": true,
+          "reason": "Uses SELECT FOR UPDATE / NOWAIT pessimistic row locking"
+        },
+        {
+          "name": "correctness:defensive_balance_check",
+          "passed": true,
+          "reason": "Enforces defensive inventory reservation check"
+        },
+        {
+          "name": "unsafe_alternative_rejection:serialization_retry",
+          "passed": true,
+          "reason": "Handles serialization failure 40001 with retry"
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:40001",
+          "passed": true,
+          "reason": "Found invariant \"40001\""
+        },
+        {
+          "name": "invariant_term:retry",
+          "passed": true,
+          "reason": "Found invariant \"retry\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-02-deadlock-prevention",
+    "name": "Deadlock prevention in concurrent transfers",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:46:52.172Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 19655,
+    "timeToFirstByteMs": 3933,
+    "promptTokens": 2132,
+    "completionTokens": 5369,
+    "reasoningTokens": 2649,
+    "contentSnippet": "Here is a complete, production-ready implementation of the `transferFunds` service function in TypeScript, followed by in-depth explanations of the concurrency mechanics.  ---  ### 1. TypeScript Imple",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:deterministic_resource_ordering",
+          "passed": true,
+          "reason": "Sorts account IDs to establish deterministic lock order"
+        },
+        {
+          "name": "correctness:pessimistic_row_locking",
+          "passed": true,
+          "reason": "Locks rows in sorted order using FOR UPDATE"
+        },
+        {
+          "name": "unsafe_alternative_rejection:negative_balance_guard",
+          "passed": true,
+          "reason": "Guards against negative account balance"
+        },
+        {
+          "name": "invariant_term:sort",
+          "passed": true,
+          "reason": "Found invariant \"sort\""
+        },
+        {
+          "name": "invariant_term:40P01",
+          "passed": true,
+          "reason": "Found invariant \"40P01\""
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-02-deadlock-prevention",
+    "name": "Deadlock prevention in concurrent transfers",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:47:24.432Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 32259,
+    "timeToFirstByteMs": 32259,
+    "promptTokens": 2614,
+    "completionTokens": 1616,
+    "reasoningTokens": 0,
+    "contentSnippet": "Use integer minor units (for example, cents) for `amount` and `balance`; do not use floating-point currency values.  ```ts type QueryResult<T> = {   rows: T[];   rowCount: number | null; };  type Tran",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:deterministic_resource_ordering",
+          "passed": true,
+          "reason": "Sorts account IDs to establish deterministic lock order"
+        },
+        {
+          "name": "correctness:pessimistic_row_locking",
+          "passed": true,
+          "reason": "Locks rows in sorted order using FOR UPDATE"
+        },
+        {
+          "name": "unsafe_alternative_rejection:negative_balance_guard",
+          "passed": true,
+          "reason": "Guards against negative account balance"
+        },
+        {
+          "name": "invariant_term:sort",
+          "passed": true,
+          "reason": "Found invariant \"sort\""
+        },
+        {
+          "name": "invariant_term:40P01",
+          "passed": true,
+          "reason": "Found invariant \"40P01\""
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-02-deadlock-prevention",
+    "name": "Deadlock prevention in concurrent transfers",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:48:09.439Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 65682,
+    "timeToFirstByteMs": 45007,
+    "promptTokens": 2614,
+    "completionTokens": 1783,
+    "reasoningTokens": 0,
+    "contentSnippet": "```ts import type { PoolClient } from \"pg\";  type Transaction = Pick<PoolClient, \"query\">;  /**  * Transfers an integer number of minor currency units, such as cents.  *  * The caller must invoke this",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "critical_invariant:deterministic_resource_ordering",
+          "passed": true,
+          "reason": "Sorts account IDs to establish deterministic lock order"
+        },
+        {
+          "name": "correctness:pessimistic_row_locking",
+          "passed": true,
+          "reason": "Locks rows in sorted order using FOR UPDATE"
+        },
+        {
+          "name": "unsafe_alternative_rejection:negative_balance_guard",
+          "passed": true,
+          "reason": "Guards against negative account balance"
+        },
+        {
+          "name": "invariant_term:sort",
+          "passed": false,
+          "reason": "Missing invariant \"sort\""
+        },
+        {
+          "name": "invariant_term:40P01",
+          "passed": true,
+          "reason": "Found invariant \"40P01\""
+        },
+        {
+          "name": "invariant_term:FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"FOR UPDATE\""
+        }
+      ],
+      "issues": [
+        "Missing key concept: \"sort\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-03-double-spend-idempotency",
+    "name": "Idempotency & double-spend prevention in payment processing",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:48:27.808Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 18367,
+    "timeToFirstByteMs": 4054,
+    "promptTokens": 2117,
+    "completionTokens": 4422,
+    "reasoningTokens": 2106,
+    "contentSnippet": "Designing a robust, idempotent payment webhook ingestion endpoint requires handling three primary failure modes: **concurrent identical deliveries** (race conditions), **sequential retries** (at-least",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:unique_idempotency_key",
+          "passed": true,
+          "reason": "Enforces unique constraint on idempotency key"
+        },
+        {
+          "name": "correctness:atomic_state_transition",
+          "passed": true,
+          "reason": "Uses atomic ON CONFLICT or row lock for transition"
+        },
+        {
+          "name": "unsafe_alternative_rejection:no_reexecution_side_effects",
+          "passed": true,
+          "reason": "Returns cached original result without re-executing"
+        },
+        {
+          "name": "invariant_term:ON CONFLICT",
+          "passed": true,
+          "reason": "Found invariant \"ON CONFLICT\""
+        },
+        {
+          "name": "invariant_term:unique",
+          "passed": true,
+          "reason": "Found invariant \"unique\""
+        },
+        {
+          "name": "invariant_term:idempotency",
+          "passed": true,
+          "reason": "Found invariant \"idempotency\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-03-double-spend-idempotency",
+    "name": "Idempotency & double-spend prevention in payment processing",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:48:58.350Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 30542,
+    "timeToFirstByteMs": 30542,
+    "promptTokens": 2598,
+    "completionTokens": 1474,
+    "reasoningTokens": 0,
+    "contentSnippet": "Use a durable idempotency record keyed by the gateway and its stable payment identifier. Treat the database transaction that claims the payment and writes ledger state as the authority; never rely onl",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:unique_idempotency_key",
+          "passed": true,
+          "reason": "Enforces unique constraint on idempotency key"
+        },
+        {
+          "name": "correctness:atomic_state_transition",
+          "passed": true,
+          "reason": "Uses atomic ON CONFLICT or row lock for transition"
+        },
+        {
+          "name": "unsafe_alternative_rejection:no_reexecution_side_effects",
+          "passed": true,
+          "reason": "Returns cached original result without re-executing"
+        },
+        {
+          "name": "invariant_term:ON CONFLICT",
+          "passed": true,
+          "reason": "Found invariant \"ON CONFLICT\""
+        },
+        {
+          "name": "invariant_term:unique",
+          "passed": true,
+          "reason": "Found invariant \"unique\""
+        },
+        {
+          "name": "invariant_term:idempotency",
+          "passed": true,
+          "reason": "Found invariant \"idempotency\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-03-double-spend-idempotency",
+    "name": "Idempotency & double-spend prevention in payment processing",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:49:43.363Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 62293,
+    "timeToFirstByteMs": 45012,
+    "promptTokens": 2598,
+    "completionTokens": 1966,
+    "reasoningTokens": 0,
+    "contentSnippet": "Use a durable idempotency record as the authority for whether a payment has already been processed. Do not rely on an in-memory lock or on checking the ledger before writing: those approaches race acr",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:unique_idempotency_key",
+          "passed": true,
+          "reason": "Enforces unique constraint on idempotency key"
+        },
+        {
+          "name": "correctness:atomic_state_transition",
+          "passed": true,
+          "reason": "Uses atomic ON CONFLICT or row lock for transition"
+        },
+        {
+          "name": "unsafe_alternative_rejection:no_reexecution_side_effects",
+          "passed": true,
+          "reason": "Returns cached original result without re-executing"
+        },
+        {
+          "name": "invariant_term:ON CONFLICT",
+          "passed": true,
+          "reason": "Found invariant \"ON CONFLICT\""
+        },
+        {
+          "name": "invariant_term:unique",
+          "passed": true,
+          "reason": "Found invariant \"unique\""
+        },
+        {
+          "name": "invariant_term:idempotency",
+          "passed": true,
+          "reason": "Found invariant \"idempotency\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-04-distributed-consistency",
+    "name": "Distributed state consistency & cache invalidation",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:50:09.027Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 25662,
+    "timeToFirstByteMs": 4143,
+    "promptTokens": 2124,
+    "completionTokens": 5892,
+    "reasoningTokens": 2335,
+    "contentSnippet": "### 1. The Pre-Commit Invalidation Race Condition  When a cache invalidation (`DEL`) is issued **before** the underlying database transaction commits, the system violates isolation barriers between th",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:race_window_analysis",
+          "passed": true,
+          "reason": "Explains race condition of pre-commit cache invalidation"
+        },
+        {
+          "name": "critical_invariant:post_commit_or_outbox",
+          "passed": true,
+          "reason": "Details transactional outbox or post-commit cache invalidation"
+        },
+        {
+          "name": "unsafe_alternative_rejection:version_fencing",
+          "passed": true,
+          "reason": "Applies fencing tokens or version vectors against stale overwrites"
+        },
+        {
+          "name": "invariant_term:post-commit",
+          "passed": true,
+          "reason": "Found invariant \"post-commit\""
+        },
+        {
+          "name": "invariant_term:race condition",
+          "passed": true,
+          "reason": "Found invariant \"race condition\""
+        },
+        {
+          "name": "invariant_term:fencing token",
+          "passed": true,
+          "reason": "Found invariant \"fencing token\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-04-distributed-consistency",
+    "name": "Distributed state consistency & cache invalidation",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:50:34.240Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 25213,
+    "timeToFirstByteMs": 25212,
+    "promptTokens": 2609,
+    "completionTokens": 1274,
+    "reasoningTokens": 0,
+    "contentSnippet": "1. **Pre-commit invalidation race**  Assume the cache key is `permissions:user:42`.  - Initial state:   - PostgreSQL committed permissions: `[\"read\"]`   - Redis: `permissions:user:42 -> [\"read\"]` - Wr",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:race_window_analysis",
+          "passed": true,
+          "reason": "Explains race condition of pre-commit cache invalidation"
+        },
+        {
+          "name": "critical_invariant:post_commit_or_outbox",
+          "passed": true,
+          "reason": "Details transactional outbox or post-commit cache invalidation"
+        },
+        {
+          "name": "unsafe_alternative_rejection:version_fencing",
+          "passed": true,
+          "reason": "Applies fencing tokens or version vectors against stale overwrites"
+        },
+        {
+          "name": "invariant_term:post-commit",
+          "passed": true,
+          "reason": "Found invariant \"post-commit\""
+        },
+        {
+          "name": "invariant_term:race condition",
+          "passed": false,
+          "reason": "Missing invariant \"race condition\""
+        },
+        {
+          "name": "invariant_term:fencing token",
+          "passed": true,
+          "reason": "Found invariant \"fencing token\""
+        }
+      ],
+      "issues": [
+        "Missing key concept: \"race condition\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-04-distributed-consistency",
+    "name": "Distributed state consistency & cache invalidation",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:51:19.247Z",
+    "operationalSuccess": false,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "TIMEOUT",
+    "failureReason": "Request timed out after 45000ms",
+    "elapsedMs": 45007,
+    "timeToFirstByteMs": 45007,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "contentSnippet": "",
+    "evaluation": {
+      "passed": false,
+      "score": 0,
+      "dimensions": [],
+      "issues": [
+        "Operational failure"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-05-race-condition-debug",
+    "name": "Sequence allocation race condition in invoice generator",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:51:33.939Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 14692,
+    "timeToFirstByteMs": 4116,
+    "promptTokens": 2128,
+    "completionTokens": 3359,
+    "reasoningTokens": 1736,
+    "contentSnippet": "### 1. Why `SELECT MAX(...) + 1` Fails Under `READ COMMITTED`  In PostgreSQL's default `READ COMMITTED` isolation level, every individual statement within a transaction acquires a fresh snapshot of th",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:race_condition_window",
+          "passed": true,
+          "reason": "Explains why MAX()+1 fails under read committed isolation"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_unhandled_serializable",
+          "passed": true,
+          "reason": "Notes that serializable isolation requires application retry"
+        },
+        {
+          "name": "critical_invariant:atomic_counter_or_sequence",
+          "passed": true,
+          "reason": "Proposes sequence or locked counter row"
+        },
+        {
+          "name": "invariant_term:SELECT FOR UPDATE",
+          "passed": false,
+          "reason": "Missing invariant \"SELECT FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:MAX",
+          "passed": true,
+          "reason": "Found invariant \"MAX\""
+        },
+        {
+          "name": "invariant_term:sequence",
+          "passed": true,
+          "reason": "Found invariant \"sequence\""
+        }
+      ],
+      "issues": [
+        "Missing key concept: \"SELECT FOR UPDATE\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-05-race-condition-debug",
+    "name": "Sequence allocation race condition in invoice generator",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:51:52.780Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 18841,
+    "timeToFirstByteMs": 18841,
+    "promptTokens": 2603,
+    "completionTokens": 925,
+    "reasoningTokens": 0,
+    "contentSnippet": "`SELECT MAX(seq_number) + 1` is a read-modify-write race.  1. Why it fails under `READ COMMITTED`  Under PostgreSQL's default `READ COMMITTED` isolation, each statement sees a snapshot of rows committ",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:race_condition_window",
+          "passed": true,
+          "reason": "Explains why MAX()+1 fails under read committed isolation"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_unhandled_serializable",
+          "passed": true,
+          "reason": "Notes that serializable isolation requires application retry"
+        },
+        {
+          "name": "critical_invariant:atomic_counter_or_sequence",
+          "passed": true,
+          "reason": "Proposes sequence or locked counter row"
+        },
+        {
+          "name": "invariant_term:SELECT FOR UPDATE",
+          "passed": false,
+          "reason": "Missing invariant \"SELECT FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:MAX",
+          "passed": true,
+          "reason": "Found invariant \"MAX\""
+        },
+        {
+          "name": "invariant_term:sequence",
+          "passed": true,
+          "reason": "Found invariant \"sequence\""
+        }
+      ],
+      "issues": [
+        "Missing key concept: \"SELECT FOR UPDATE\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-05-race-condition-debug",
+    "name": "Sequence allocation race condition in invoice generator",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:52:29.204Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 36423,
+    "timeToFirstByteMs": 36423,
+    "promptTokens": 2603,
+    "completionTokens": 1323,
+    "reasoningTokens": 0,
+    "contentSnippet": "1. Why `MAX(...) + 1` fails under `READ COMMITTED`  In PostgreSQL, `READ COMMITTED` gives each statement a snapshot of rows committed before that statement begins. It does not reserve the value return",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:race_condition_window",
+          "passed": true,
+          "reason": "Explains why MAX()+1 fails under read committed isolation"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_unhandled_serializable",
+          "passed": true,
+          "reason": "Notes that serializable isolation requires application retry"
+        },
+        {
+          "name": "critical_invariant:atomic_counter_or_sequence",
+          "passed": true,
+          "reason": "Proposes sequence or locked counter row"
+        },
+        {
+          "name": "invariant_term:SELECT FOR UPDATE",
+          "passed": true,
+          "reason": "Found invariant \"SELECT FOR UPDATE\""
+        },
+        {
+          "name": "invariant_term:MAX",
+          "passed": true,
+          "reason": "Found invariant \"MAX\""
+        },
+        {
+          "name": "invariant_term:sequence",
+          "passed": true,
+          "reason": "Found invariant \"sequence\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-06-multifile-stream-debug",
+    "name": "Multi-file streaming proxy memory leak and socket cleanup",
+    "category": "F. DEBUGGING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:52:50.879Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 21675,
+    "timeToFirstByteMs": 5373,
+    "promptTokens": 2138,
+    "completionTokens": 5543,
+    "reasoningTokens": 3194,
+    "contentSnippet": "### 1. Root Cause Analysis  When streaming an LLM response via SSE, the proxy acts as a duplex intermediary between two independent network sessions: 1. **Downstream:** The client socket connected to ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:upstream_abort_propagation",
+          "passed": true,
+          "reason": "Explains need to signal upstream AbortController on client disconnect"
+        },
+        {
+          "name": "correctness:cleanup_hook_implementation",
+          "passed": true,
+          "reason": "Hooks close event to controller.abort and reader cleanup"
+        },
+        {
+          "name": "unsafe_alternative_rejection:event_listener_leak_prevention",
+          "passed": true,
+          "reason": "Addresses listener cleanup and MaxListenersExceededWarning"
+        },
+        {
+          "name": "invariant_term:AbortController",
+          "passed": true,
+          "reason": "Found invariant \"AbortController\""
+        },
+        {
+          "name": "invariant_term:close",
+          "passed": true,
+          "reason": "Found invariant \"close\""
+        },
+        {
+          "name": "invariant_term:listener",
+          "passed": true,
+          "reason": "Found invariant \"listener\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-06-multifile-stream-debug",
+    "name": "Multi-file streaming proxy memory leak and socket cleanup",
+    "category": "F. DEBUGGING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:53:35.884Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 26212,
+    "timeToFirstByteMs": 45004,
+    "promptTokens": 2615,
+    "completionTokens": 1293,
+    "reasoningTokens": 0,
+    "contentSnippet": "`req.raw.on('close')` only observes that the downstream socket closed. It does not automatically cancel work already started by `fetch()`.  If its callback does not call `AbortController.abort()`, Und",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:upstream_abort_propagation",
+          "passed": true,
+          "reason": "Explains need to signal upstream AbortController on client disconnect"
+        },
+        {
+          "name": "correctness:cleanup_hook_implementation",
+          "passed": true,
+          "reason": "Hooks close event to controller.abort and reader cleanup"
+        },
+        {
+          "name": "unsafe_alternative_rejection:event_listener_leak_prevention",
+          "passed": true,
+          "reason": "Addresses listener cleanup and MaxListenersExceededWarning"
+        },
+        {
+          "name": "invariant_term:AbortController",
+          "passed": true,
+          "reason": "Found invariant \"AbortController\""
+        },
+        {
+          "name": "invariant_term:close",
+          "passed": true,
+          "reason": "Found invariant \"close\""
+        },
+        {
+          "name": "invariant_term:listener",
+          "passed": true,
+          "reason": "Found invariant \"listener\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-06-multifile-stream-debug",
+    "name": "Multi-file streaming proxy memory leak and socket cleanup",
+    "category": "F. DEBUGGING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:54:20.889Z",
+    "operationalSuccess": false,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "TIMEOUT",
+    "failureReason": "Request timed out after 45000ms",
+    "elapsedMs": 45004,
+    "timeToFirstByteMs": 45004,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "contentSnippet": "",
+    "evaluation": {
+      "passed": false,
+      "score": 0,
+      "dimensions": [],
+      "issues": [
+        "Operational failure"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-07-security-auth-boundary",
+    "name": "Security & RBAC boundary reasoning with header spoofing",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:54:36.736Z",
+    "operationalSuccess": true,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "QUALITY_FAILURE",
+    "failureReason": "Contains forbidden pattern \"req.headers['x-user-id']\"",
+    "elapsedMs": 15846,
+    "timeToFirstByteMs": 11437,
+    "promptTokens": 2214,
+    "completionTokens": 1698,
+    "reasoningTokens": 452,
+    "contentSnippet": "### 1. Critical Security Vulnerability: Untrusted Header Spoofing & Privilege Escalation  The critical vulnerability in this middleware is **Authentication Bypass and Privilege Escalation via Untruste",
+    "evaluation": {
+      "passed": false,
+      "score": 0.86,
+      "dimensions": [
+        {
+          "name": "negative_constraint:req.headers['x-user-id']",
+          "passed": false,
+          "reason": "Contains forbidden pattern \"req.headers['x-user-id']\""
+        },
+        {
+          "name": "reasoning_completeness:header_spoofing_vulnerability",
+          "passed": true,
+          "reason": "Identifies caller-controlled header impersonation vulnerability"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_header_fallback",
+          "passed": true,
+          "reason": "Explains violation of fail-closed principle"
+        },
+        {
+          "name": "correctness:strict_401_rejection",
+          "passed": true,
+          "reason": "Returns 401 Unauthorized for missing/invalid auth"
+        },
+        {
+          "name": "invariant_term:fail-closed",
+          "passed": true,
+          "reason": "Found invariant \"fail-closed\""
+        },
+        {
+          "name": "invariant_term:impersonat",
+          "passed": true,
+          "reason": "Found invariant \"impersonat\""
+        },
+        {
+          "name": "invariant_term:401",
+          "passed": true,
+          "reason": "Found invariant \"401\""
+        }
+      ],
+      "issues": [
+        "Contains forbidden pattern \"req.headers['x-user-id']\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-07-security-auth-boundary",
+    "name": "Security & RBAC boundary reasoning with header spoofing",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:55:01.319Z",
+    "operationalSuccess": true,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "QUALITY_FAILURE",
+    "failureReason": "Contains forbidden pattern \"req.headers['x-user-id']\"",
+    "elapsedMs": 24582,
+    "timeToFirstByteMs": 24582,
+    "promptTokens": 2677,
+    "completionTokens": 1264,
+    "reasoningTokens": 0,
+    "contentSnippet": "The critical vulnerability is trusting `X-User-ID` and `X-Role`, which are caller-controlled HTTP headers, as an identity source:  ```http X-User-ID: victim-user-id X-Role: admin ```  An unauthenticat",
+    "evaluation": {
+      "passed": false,
+      "score": 0.86,
+      "dimensions": [
+        {
+          "name": "negative_constraint:req.headers['x-user-id']",
+          "passed": false,
+          "reason": "Contains forbidden pattern \"req.headers['x-user-id']\""
+        },
+        {
+          "name": "reasoning_completeness:header_spoofing_vulnerability",
+          "passed": true,
+          "reason": "Identifies caller-controlled header impersonation vulnerability"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_header_fallback",
+          "passed": true,
+          "reason": "Explains violation of fail-closed principle"
+        },
+        {
+          "name": "correctness:strict_401_rejection",
+          "passed": true,
+          "reason": "Returns 401 Unauthorized for missing/invalid auth"
+        },
+        {
+          "name": "invariant_term:fail-closed",
+          "passed": true,
+          "reason": "Found invariant \"fail-closed\""
+        },
+        {
+          "name": "invariant_term:impersonat",
+          "passed": true,
+          "reason": "Found invariant \"impersonat\""
+        },
+        {
+          "name": "invariant_term:401",
+          "passed": true,
+          "reason": "Found invariant \"401\""
+        }
+      ],
+      "issues": [
+        "Contains forbidden pattern \"req.headers['x-user-id']\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-07-security-auth-boundary",
+    "name": "Security & RBAC boundary reasoning with header spoofing",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:55:39.641Z",
+    "operationalSuccess": true,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "QUALITY_FAILURE",
+    "failureReason": "Contains forbidden pattern \"req.headers['x-user-id']\"; Missing key concept: \"impersonat\"",
+    "elapsedMs": 38321,
+    "timeToFirstByteMs": 38321,
+    "promptTokens": 2677,
+    "completionTokens": 1201,
+    "reasoningTokens": 0,
+    "contentSnippet": "## Critical finding  The middleware trusts caller-controlled identity headers whenever JWT-derived values are absent:  ```ts const actorId = user?.id || req.headers['x-user-id']; const role = user?.ro",
+    "evaluation": {
+      "passed": false,
+      "score": 0.71,
+      "dimensions": [
+        {
+          "name": "negative_constraint:req.headers['x-user-id']",
+          "passed": false,
+          "reason": "Contains forbidden pattern \"req.headers['x-user-id']\""
+        },
+        {
+          "name": "reasoning_completeness:header_spoofing_vulnerability",
+          "passed": true,
+          "reason": "Identifies caller-controlled header impersonation vulnerability"
+        },
+        {
+          "name": "unsafe_alternative_rejection:reject_header_fallback",
+          "passed": true,
+          "reason": "Explains violation of fail-closed principle"
+        },
+        {
+          "name": "correctness:strict_401_rejection",
+          "passed": true,
+          "reason": "Returns 401 Unauthorized for missing/invalid auth"
+        },
+        {
+          "name": "invariant_term:fail-closed",
+          "passed": true,
+          "reason": "Found invariant \"fail-closed\""
+        },
+        {
+          "name": "invariant_term:impersonat",
+          "passed": false,
+          "reason": "Missing invariant \"impersonat\""
+        },
+        {
+          "name": "invariant_term:401",
+          "passed": true,
+          "reason": "Found invariant \"401\""
+        }
+      ],
+      "issues": [
+        "Contains forbidden pattern \"req.headers['x-user-id']\"",
+        "Missing key concept: \"impersonat\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-08-zerodowntime-migration",
+    "name": "Zero-downtime database migration for column rename/re-type",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:55:59.784Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 20143,
+    "timeToFirstByteMs": 3206,
+    "promptTokens": 2176,
+    "completionTokens": 5296,
+    "reasoningTokens": 2119,
+    "contentSnippet": "Migrating a critical column from `JSON` to `JSONB` on a high-throughput production PostgreSQL table requires avoiding long-held locks, preventing replica lag, ensuring idempotent updates, and guarante",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:dual_write_phase",
+          "passed": true,
+          "reason": "Specifies dual-write phase maintaining sync"
+        },
+        {
+          "name": "correctness:batched_keyset_backfill",
+          "passed": true,
+          "reason": "Uses keyset pagination for batched historical backfill"
+        },
+        {
+          "name": "unsafe_alternative_rejection:safe_read_switch_and_contract",
+          "passed": true,
+          "reason": "Includes read-switch validation and column drop contract"
+        },
+        {
+          "name": "invariant_term:dual-write",
+          "passed": true,
+          "reason": "Found invariant \"dual-write\""
+        },
+        {
+          "name": "invariant_term:backfill",
+          "passed": true,
+          "reason": "Found invariant \"backfill\""
+        },
+        {
+          "name": "invariant_term:keyset pagination",
+          "passed": true,
+          "reason": "Found invariant \"keyset pagination\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-08-zerodowntime-migration",
+    "name": "Zero-downtime database migration for column rename/re-type",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:56:34.488Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 34704,
+    "timeToFirstByteMs": 34703,
+    "promptTokens": 2642,
+    "completionTokens": 1827,
+    "reasoningTokens": 0,
+    "contentSnippet": "PostgreSQL cannot perform `ALTER TABLE` with literally zero locking: adding or dropping a column takes a brief `ACCESS EXCLUSIVE` metadata lock. However, adding a nullable column without a default doe",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "critical_invariant:dual_write_phase",
+          "passed": true,
+          "reason": "Specifies dual-write phase maintaining sync"
+        },
+        {
+          "name": "correctness:batched_keyset_backfill",
+          "passed": true,
+          "reason": "Uses keyset pagination for batched historical backfill"
+        },
+        {
+          "name": "unsafe_alternative_rejection:safe_read_switch_and_contract",
+          "passed": true,
+          "reason": "Includes read-switch validation and column drop contract"
+        },
+        {
+          "name": "invariant_term:dual-write",
+          "passed": true,
+          "reason": "Found invariant \"dual-write\""
+        },
+        {
+          "name": "invariant_term:backfill",
+          "passed": true,
+          "reason": "Found invariant \"backfill\""
+        },
+        {
+          "name": "invariant_term:keyset pagination",
+          "passed": false,
+          "reason": "Missing invariant \"keyset pagination\""
+        }
+      ],
+      "issues": [
+        "Missing key concept: \"keyset pagination\""
+      ]
+    }
+  },
+  {
+    "caseId": "hard-08-zerodowntime-migration",
+    "name": "Zero-downtime database migration for column rename/re-type",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:57:19.497Z",
+    "operationalSuccess": false,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "TIMEOUT",
+    "failureReason": "Request timed out after 45000ms",
+    "elapsedMs": 45009,
+    "timeToFirstByteMs": 45009,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "contentSnippet": "",
+    "evaluation": {
+      "passed": false,
+      "score": 0,
+      "dimensions": [],
+      "issues": [
+        "Operational failure"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-09-financial-ledger-integrity",
+    "name": "Financial ledger double-entry reconciliation & invariants",
+    "category": "I. ANALYSIS",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:57:34.865Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 15368,
+    "timeToFirstByteMs": 3814,
+    "promptTokens": 2155,
+    "completionTokens": 4272,
+    "reasoningTokens": 1862,
+    "contentSnippet": "Here is an architectural and mathematical analysis of the financial ledger schema, along with the production-grade PostgreSQL implementation.  ---  ### 1. Fundamental Double-Entry Balance Invariant  I",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:DELETE FROM ledger_entries",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"DELETE FROM ledger_entries\""
+        },
+        {
+          "name": "critical_invariant:double_entry_balance",
+          "passed": true,
+          "reason": "Formulates double-entry balance invariant (debits == credits)"
+        },
+        {
+          "name": "unsafe_alternative_rejection:immutable_append_only",
+          "passed": true,
+          "reason": "Requires immutable append-only ledger with compensating reversals"
+        },
+        {
+          "name": "correctness:balance_validation_constraint",
+          "passed": true,
+          "reason": "Implements transaction balance verification constraint/trigger"
+        },
+        {
+          "name": "invariant_term:DEBIT",
+          "passed": true,
+          "reason": "Found invariant \"DEBIT\""
+        },
+        {
+          "name": "invariant_term:CREDIT",
+          "passed": true,
+          "reason": "Found invariant \"CREDIT\""
+        },
+        {
+          "name": "invariant_term:append-only",
+          "passed": true,
+          "reason": "Found invariant \"append-only\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-09-financial-ledger-integrity",
+    "name": "Financial ledger double-entry reconciliation & invariants",
+    "category": "I. ANALYSIS",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:57:58.964Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 24098,
+    "timeToFirstByteMs": 24098,
+    "promptTokens": 2627,
+    "completionTokens": 1252,
+    "reasoningTokens": 0,
+    "contentSnippet": "For each `transaction_id` and `currency`, the transaction must net to zero:  ```sql SUM(   CASE entry_type     WHEN 'DEBIT'  THEN amount_cents     WHEN 'CREDIT' THEN -amount_cents   END ) = 0 ```  Equ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:DELETE FROM ledger_entries",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"DELETE FROM ledger_entries\""
+        },
+        {
+          "name": "critical_invariant:double_entry_balance",
+          "passed": true,
+          "reason": "Formulates double-entry balance invariant (debits == credits)"
+        },
+        {
+          "name": "unsafe_alternative_rejection:immutable_append_only",
+          "passed": true,
+          "reason": "Requires immutable append-only ledger with compensating reversals"
+        },
+        {
+          "name": "correctness:balance_validation_constraint",
+          "passed": true,
+          "reason": "Implements transaction balance verification constraint/trigger"
+        },
+        {
+          "name": "invariant_term:DEBIT",
+          "passed": true,
+          "reason": "Found invariant \"DEBIT\""
+        },
+        {
+          "name": "invariant_term:CREDIT",
+          "passed": true,
+          "reason": "Found invariant \"CREDIT\""
+        },
+        {
+          "name": "invariant_term:append-only",
+          "passed": true,
+          "reason": "Found invariant \"append-only\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-09-financial-ledger-integrity",
+    "name": "Financial ledger double-entry reconciliation & invariants",
+    "category": "I. ANALYSIS",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:58:43.973Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 51128,
+    "timeToFirstByteMs": 45008,
+    "promptTokens": 2627,
+    "completionTokens": 1569,
+    "reasoningTokens": 0,
+    "contentSnippet": "## 1. Double-entry invariant  For every `transaction_id` and **each currency independently**:  \\[ \\sum \\text{DEBIT amount\\_cents} - \\sum \\text{CREDIT amount\\_cents} = 0 \\]  Equivalent SQL:  ```sql SEL",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:DELETE FROM ledger_entries",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"DELETE FROM ledger_entries\""
+        },
+        {
+          "name": "critical_invariant:double_entry_balance",
+          "passed": true,
+          "reason": "Formulates double-entry balance invariant (debits == credits)"
+        },
+        {
+          "name": "unsafe_alternative_rejection:immutable_append_only",
+          "passed": true,
+          "reason": "Requires immutable append-only ledger with compensating reversals"
+        },
+        {
+          "name": "correctness:balance_validation_constraint",
+          "passed": true,
+          "reason": "Implements transaction balance verification constraint/trigger"
+        },
+        {
+          "name": "invariant_term:DEBIT",
+          "passed": true,
+          "reason": "Found invariant \"DEBIT\""
+        },
+        {
+          "name": "invariant_term:CREDIT",
+          "passed": true,
+          "reason": "Found invariant \"CREDIT\""
+        },
+        {
+          "name": "invariant_term:append-only",
+          "passed": true,
+          "reason": "Found invariant \"append-only\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-10-arch-tradeoff-analysis",
+    "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:59:03.522Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 19547,
+    "timeToFirstByteMs": 3578,
+    "promptTokens": 2123,
+    "completionTokens": 4309,
+    "reasoningTokens": 2053,
+    "contentSnippet": "### 1. Operational Complexity and Deployment Footprint  | Dimension | Embedded SQLite (WAL Mode) | Local Redis Daemon | | :--- | :--- | :--- | | **Packaging & Distribution** | **Negligible.** Compiles",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:deployment_footprint_analysis",
+          "passed": true,
+          "reason": "Compares embedded single-binary vs external daemon lifecycle"
+        },
+        {
+          "name": "critical_invariant:concurrency_latency_tradeoffs",
+          "passed": true,
+          "reason": "Evaluates WAL single-writer vs in-memory Redis latency"
+        },
+        {
+          "name": "recommendation_quality:clear_architectural_verdict",
+          "passed": true,
+          "reason": "Provides actionable recommendation for local agent proxy"
+        },
+        {
+          "name": "invariant_term:WAL",
+          "passed": true,
+          "reason": "Found invariant \"WAL\""
+        },
+        {
+          "name": "invariant_term:Redis",
+          "passed": true,
+          "reason": "Found invariant \"Redis\""
+        },
+        {
+          "name": "invariant_term:recommendation",
+          "passed": true,
+          "reason": "Found invariant \"recommendation\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-10-arch-tradeoff-analysis",
+    "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T05:59:48.528Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 16122,
+    "timeToFirstByteMs": 45006,
+    "promptTokens": 2599,
+    "completionTokens": 788,
+    "reasoningTokens": 0,
+    "contentSnippet": "For a local desktop coding-agent proxy at up to 100 requests/minute, use embedded SQLite in WAL mode.  **1. Operational Complexity**  - **SQLite:** Ships inside the router binary/library with no separ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:deployment_footprint_analysis",
+          "passed": true,
+          "reason": "Compares embedded single-binary vs external daemon lifecycle"
+        },
+        {
+          "name": "critical_invariant:concurrency_latency_tradeoffs",
+          "passed": true,
+          "reason": "Evaluates WAL single-writer vs in-memory Redis latency"
+        },
+        {
+          "name": "recommendation_quality:clear_architectural_verdict",
+          "passed": true,
+          "reason": "Provides actionable recommendation for local agent proxy"
+        },
+        {
+          "name": "invariant_term:WAL",
+          "passed": true,
+          "reason": "Found invariant \"WAL\""
+        },
+        {
+          "name": "invariant_term:Redis",
+          "passed": true,
+          "reason": "Found invariant \"Redis\""
+        },
+        {
+          "name": "invariant_term:recommendation",
+          "passed": true,
+          "reason": "Found invariant \"recommendation\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-10-arch-tradeoff-analysis",
+    "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:00:33.535Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 45778,
+    "timeToFirstByteMs": 45006,
+    "promptTokens": 2599,
+    "completionTokens": 1221,
+    "reasoningTokens": 0,
+    "contentSnippet": "For a local desktop coding-agent proxy handling at most 100 requests/minute, use embedded SQLite in WAL mode. Redis adds operational complexity without providing meaningful benefit at this load.  | Di",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:deployment_footprint_analysis",
+          "passed": true,
+          "reason": "Compares embedded single-binary vs external daemon lifecycle"
+        },
+        {
+          "name": "critical_invariant:concurrency_latency_tradeoffs",
+          "passed": true,
+          "reason": "Evaluates WAL single-writer vs in-memory Redis latency"
+        },
+        {
+          "name": "recommendation_quality:clear_architectural_verdict",
+          "passed": true,
+          "reason": "Provides actionable recommendation for local agent proxy"
+        },
+        {
+          "name": "invariant_term:WAL",
+          "passed": true,
+          "reason": "Found invariant \"WAL\""
+        },
+        {
+          "name": "invariant_term:Redis",
+          "passed": true,
+          "reason": "Found invariant \"Redis\""
+        },
+        {
+          "name": "invariant_term:recommendation",
+          "passed": true,
+          "reason": "Found invariant \"recommendation\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-11-retry-side-effect-safety",
+    "name": "Retry and side-effect safety in streaming proxy",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:00:57.509Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 23973,
+    "timeToFirstByteMs": 3879,
+    "promptTokens": 2149,
+    "completionTokens": 5621,
+    "reasoningTokens": 1958,
+    "contentSnippet": "### 1. The Fundamental Stream-Safety Invariant  An HTTP stream represents an append-only, irreversible state machine over an underlying TCP/TLS transport. The stream-safety invariant dictates:  $$\\tex",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:retry mid-stream",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"retry mid-stream\""
+        },
+        {
+          "name": "negative_constraint:replay after first chunk",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"replay after first chunk\""
+        },
+        {
+          "name": "critical_invariant:stream_safety_boundary",
+          "passed": true,
+          "reason": "Distinguishes pre-stream fallback from forbidden mid-stream replay"
+        },
+        {
+          "name": "unsafe_alternative_rejection:duplicate_side_effects",
+          "passed": true,
+          "reason": "Identifies duplicate tool call and stream corruption risks"
+        },
+        {
+          "name": "correctness:jittered_exponential_backoff",
+          "passed": true,
+          "reason": "Designs jittered exponential backoff formula"
+        },
+        {
+          "name": "invariant_term:pre-stream",
+          "passed": true,
+          "reason": "Found invariant \"pre-stream\""
+        },
+        {
+          "name": "invariant_term:mid-stream",
+          "passed": true,
+          "reason": "Found invariant \"mid-stream\""
+        },
+        {
+          "name": "invariant_term:jitter",
+          "passed": true,
+          "reason": "Found invariant \"jitter\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-11-retry-side-effect-safety",
+    "name": "Retry and side-effect safety in streaming proxy",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:01:21.583Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 24074,
+    "timeToFirstByteMs": 24074,
+    "promptTokens": 2622,
+    "completionTokens": 1151,
+    "reasoningTokens": 0,
+    "contentSnippet": "**Stream-Safety Invariant**  A router may retry an upstream request or fall back to another model only while the downstream response is uncommitted:  > Retry/fallback is permitted only before the rout",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:retry mid-stream",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"retry mid-stream\""
+        },
+        {
+          "name": "negative_constraint:replay after first chunk",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"replay after first chunk\""
+        },
+        {
+          "name": "critical_invariant:stream_safety_boundary",
+          "passed": true,
+          "reason": "Distinguishes pre-stream fallback from forbidden mid-stream replay"
+        },
+        {
+          "name": "unsafe_alternative_rejection:duplicate_side_effects",
+          "passed": true,
+          "reason": "Identifies duplicate tool call and stream corruption risks"
+        },
+        {
+          "name": "correctness:jittered_exponential_backoff",
+          "passed": true,
+          "reason": "Designs jittered exponential backoff formula"
+        },
+        {
+          "name": "invariant_term:pre-stream",
+          "passed": true,
+          "reason": "Found invariant \"pre-stream\""
+        },
+        {
+          "name": "invariant_term:mid-stream",
+          "passed": true,
+          "reason": "Found invariant \"mid-stream\""
+        },
+        {
+          "name": "invariant_term:jitter",
+          "passed": true,
+          "reason": "Found invariant \"jitter\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-11-retry-side-effect-safety",
+    "name": "Retry and side-effect safety in streaming proxy",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:02:03.072Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 41488,
+    "timeToFirstByteMs": 41488,
+    "promptTokens": 2622,
+    "completionTokens": 1226,
+    "reasoningTokens": 0,
+    "contentSnippet": "## 1. Fundamental stream-safety invariant  For each client request, the router must preserve a **single upstream execution boundary**:  > The router may retry or select another model only while the do",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "negative_constraint:retry mid-stream",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"retry mid-stream\""
+        },
+        {
+          "name": "negative_constraint:replay after first chunk",
+          "passed": true,
+          "reason": "Excluded forbidden pattern \"replay after first chunk\""
+        },
+        {
+          "name": "critical_invariant:stream_safety_boundary",
+          "passed": true,
+          "reason": "Distinguishes pre-stream fallback from forbidden mid-stream replay"
+        },
+        {
+          "name": "unsafe_alternative_rejection:duplicate_side_effects",
+          "passed": true,
+          "reason": "Identifies duplicate tool call and stream corruption risks"
+        },
+        {
+          "name": "correctness:jittered_exponential_backoff",
+          "passed": true,
+          "reason": "Designs jittered exponential backoff formula"
+        },
+        {
+          "name": "invariant_term:pre-stream",
+          "passed": true,
+          "reason": "Found invariant \"pre-stream\""
+        },
+        {
+          "name": "invariant_term:mid-stream",
+          "passed": true,
+          "reason": "Found invariant \"mid-stream\""
+        },
+        {
+          "name": "invariant_term:jitter",
+          "passed": true,
+          "reason": "Found invariant \"jitter\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-12-test-failure-diagnosis",
+    "name": "Difficult test-failure diagnosis: hanging Vitest async suites",
+    "category": "F. DEBUGGING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:02:14.805Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 11733,
+    "timeToFirstByteMs": 3505,
+    "promptTokens": 2208,
+    "completionTokens": 2708,
+    "reasoningTokens": 1717,
+    "contentSnippet": "### 1. Why `vi.runAllTimersAsync()` Causes an Infinite Timer Loop  `vi.runAllTimersAsync()` is **greedy**: it repeatedly drains the timer queue and flushes pending microtasks until **zero timers remai",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:infinite_timer_loop_root_cause",
+          "passed": true,
+          "reason": "Explains infinite timer loop caused by runAllTimersAsync"
+        },
+        {
+          "name": "unsafe_alternative_rejection:fake_timer_network_mismatch",
+          "passed": true,
+          "reason": "Explains mismatch between fake timers and unmocked network fetch"
+        },
+        {
+          "name": "correctness:idiomatic_vitest_remediation",
+          "passed": true,
+          "reason": "Provides correct fix: mock fetch, advance discretely, restore real timers"
+        },
+        {
+          "name": "invariant_term:useRealTimers",
+          "passed": true,
+          "reason": "Found invariant \"useRealTimers\""
+        },
+        {
+          "name": "invariant_term:mock",
+          "passed": true,
+          "reason": "Found invariant \"mock\""
+        },
+        {
+          "name": "invariant_term:advanceTimersByTime",
+          "passed": true,
+          "reason": "Found invariant \"advanceTimersByTime\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-12-test-failure-diagnosis",
+    "name": "Difficult test-failure diagnosis: hanging Vitest async suites",
+    "category": "F. DEBUGGING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:02:31.332Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 16526,
+    "timeToFirstByteMs": 16526,
+    "promptTokens": 2667,
+    "completionTokens": 454,
+    "reasoningTokens": 0,
+    "contentSnippet": "`vi.runAllTimersAsync()` attempts to drain every scheduled timer until none remain. In a retry implementation, that can hang when:  - Each failed retry schedules another timeout recursively, so draini",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:infinite_timer_loop_root_cause",
+          "passed": true,
+          "reason": "Explains infinite timer loop caused by runAllTimersAsync"
+        },
+        {
+          "name": "unsafe_alternative_rejection:fake_timer_network_mismatch",
+          "passed": true,
+          "reason": "Explains mismatch between fake timers and unmocked network fetch"
+        },
+        {
+          "name": "correctness:idiomatic_vitest_remediation",
+          "passed": true,
+          "reason": "Provides correct fix: mock fetch, advance discretely, restore real timers"
+        },
+        {
+          "name": "invariant_term:useRealTimers",
+          "passed": true,
+          "reason": "Found invariant \"useRealTimers\""
+        },
+        {
+          "name": "invariant_term:mock",
+          "passed": true,
+          "reason": "Found invariant \"mock\""
+        },
+        {
+          "name": "invariant_term:advanceTimersByTime",
+          "passed": true,
+          "reason": "Found invariant \"advanceTimersByTime\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-12-test-failure-diagnosis",
+    "name": "Difficult test-failure diagnosis: hanging Vitest async suites",
+    "category": "F. DEBUGGING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:03:08.585Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 37252,
+    "timeToFirstByteMs": 37252,
+    "promptTokens": 2667,
+    "completionTokens": 1089,
+    "reasoningTokens": 0,
+    "contentSnippet": "`vi.runAllTimersAsync()` is the wrong primitive for retry code because it attempts to drain the timer queue completely. Retry logic often schedules another timeout after each failed attempt, so the qu",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "reasoning_completeness:infinite_timer_loop_root_cause",
+          "passed": true,
+          "reason": "Explains infinite timer loop caused by runAllTimersAsync"
+        },
+        {
+          "name": "unsafe_alternative_rejection:fake_timer_network_mismatch",
+          "passed": true,
+          "reason": "Explains mismatch between fake timers and unmocked network fetch"
+        },
+        {
+          "name": "correctness:idiomatic_vitest_remediation",
+          "passed": true,
+          "reason": "Provides correct fix: mock fetch, advance discretely, restore real timers"
+        },
+        {
+          "name": "invariant_term:useRealTimers",
+          "passed": true,
+          "reason": "Found invariant \"useRealTimers\""
+        },
+        {
+          "name": "invariant_term:mock",
+          "passed": true,
+          "reason": "Found invariant \"mock\""
+        },
+        {
+          "name": "invariant_term:advanceTimersByTime",
+          "passed": true,
+          "reason": "Found invariant \"advanceTimersByTime\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-13-algorithmic-reasoning",
+    "name": "Algorithmic reasoning: lock-free ring buffer memory ordering",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:03:34.730Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 26145,
+    "timeToFirstByteMs": 4217,
+    "promptTokens": 2130,
+    "completionTokens": 6792,
+    "reasoningTokens": 3012,
+    "contentSnippet": "Here is a complete, production-grade C++20 implementation of a high-throughput Single-Producer Single-Consumer (SPSC) lock-free ring buffer, followed by detailed answers to each of your architectural ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:bitwise_masking_index",
+          "passed": true,
+          "reason": "Explains power-of-two bitwise indexing & (N - 1)"
+        },
+        {
+          "name": "correctness:acquire_release_memory_ordering",
+          "passed": true,
+          "reason": "Specifies acquire/release memory semantics for head/tail"
+        },
+        {
+          "name": "unsafe_alternative_rejection:false_sharing_padding",
+          "passed": true,
+          "reason": "Explains false sharing and 64-byte cache-line padding"
+        },
+        {
+          "name": "invariant_term:false sharing",
+          "passed": true,
+          "reason": "Found invariant \"false sharing\""
+        },
+        {
+          "name": "invariant_term:64",
+          "passed": true,
+          "reason": "Found invariant \"64\""
+        },
+        {
+          "name": "invariant_term:acquire",
+          "passed": true,
+          "reason": "Found invariant \"acquire\""
+        },
+        {
+          "name": "invariant_term:release",
+          "passed": true,
+          "reason": "Found invariant \"release\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-13-algorithmic-reasoning",
+    "name": "Algorithmic reasoning: lock-free ring buffer memory ordering",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:04:19.739Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 34958,
+    "timeToFirstByteMs": 45008,
+    "promptTokens": 2603,
+    "completionTokens": 1852,
+    "reasoningTokens": 0,
+    "contentSnippet": "A power-of-two SPSC ring buffer uses monotonically increasing `head` and `tail` sequence counters. The physical array position is derived only when accessing a slot:  ```text index = sequence & (N - 1",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:bitwise_masking_index",
+          "passed": true,
+          "reason": "Explains power-of-two bitwise indexing & (N - 1)"
+        },
+        {
+          "name": "correctness:acquire_release_memory_ordering",
+          "passed": true,
+          "reason": "Specifies acquire/release memory semantics for head/tail"
+        },
+        {
+          "name": "unsafe_alternative_rejection:false_sharing_padding",
+          "passed": true,
+          "reason": "Explains false sharing and 64-byte cache-line padding"
+        },
+        {
+          "name": "invariant_term:false sharing",
+          "passed": true,
+          "reason": "Found invariant \"false sharing\""
+        },
+        {
+          "name": "invariant_term:64",
+          "passed": true,
+          "reason": "Found invariant \"64\""
+        },
+        {
+          "name": "invariant_term:acquire",
+          "passed": true,
+          "reason": "Found invariant \"acquire\""
+        },
+        {
+          "name": "invariant_term:release",
+          "passed": true,
+          "reason": "Found invariant \"release\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-13-algorithmic-reasoning",
+    "name": "Algorithmic reasoning: lock-free ring buffer memory ordering",
+    "category": "G. HARD SOFTWARE REASONING",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:05:04.752Z",
+    "operationalSuccess": false,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "TIMEOUT",
+    "failureReason": "Request timed out after 45000ms",
+    "elapsedMs": 45012,
+    "timeToFirstByteMs": 45012,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "contentSnippet": "",
+    "evaluation": {
+      "passed": false,
+      "score": 0,
+      "dimensions": [],
+      "issues": [
+        "Operational failure"
+      ]
+    }
+  },
+  {
+    "caseId": "hard-14-complex-typescript",
+    "name": "Complex TypeScript correctness: exhaustive discriminated unions & mapped types",
+    "category": "B. SIMPLE CODE / COMPLEX TYPESCRIPT",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:05:25.369Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 20615,
+    "timeToFirstByteMs": 4929,
+    "promptTokens": 2138,
+    "completionTokens": 6736,
+    "reasoningTokens": 5632,
+    "contentSnippet": "Here is the complete TypeScript implementation for the type-safe model routing configuration.  ---  ### 1. Discriminated Union: `RouteTarget`  This defines a recursive discriminated union using the co",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "correctness:discriminated_union_definition",
+          "passed": true,
+          "reason": "Defines discriminated union RouteTarget with type discriminant"
+        },
+        {
+          "name": "critical_invariant:compile_time_exhaustiveness_never",
+          "passed": true,
+          "reason": "Enforces compile-time exhaustiveness checking using never"
+        },
+        {
+          "name": "instruction_adherence:deep_readonly_mapped_type",
+          "passed": true,
+          "reason": "Implements recursive RequireDeepReadonly mapped type"
+        },
+        {
+          "name": "invariant_term:never",
+          "passed": true,
+          "reason": "Found invariant \"never\""
+        },
+        {
+          "name": "invariant_term:readonly",
+          "passed": true,
+          "reason": "Found invariant \"readonly\""
+        },
+        {
+          "name": "invariant_term:switch",
+          "passed": true,
+          "reason": "Found invariant \"switch\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-14-complex-typescript",
+    "name": "Complex TypeScript correctness: exhaustive discriminated unions & mapped types",
+    "category": "B. SIMPLE CODE / COMPLEX TYPESCRIPT",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:05:31.589Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 6220,
+    "timeToFirstByteMs": 6219,
+    "promptTokens": 2617,
+    "completionTokens": 253,
+    "reasoningTokens": 0,
+    "contentSnippet": "```ts export type RouteTarget =   | { type: \"model\"; modelId: string }   | { type: \"tier\"; tier: \"cheap\" | \"balanced\" | \"strong\" }   | { type: \"fallback\"; targets: RouteTarget[] };  export function re",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "correctness:discriminated_union_definition",
+          "passed": false,
+          "reason": "Missing discriminated union"
+        },
+        {
+          "name": "critical_invariant:compile_time_exhaustiveness_never",
+          "passed": true,
+          "reason": "Enforces compile-time exhaustiveness checking using never"
+        },
+        {
+          "name": "instruction_adherence:deep_readonly_mapped_type",
+          "passed": true,
+          "reason": "Implements recursive RequireDeepReadonly mapped type"
+        },
+        {
+          "name": "invariant_term:never",
+          "passed": true,
+          "reason": "Found invariant \"never\""
+        },
+        {
+          "name": "invariant_term:readonly",
+          "passed": true,
+          "reason": "Found invariant \"readonly\""
+        },
+        {
+          "name": "invariant_term:switch",
+          "passed": true,
+          "reason": "Found invariant \"switch\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-14-complex-typescript",
+    "name": "Complex TypeScript correctness: exhaustive discriminated unions & mapped types",
+    "category": "B. SIMPLE CODE / COMPLEX TYPESCRIPT",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:05:37.920Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 6331,
+    "timeToFirstByteMs": 6330,
+    "promptTokens": 2617,
+    "completionTokens": 236,
+    "reasoningTokens": 0,
+    "contentSnippet": "```ts export type RouteTarget =   | {       type: \"model\";       modelId: string;     }   | {       type: \"tier\";       tier: \"cheap\" | \"balanced\" | \"strong\";     }   | {       type: \"fallback\";      ",
+    "evaluation": {
+      "passed": true,
+      "score": 0.83,
+      "dimensions": [
+        {
+          "name": "correctness:discriminated_union_definition",
+          "passed": false,
+          "reason": "Missing discriminated union"
+        },
+        {
+          "name": "critical_invariant:compile_time_exhaustiveness_never",
+          "passed": true,
+          "reason": "Enforces compile-time exhaustiveness checking using never"
+        },
+        {
+          "name": "instruction_adherence:deep_readonly_mapped_type",
+          "passed": true,
+          "reason": "Implements recursive RequireDeepReadonly mapped type"
+        },
+        {
+          "name": "invariant_term:never",
+          "passed": true,
+          "reason": "Found invariant \"never\""
+        },
+        {
+          "name": "invariant_term:readonly",
+          "passed": true,
+          "reason": "Found invariant \"readonly\""
+        },
+        {
+          "name": "invariant_term:switch",
+          "passed": true,
+          "reason": "Found invariant \"switch\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-15-repository-rollout-planning",
+    "name": "Tool-oriented repository planning: canary release and instant rollback",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:05:59.863Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 21943,
+    "timeToFirstByteMs": 3930,
+    "promptTokens": 2149,
+    "completionTokens": 6249,
+    "reasoningTokens": 1294,
+    "contentSnippet": "# Production Deployment and Rollback Plan: AutoRouter V2  ## 1. System Architecture & Topology Overview  ```                           [ Client Traffic ]                                   │           ",
+    "evaluation": {
+      "passed": true,
+      "score": 1,
+      "dimensions": [
+        {
+          "name": "critical_invariant:canary_port_isolation",
+          "passed": true,
+          "reason": "Enforces port isolation (stable 20200 vs canary 20201)"
+        },
+        {
+          "name": "reasoning_completeness:readiness_gates",
+          "passed": true,
+          "reason": "Defines health probe and soak readiness gates"
+        },
+        {
+          "name": "correctness:instant_rollback_mechanism",
+          "passed": true,
+          "reason": "Details instant configuration rollback via ROUTER_MODE=legacy"
+        },
+        {
+          "name": "unsafe_alternative_rejection:stable_process_untouched",
+          "passed": true,
+          "reason": "Guarantees stable port 20200 process remains running and untouched"
+        },
+        {
+          "name": "invariant_term:20200",
+          "passed": true,
+          "reason": "Found invariant \"20200\""
+        },
+        {
+          "name": "invariant_term:20201",
+          "passed": true,
+          "reason": "Found invariant \"20201\""
+        },
+        {
+          "name": "invariant_term:ROUTER_MODE",
+          "passed": true,
+          "reason": "Found invariant \"ROUTER_MODE\""
+        },
+        {
+          "name": "invariant_term:rollback",
+          "passed": true,
+          "reason": "Found invariant \"rollback\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-15-repository-rollout-planning",
+    "name": "Tool-oriented repository planning: canary release and instant rollback",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-terra",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:06:42.165Z",
+    "operationalSuccess": true,
+    "qualitySuccess": true,
+    "passed": true,
+    "elapsedMs": 41892,
+    "timeToFirstByteMs": 42300,
+    "promptTokens": 2615,
+    "completionTokens": 1925,
+    "reasoningTokens": 0,
+    "contentSnippet": "**Deployment Plan**  **Objective:** Deploy AutoRouter V2 as an isolated canary on port `20201`, while AutoRouter V1 remains the production authority on port `20200`. No production traffic shifts until",
+    "evaluation": {
+      "passed": true,
+      "score": 0.88,
+      "dimensions": [
+        {
+          "name": "critical_invariant:canary_port_isolation",
+          "passed": true,
+          "reason": "Enforces port isolation (stable 20200 vs canary 20201)"
+        },
+        {
+          "name": "reasoning_completeness:readiness_gates",
+          "passed": true,
+          "reason": "Defines health probe and soak readiness gates"
+        },
+        {
+          "name": "correctness:instant_rollback_mechanism",
+          "passed": true,
+          "reason": "Details instant configuration rollback via ROUTER_MODE=legacy"
+        },
+        {
+          "name": "unsafe_alternative_rejection:stable_process_untouched",
+          "passed": false,
+          "reason": "Missing untouched process invariant"
+        },
+        {
+          "name": "invariant_term:20200",
+          "passed": true,
+          "reason": "Found invariant \"20200\""
+        },
+        {
+          "name": "invariant_term:20201",
+          "passed": true,
+          "reason": "Found invariant \"20201\""
+        },
+        {
+          "name": "invariant_term:ROUTER_MODE",
+          "passed": true,
+          "reason": "Found invariant \"ROUTER_MODE\""
+        },
+        {
+          "name": "invariant_term:rollback",
+          "passed": true,
+          "reason": "Found invariant \"rollback\""
+        }
+      ],
+      "issues": []
+    }
+  },
+  {
+    "caseId": "hard-15-repository-rollout-planning",
+    "name": "Tool-oriented repository planning: canary release and instant rollback",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "modelId": "cx/gpt-5.6-sol",
+    "attempt": 1,
+    "timestamp": "2026-09-12T06:07:27.170Z",
+    "operationalSuccess": false,
+    "qualitySuccess": false,
+    "passed": false,
+    "failureCategory": "TIMEOUT",
+    "failureReason": "Request timed out after 45000ms",
+    "elapsedMs": 45005,
+    "timeToFirstByteMs": 45005,
+    "promptTokens": 0,
+    "completionTokens": 0,
+    "reasoningTokens": 0,
+    "contentSnippet": "",
+    "evaluation": {
+      "passed": false,
+      "score": 0,
+      "dimensions": [],
+      "issues": [
+        "Operational failure"
+      ]
+    }
+  }
+]

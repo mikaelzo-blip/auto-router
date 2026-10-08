@@ -1,0 +1,207 @@
+{
+  "benchmark": "CP7.2 SONNET AGENTIC EXECUTOR VALIDATION",
+  "timestamp": "2026-09-15T05:42:09.801Z",
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "candidates": {
+    "gemini_high": {
+      "completed": 6,
+      "attempted": 12,
+      "completionRate": 0.5,
+      "hiddenTestSuccessCount": 6,
+      "hiddenTestRate": 0.5,
+      "timeouts": 6,
+      "regressions": 0,
+      "toolCalls": 128,
+      "failedToolCalls": 13,
+      "medianIterations": 12,
+      "medianWallClockMs": 81288,
+      "medianTtfbMs": 2973
+    },
+    "sonnet_4_6": {
+      "completed": 11,
+      "attempted": 12,
+      "completionRate": 0.917,
+      "hiddenTestSuccessCount": 11,
+      "hiddenTestRate": 0.917,
+      "timeouts": 0,
+      "regressions": 0,
+      "toolCalls": 119,
+      "failedToolCalls": 5,
+      "medianIterations": 7,
+      "medianWallClockMs": 49097,
+      "medianTtfbMs": 2593
+    }
+  },
+  "headToHead": [
+    {
+      "caseId": "A1",
+      "family": "BUG_DIAGNOSIS_AND_REPAIR",
+      "winner": "GEMINI",
+      "reason": "Gemini passed, Sonnet failed"
+    },
+    {
+      "caseId": "A2",
+      "family": "BUG_DIAGNOSIS_AND_REPAIR",
+      "winner": "SONNET",
+      "reason": "Both passed, Sonnet required fewer iterations"
+    },
+    {
+      "caseId": "B1",
+      "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+      "winner": "SONNET",
+      "reason": "Both passed, Sonnet required fewer iterations"
+    },
+    {
+      "caseId": "B2",
+      "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    },
+    {
+      "caseId": "C1",
+      "family": "REFACTOR_UNDER_CONSTRAINTS",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    },
+    {
+      "caseId": "C2",
+      "family": "REFACTOR_UNDER_CONSTRAINTS",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    },
+    {
+      "caseId": "D1",
+      "family": "FAILURE_RECOVERY",
+      "winner": "SONNET",
+      "reason": "Both passed, Sonnet required fewer iterations"
+    },
+    {
+      "caseId": "D2",
+      "family": "FAILURE_RECOVERY",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    },
+    {
+      "caseId": "E1",
+      "family": "DATA_CONCURRENCY_MIGRATION",
+      "winner": "SONNET",
+      "reason": "Both passed, Sonnet required fewer iterations"
+    },
+    {
+      "caseId": "E2",
+      "family": "DATA_CONCURRENCY_MIGRATION",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    },
+    {
+      "caseId": "F1",
+      "family": "REPOSITORY_SCALE_MAINTENANCE",
+      "winner": "SONNET",
+      "reason": "Both passed, Sonnet required fewer iterations"
+    },
+    {
+      "caseId": "F2",
+      "family": "REPOSITORY_SCALE_MAINTENANCE",
+      "winner": "SONNET",
+      "reason": "Sonnet passed, Gemini failed"
+    }
+  ],
+  "familyOutcomes": {
+    "BUG_DIAGNOSIS_AND_REPAIR": {
+      "winner": "TIE",
+      "geminiWins": 1,
+      "sonnetWins": 1,
+      "ties": 0
+    },
+    "MULTI_FILE_FEATURE_IMPLEMENTATION": {
+      "winner": "SONNET",
+      "geminiWins": 0,
+      "sonnetWins": 2,
+      "ties": 0
+    },
+    "REFACTOR_UNDER_CONSTRAINTS": {
+      "winner": "SONNET",
+      "geminiWins": 0,
+      "sonnetWins": 2,
+      "ties": 0
+    },
+    "FAILURE_RECOVERY": {
+      "winner": "SONNET",
+      "geminiWins": 0,
+      "sonnetWins": 2,
+      "ties": 0
+    },
+    "DATA_CONCURRENCY_MIGRATION": {
+      "winner": "SONNET",
+      "geminiWins": 0,
+      "sonnetWins": 2,
+      "ties": 0
+    },
+    "REPOSITORY_SCALE_MAINTENANCE": {
+      "winner": "SONNET",
+      "geminiWins": 0,
+      "sonnetWins": 2,
+      "ties": 0
+    }
+  },
+  "promotionGate": {
+    "gatePassed": true,
+    "decision": "PROMOTE_TO_AGENTIC_EXECUTOR",
+    "criteria": {
+      "completionAdvantage": {
+        "passed": true,
+        "sonnetPassed": 11,
+        "geminiPassed": 6,
+        "delta": 5,
+        "details": "Sonnet: 11/12, Gemini: 6/12, Delta: +5"
+      },
+      "hiddenTestGate": {
+        "passed": true,
+        "sonnetRate": 91.7,
+        "geminiRate": 50,
+        "details": "Sonnet: 91.7%, Gemini: 50.0%"
+      },
+      "regressionGate": {
+        "passed": true,
+        "sonnetRegressions": 0,
+        "geminiRegressions": 0,
+        "details": "Sonnet: 0, Gemini: 0"
+      },
+      "timeoutGate": {
+        "passed": true,
+        "sonnetTimeoutRate": 0,
+        "limit": 10,
+        "details": "Sonnet: 0.0% (limit: 10%)"
+      },
+      "toolReliabilityGate": {
+        "passed": true,
+        "sonnetToolFailureRate": 4.2,
+        "geminiToolFailureRate": 10.2,
+        "details": "Sonnet: 4.2%, Gemini: 10.2%"
+      },
+      "iterationGate": {
+        "passed": true,
+        "sonnetMedianIters": 7,
+        "geminiMedianIters": 12,
+        "details": "Sonnet median: 7, Gemini median: 12"
+      },
+      "latencyGate": {
+        "passed": true,
+        "latencyRatio": 0.6,
+        "limit": 1.5,
+        "details": "Ratio: 0.60x (limit: 1.5x unless quality delta >= 3)"
+      },
+      "taskFamilyDiversityGate": {
+        "passed": true,
+        "winningFamilies": [
+          "MULTI_FILE_FEATURE_IMPLEMENTATION",
+          "REFACTOR_UNDER_CONSTRAINTS",
+          "FAILURE_RECOVERY",
+          "DATA_CONCURRENCY_MIGRATION",
+          "REPOSITORY_SCALE_MAINTENANCE"
+        ],
+        "details": "Sonnet won 5 families: MULTI_FILE_FEATURE_IMPLEMENTATION, REFACTOR_UNDER_CONSTRAINTS, FAILURE_RECOVERY, DATA_CONCURRENCY_MIGRATION, REPOSITORY_SCALE_MAINTENANCE"
+      }
+    }
+  }
+}

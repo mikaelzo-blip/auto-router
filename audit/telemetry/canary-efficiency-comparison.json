@@ -1,0 +1,44 @@
+{
+  "checkpoint": "CP5",
+  "timestamp": "2026-09-14T07:31:50.788Z",
+  "canaryPort": 20201,
+  "casesEvaluated": 8,
+  "autoReasoning": {
+    "policy": "auto",
+    "overallSuccessRate": "100%",
+    "averageLatencyMs": 14323,
+    "totalReasoningTokens": 9274,
+    "routineTasks": {
+      "averageLatencyMs": 8619,
+      "effectiveEffort": "low",
+      "successRate": "100%"
+    },
+    "hardTasks": {
+      "effectiveEffort": "high",
+      "successRate": "100%"
+    },
+    "deEscalationVerified": true,
+    "escalationVerified": true
+  },
+  "fixedHighBaseline": {
+    "policy": "fixed_high",
+    "overallSuccessRate": "75%",
+    "averageLatencyMs": 13846,
+    "totalReasoningTokens": 5021,
+    "routineTasks": {
+      "averageLatencyMs": 6557,
+      "effectiveEffort": "high",
+      "successRate": "100%"
+    },
+    "hardTasks": {
+      "effectiveEffort": "high",
+      "successRate": "50%"
+    }
+  },
+  "efficiencyGains": {
+    "routineLatencyReductionMs": -2062,
+    "routineLatencyReductionPct": "-31%",
+    "overallLatencyDeltaMs": -477,
+    "qualityRegressionDetected": false
+  }
+}

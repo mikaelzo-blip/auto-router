@@ -1,0 +1,26 @@
+{
+  "taskId": "ST-04",
+  "category": "STRONG",
+  "taskName": "Webhook signature boundary under proxying",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:28:24.000Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [
+    "Omitted grace-period handling for secret rotation (accept current and previous secret)"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.8,
+  "elapsedMs": 15008,
+  "ttfbMs": 2375,
+  "usage": {
+    "promptTokens": 2524,
+    "completionTokens": 486,
+    "reasoningTokens": 0,
+    "totalTokens": 3010
+  },
+  "rawResponse": "The authentication boundary is the provider’s HMAC, not the client IP. The CDN and reverse proxy are transport intermediaries; an incoming `X-Forwarded-For` value is untrusted unless a trusted proxy overwrites it. Even then, the resulting IP is not webhook authentication. JSON parsing is another boundary: it must happen **after** verification because parse-and-stringify can change the signed bytes.\n\n**Safe verification sequence**\n\n1. Require HTTPS at the public edge. Set a body-size limit, and capture the request body as raw bytes before any JSON parser or other body transformation. Configure the CDN and proxy not to alter the body.\n2. Read the provider’s signature, timestamp, and key identifier from their specified headers. Reject missing, malformed, duplicate, or ambiguous values. Follow the provider’s exact signing specification: if it signs the raw body alone, verify those bytes; if it signs a timestamp plus the body, reproduce that byte sequence exactly.\n3. Select the configured secret by key identifier, if the provider supplies one. Otherwise, check a small, bounded set of active rotation secrets. Compute HMAC-SHA256 over the specified bytes, decode the supplied signature to bytes, require the expected length, and compare with a constant-time comparison function—not `===`. Do not log bodies, signatures, or secrets.\n4. Enforce replay limits. Reject timestamps outside a short allowed window when the provider supplies a signed timestamp. **A timestamp is useful only if covered by the signature.** Atomically record the provider’s unique event ID, or a digest of the authenticated message if no event ID exists, in a durable store. On duplicate delivery, return the appropriate success response without repeating the business operation. Keep the record for at least the provider’s retry horizon.\n5. Only after authentication, parse and validate the JSON schema and event type. Apply the business change idempotently using a transaction or an equivalent atomic state transition. Acknowledge only after the event is durably recorded or processed; let failures retry.\n\nFor rotation, accept the old and new secrets only during a defined overlap, track which key verified the event, and remove the old secret after the provider’s cutover and retry window. A body-only signature with no authenticated timestamp or unique event ID cannot by itself distinguish a fresh request from a replay; durable deduplication and idempotent processing are then essential."
+}

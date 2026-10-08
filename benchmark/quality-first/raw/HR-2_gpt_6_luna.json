@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-2",
+  "category": "HARD_REASONING",
+  "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:14:42.671Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 7932,
+  "ttfbMs": 1673,
+  "usage": {
+    "promptTokens": 2738,
+    "completionTokens": 223,
+    "reasoningTokens": 0,
+    "totalTokens": 2961
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "1. **Concurrent.** `[1, 1, 0]` and `[0, 0, 1]` are incomparable: each has a component greater than the other in at least one position. Neither update causally follows the other.\n\n2. **LWW selects `v3`**, because its physical timestamp, `10:00:05`, is later than `v2`’s `10:00:00`. The anomaly is that wall-clock ordering can discard a concurrent update—and clock drift can make that ordering disagree"
+}

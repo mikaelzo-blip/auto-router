@@ -1,0 +1,29 @@
+{
+  "caseId": "F2",
+  "family": "REPOSITORY_SCALE_MAINTENANCE",
+  "name": "Architecture Cleanup: Pipeline Error Flow & Modularity",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:40:19.445Z",
+  "ttfbMs": 2456,
+  "totalLatencyMs": 62310,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 12,
+    "toolCalls": 15,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/pipeline/context.ts",
+      "src/pipeline/step.ts",
+      "src/pipeline/pipeline.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ Pipeline - executes sequential steps modifying context (0.499ms)\n✔ Pipeline - stopOnError: true halts pipeline immediately when step fails (0.1661ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.9326\n",
+    "hiddenTestOutput": "✔ Hidden: Pipeline - stopOnError: false continues executing remaining steps and aggregates errors (0.5058ms)\n✔ Hidden: Pipeline - empty pipeline returns success with unchanged context (0.073ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 136.4008\n"
+  }
+}

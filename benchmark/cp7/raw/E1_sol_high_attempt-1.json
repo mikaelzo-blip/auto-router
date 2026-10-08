@@ -1,0 +1,23 @@
+{
+  "caseId": "E1",
+  "track": "agentic",
+  "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-14T19:36:14.157Z",
+  "ttfbMs": 3565,
+  "totalLatencyMs": 139109,
+  "httpStatus": 0,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "agenticDetails": {
+    "iterations": 8,
+    "toolCalls": 19,
+    "failedToolCalls": 5,
+    "filesChanged": [
+      "src/rate-limiter.ts"
+    ],
+    "testsPassed": false,
+    "hiddenTestsPassed": false
+  }
+}

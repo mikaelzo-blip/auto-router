@@ -1,0 +1,28 @@
+{
+  "checkpoint": "CP2",
+  "status": "shadow-ready",
+  "startingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
+  "endingHead": "6150245f6f81bba8c0a0f6dc487bbd6c5133a52f",
+  "cp1EndingHead": "4f7a1d9017028ee317fb7118ca77c9f79c1075b2",
+  "tests": {
+    "command": "npm test",
+    "result": "PASS: 8 files, 83 tests",
+    "reliabilityTargeted": "PASS: 6 tests",
+    "shadowCorpus": {
+      "command": "npm run shadow:corpus",
+      "result": "PASS: 10 cases",
+      "selectedProfiles": {
+        "gemini-flash-low": 2,
+        "gemini-flash-medium": 5,
+        "gemini-flash-high": 3
+      }
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "result": "PASS"
+  },
+  "legacyRoutingAuthoritative": true,
+  "shadowForwarding": false,
+  "timestamp": "2026-09-12T10:51:19+07:00"
+}

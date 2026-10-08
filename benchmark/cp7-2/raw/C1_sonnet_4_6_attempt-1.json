@@ -1,0 +1,30 @@
+{
+  "caseId": "C1",
+  "family": "REFACTOR_UNDER_CONSTRAINTS",
+  "name": "Multi-File Refactor: Billing Calculator Strategies",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:28:56.382Z",
+  "ttfbMs": 3638,
+  "totalLatencyMs": 88265,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 12,
+    "toolCalls": 16,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/billing/strategies/DiscountStrategy.ts",
+      "src/billing/strategies/TaxStrategy.ts",
+      "src/billing/strategies/index.ts",
+      "src/billing/calculator.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ BillingCalculator - standard invoice without discount (0.4502ms)\n✔ BillingCalculator - invoice with percentage discount (0.082ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.7856\n",
+    "hiddenTestOutput": "✔ Hidden: BillingCalculator - non-taxable item proportion in tax calculation (0.4755ms)\n✔ Hidden: BillingCalculator - empty items array handling (0.0801ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.8784\n"
+  }
+}

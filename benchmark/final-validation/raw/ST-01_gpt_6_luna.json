@@ -1,0 +1,24 @@
+{
+  "taskId": "ST-01",
+  "category": "STRONG",
+  "taskName": "Multi-region checkout: saga versus transactional outbox",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:23:54.896Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 1,
+  "elapsedMs": 17287,
+  "ttfbMs": 2008,
+  "usage": {
+    "promptTokens": 2559,
+    "completionTokens": 717,
+    "reasoningTokens": 0,
+    "totalTokens": 3276
+  },
+  "rawResponse": "Application retries cannot make PostgreSQL and Kafka atomic. A process can commit the row, lose the broker connection, and fail before learning whether the publish succeeded. Use a transactional outbox.\n\n1. **Transaction boundary**\n   - In one PostgreSQL transaction, insert the `Order` and an outbox record containing `OrderCreated`.\n   - Commit both or neither. Enforce a unique constraint on the order’s client idempotency key.\n   - Do not publish to Kafka inside this transaction. Do not describe the database commit and Kafka publish as atomic.\n\n2. **Outbox publisher**\n   - A background publisher reads unpublished outbox rows, claims them with a lease or `FOR UPDATE SKIP LOCKED`, and publishes them to Kafka.\n   - Mark a row published only after Kafka acknowledges the record. If the publisher crashes after Kafka accepts it but before PostgreSQL records success, it publishes again. Therefore delivery is **at least once**.\n   - Retry transient failures with bounded exponential backoff and jitter; retain the row and alert on prolonged failure. Do not discard an event because retries were exhausted. Partition by order ID when per-order ordering is required. Monitor outbox age and backlog.\n\n3. **Idempotency**\n   - Give each logical command a stable client idempotency key. Replays of checkout with that key return the existing order rather than creating another.\n   - Give every event a stable `event_id`, stored in the outbox and reused on every publish attempt. Do not generate a new ID per retry.\n   - Each consumer keeps an inbox/deduplication record with a unique constraint on `(consumer, event_id)`. In the same local database transaction, insert the inbox record and apply the business change. A duplicate is acknowledged without reapplying the change.\n   - For external payment or inventory APIs, pass a stable operation idempotency key, such as `(order_id, saga_step)`. If the provider lacks idempotency or status lookup, exactly-once external effects cannot be guaranteed; reconcile ambiguous outcomes.\n\n4. **Saga and recovery**\n   - Model the order workflow as a durable saga with persisted step state, attempts, and deadlines. Payment and inventory workers emit result events through their own outboxes; the saga processes each event idempotently.\n   - If payment succeeds and inventory rejects, persist the rejection and transition the saga to compensating. Issue a payment void/refund using a stable compensation idempotency key. Record completion only after the payment provider confirms it. Then mark the order rejected or cancelled and notify downstream systems.\n   - Compensation is a new business action, not a rollback of the original payment. Preserve the payment and inventory outcomes for audit.\n\n5. **Compensation timeout**\n   - A timeout means **unknown outcome**, not failure. Keep the saga in `COMPENSATION_PENDING`; do not mark compensation complete or issue a fresh, non-idempotent refund.\n   - Retry or query the provider using the same compensation key. If the provider supports idempotency, repeated requests converge on one effect. Reconcile until confirmed; escalate to manual operations when the outcome cannot be established.\n   - Keep customer-visible order state explicit, such as `cancellation pending`, until compensation is confirmed. Do not claim the order is fully cancelled while the charge may remain.\n\nIn a multi-region deployment, keep each order’s authoritative write and saga state in one home region or otherwise enforce single-writer ownership. Replicate asynchronously and fail over with fencing; do not introduce cross-region synchronous transactions."
+}

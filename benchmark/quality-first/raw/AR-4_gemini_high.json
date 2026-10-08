@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-4",
+  "category": "ARCHITECTURE",
+  "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:28:28.359Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 14658,
+  "ttfbMs": 4350,
+  "usage": {
+    "promptTokens": 2626,
+    "completionTokens": 3205,
+    "reasoningTokens": 1180,
+    "totalTokens": 5831
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "### 1. Root Causes of Naive DDL Downtime\n\nA naive `ALTER TABLE` statement triggers an immediate operational outage through three mechanisms:\n\n*   **Lock Queuing and Connection Pool Starvation:** The statement requires an `ACCESS EXCLUSIVE` lock on `journal_entries` and all underlying child partitions. While waiting for existing read/write transactions to clear, the DDL blocks every subsequent read"
+}

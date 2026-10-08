@@ -1,0 +1,24 @@
+{
+  "taskId": "ST-04",
+  "category": "STRONG",
+  "taskName": "Webhook signature boundary under proxying",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:28:43.110Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 1,
+  "elapsedMs": 19110,
+  "ttfbMs": 2133,
+  "usage": {
+    "promptTokens": 2524,
+    "completionTokens": 777,
+    "reasoningTokens": 0,
+    "totalTokens": 3301
+  },
+  "rawResponse": "## Security boundaries\n\n- **Network identity is not authentication.** `X-Forwarded-For` is client-controlled unless a trusted proxy overwrites it. Even then, source IP only supports rate limiting or network policy; it does not prove that a request came from the payment provider.\n- **The signed bytes are the boundary.** JSON parsing and re-serialization can change whitespace, key order, escaping, or number representation. Verify the exact body bytes received, before parsing.\n- **The signature is a credential check.** Require the provider’s documented signature format and algorithm. A valid HMAC proves possession of the shared secret and integrity of the signed bytes; it does not by itself prevent replay.\n- **The application boundary remains important.** After verification, validate the payload schema, event type, account or merchant identity, and expected payment state. Do not treat a valid signature as authorization for arbitrary actions.\n\n## Safe verification sequence\n\n1. **Establish the trusted transport path.** Accept webhook traffic only through the intended TLS endpoint. Configure the CDN and reverse proxy to remove or overwrite forwarding headers. Do not use `X-Forwarded-For` to authenticate requests.\n2. **Enforce request limits before buffering.** Restrict body size, header size, and processing time. Reject malformed or duplicate signature headers according to the provider’s specification.\n3. **Read and retain the raw body bytes.** Do not parse, normalize, decompress, or re-serialize the body before verification. Ensure the proxy and application agree on the bytes the provider signs; avoid transformations that alter the body.\n4. **Validate signature metadata.** Parse the specified signature header strictly. Validate its encoding and length, and obtain any signed timestamp or key identifier required by the provider.\n5. **Compute and compare HMAC safely.** Compute HMAC-SHA256 over the exact signed input specified by the provider, using the candidate secret. Compare the expected and supplied MACs with a constant-time comparison after validating equal lengths. Reject missing, malformed, or invalid signatures.\n6. **Enforce freshness.** If the provider signs a timestamp, reject timestamps outside a bounded tolerance. Use a synchronized server clock. A timestamp alone does not prevent repeated delivery within that window.\n7. **Apply durable replay and idempotency defense.** After signature verification, atomically claim a unique provider event ID (or the provider’s documented replay key) in durable storage with a uniqueness constraint. If already processed, return the provider-required success response without repeating side effects. Commit the claim and payment-state transition transactionally where possible; otherwise use an idempotent job/outbox design. Retain deduplication records for the provider’s retry and replay horizon.\n8. **Parse and validate the payload.** Parse the verified bytes, then validate schema, event type, merchant/account, currency, amount, and payment-state transition. Make state changes idempotent and reject invalid transitions.\n9. **Acknowledge only after durable handling.** Return success after the event is safely recorded or processed. Return a retryable failure if durable handling fails; avoid acknowledging an event that could be lost.\n\n## Secret rotation\n\n- Store secrets in a secret manager, not source code or request logs.\n- During rotation, verify against the active secret and the explicitly configured previous secret, if the provider supports overlap. Do not accept arbitrary key IDs or secrets supplied by the request.\n- Scope each secret to the expected provider and environment. Use a key identifier only to select from a fixed allowlist; still verify the HMAC.\n- Remove the previous secret after the provider’s rotation window and outstanding retries have elapsed. Record which configured key verified an event, but never log the secret or full signature.\n- Test rotation, malformed signatures, timestamp boundaries, duplicate event IDs, and storage failures."
+}

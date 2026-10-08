@@ -1,0 +1,35 @@
+{
+  "caseId": "A1",
+  "track": "architecture",
+  "name": "Offline / Delayed-Processing Document System",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:20:03.136Z",
+  "ttfbMs": 1253,
+  "totalLatencyMs": 43407,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2198,
+    "completion": 3000
+  },
+  "outputSnippet": "# Offline/Delayed-Processing Document Ingestion Architecture\n\n## Executive Summary\n\nThis architecture provides a durable, secure, operationally simple ingestion pipeline for document and message intake during primary cluster unavailability. The design prioritizes **write availability** (AP in CAP te",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "durability_guarantee": 2,
+      "queueing_and_backpressure": 2,
+      "idempotency_mechanism": 2,
+      "duplicate_detection": 2,
+      "failure_recovery_and_dlq": 2,
+      "operational_simplicity": 2,
+      "security_and_encryption": 2,
+      "observability_and_alerts": 1,
+      "tradeoff_analysis": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

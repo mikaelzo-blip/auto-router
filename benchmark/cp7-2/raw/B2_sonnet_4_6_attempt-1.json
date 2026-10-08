@@ -1,0 +1,28 @@
+{
+  "caseId": "B2",
+  "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+  "name": "Feature with Validation & Idempotency (Payment Processor)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:23:47.487Z",
+  "ttfbMs": 1906,
+  "totalLatencyMs": 53116,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 8,
+    "toolCalls": 12,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/payments/validator.ts",
+      "src/payments/processor.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ PaymentProcessor - valid request produces SUCCESS response (0.4752ms)\n✔ PaymentProcessor - rejects non-positive amount (0.074ms)\n✔ PaymentProcessor - rejects invalid currency code (0.0704ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.3454\n",
+    "hiddenTestOutput": "✔ Hidden: PaymentProcessor - duplicate idempotencyKey returns cached response without duplicate execution (0.5135ms)\n✔ Hidden: PaymentProcessor - missing recipientId returns MISSING_RECIPIENT (0.0941ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.4588\n"
+  }
+}

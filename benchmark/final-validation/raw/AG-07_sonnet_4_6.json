@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-07",
+  "category": "AGENTIC",
+  "taskName": "Wildcard event bus multi-file feature",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:43:10.909Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 9,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 19556,
+  "ttfbMs": 2697,
+  "score": 1,
+  "filesChanged": [
+    "src/events/dispatcher.ts"
+  ],
+  "publicOutputSnippet": "✔ EventBus - exact topic subscription (0.8976ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1326ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.1029ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 119.7021\n",
+  "hiddenOutputSnippet": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4915ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.3955ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.6215\n"
+}

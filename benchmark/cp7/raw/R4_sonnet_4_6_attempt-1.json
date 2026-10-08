@@ -1,0 +1,66 @@
+{
+  "caseId": "R4",
+  "track": "reasoning",
+  "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T04:35:57.878Z",
+  "ttfbMs": 1022,
+  "totalLatencyMs": 52016,
+  "httpStatus": 200,
+  "tokens": {
+    "prompt": 2244,
+    "completion": 3000
+  },
+  "outputSnippet": "# Multi-Tenant Authorization System: Comprehensive Security Analysis\n\n## 1. Privilege Escalation Vectors in `editUserRole`\n\n### Vector 1: Vertical Self-Escalation\n```\nATTACK: Admin calls editUserRole(adminUserId, 'Owner')\n```\nThe check `currentUser.hasPermission('user:edit_role')` is **role-agnostic",
+  "fullOutput": "# Multi-Tenant Authorization System: Comprehensive Security Analysis\n\n## 1. Privilege Escalation Vectors in `editUserRole`\n\n### Vector 1: Vertical Self-Escalation\n```\nATTACK: Admin calls editUserRole(adminUserId, 'Owner')\n```\nThe check `currentUser.hasPermission('user:edit_role')` is **role-agnostic about the target role**. An Admin can assign any role including Owner or Admin to any user — including themselves. Since the permission check only validates *capability to edit*, not *what role can be assigned*, the Admin effectively escalates to Owner.\n\n**Root Cause:** Missing constraint on `ceiling(assignable_roles) < currentUser.role`\n\n---\n\n### Vector 2: Horizontal Peer Escalation (Same-Tier Manipulation)\n```\nATTACK: Admin A calls editUserRole(AdminB.userId, 'Guest')\n         then reassigns AdminB's subordinates\n```\nTwo Admins exist at the same privilege level. Admin A can **demote Admin B** to Guest (disabling them), then operate without peer oversight. This is not escalation in the classical sense, but it is **authority consolidation** — a form of horizontal privilege abuse. Admin A also cannot be prevented from editing another Admin's role assignments downstream, effectively gaining sole Admin control.\n\n**Root Cause:** Missing constraint that `targetUser.role < currentUser.role` (strictly less than, not equal to)\n\n---\n\n### Vector 3: Cross-Tenant Escalation via Tenant ID Injection\n```\nATTACK: Admin in Tenant-A calls:\n  editUserRole(victimUserId, 'Owner', tenantId='Tenant-B')\n```\nThe check `currentUser.hasPermission('user:edit_role')` carries no **tenant scope validation**. If the function accepts a tenantId parameter (or derives it from the request body rather than the authenticated session), an Admin in one tenant can modify users in another tenant entirely.\n\n**Root Cause:** Permission check is context-free — `tenantId` must be authoritatively sourced from `currentUser.tenantId` (the token claim), never from client-supplied input.\n\n---\n\n### Vector 4: Role Enum Boundary Exploitation\n```\nATTACK: Admin sends newRole = 'SuperAdmin' or newRole = -1 or newRole = null\n```\nIf the system uses a numeric role hierarchy (Owner=1, Admin=2…) and the validation only checks `hasPermission`, a malformed or out-of-enum `newRole` can:\n- Bypass hierarchy comparisons if null coerces to 0 (higher than Owner)\n- Inject a synthetic role string that matches a partial permission filter\n- Exploit loose equality (`==` vs `===`) in role comparison\n\n**Root Cause:** Missing strict allowlist validation of `newRole` against a closed role enum before any comparison.\n\n---\n\n### Vector 5: Concurrent Race Condition (TOCTOU)\n```\nT1: Admin checks permission → PASS\nT2: Admin's role is demoted to Manager by Owner (different session)\nT3: Admin's editUserRole write commits with now-invalid authority\n```\nBetween the permission check and the write commit, the actor's role can change. Without an atomic compare-and-write with role verification at commit time, the system suffers a classic **Time-of-Check to Time-of-Use** vulnerability.\n\n---\n\n## 2. Complete Invariant Checks for `editUserRole`\n\n```\nROLE_HIERARCHY = {\n  'Owner':   0,   // lowest ordinal = highest privilege\n  'Admin':   1,\n  'Manager': 2,\n  'Member':  3,\n  'Guest':   4\n}\n\nASSIGNABLE_ROLES_ALLOWLIST = frozenset({'Owner','Admin','Manager','Member','Guest'})\n```\n\n```\nfunction editUserRole(currentUser, targetUserId, newRole, requestContext):\n\n  ── INVARIANT BLOCK: ALL CHECKS MUST PASS ─────────────────────────────────\n\n  [INV-01] TENANT ISOLATION — Source of truth is the token, never the payload\n    ASSERT currentUser.tenantId == requestContext.authenticatedTenantId\n    ASSERT currentUser.tenantId is NOT derived from client-supplied headers\n\n  [INV-02] TARGET USER EXISTS AND IS IN SAME TENANT\n    targetUser = db.fetchUser(targetUserId)\n    ASSERT targetUser is NOT null\n      → FAIL: USER_NOT_FOUND (do NOT reveal existence to cross-tenant callers)\n    ASSERT targetUser.tenantId == currentUser.tenantId\n      → FAIL: CROSS_TENANT_ACCESS_DENIED\n\n  [INV-03] ACTOR PERMISSION CHECK (existing check — necessary but insufficient)\n    ASSERT currentUser.hasPermission('user:edit_role')\n      → FAIL: PERMISSION_DENIED\n\n  [INV-04] NEW ROLE MUST BE WITHIN CLOSED ALLOWLIST\n    ASSERT newRole IN ASSIGNABLE_ROLES_ALLOWLIST\n      → FAIL: INVALID_ROLE_VALUE\n\n  [INV-05] VERTICAL ESCALATION GUARD — Actor cannot assign >= their own privilege\n    ASSERT ROLE_HIERARCHY[newRole] > ROLE_HIERARCHY[currentUser.role]\n      → FAIL: CANNOT_ASSIGN_ROLE_AT_OR_ABOVE_OWN_LEVEL\n    // Admin (ordinal=1) can only assign Manager(2), Member(3), Guest(4)\n    // Admin cannot assign Admin(1) or Owner(0)\n\n  [INV-06] HORIZONTAL PEER ESCALATION GUARD — Actor cannot edit peers\n    ASSERT ROLE_HIERARCHY[targetUser.role] > ROLE_HIERARCHY[currentUser.role]\n      → FAIL: CANNOT_EDIT_PEER_OR_SUPERIOR\n    // Admin can only edit users with role ordinal STRICTLY greater (lower privilege)\n\n  [INV-07] SELF-MODIFICATION GUARD\n    ASSERT currentUser.userId != targetUserId\n      → FAIL: CANNOT_EDIT_OWN_ROLE\n    // Prevents self-escalation and self-lockout weaponization\n\n  [INV-08] OWNER ROLE PROTECTION\n    ASSERT newRole != 'Owner'\n      → FAIL: OWNER_ROLE_NOT_ASSIGNABLE_VIA_THIS_ENDPOINT\n    // Owner assignment requires separate, elevated ceremony (e.g., transfer of ownership)\n    // with 2FA re-verification and audit trail, handled by a distinct privileged endpoint\n\n  [INV-09] ATOMIC COMMIT WITH ROLE RE-VERIFICATION (TOCTOU guard)\n    BEGIN TRANSACTION with SERIALIZABLE isolation\n      currentUserFresh = db.fetchUser(currentUser.userId, lock=FOR_UPDATE)\n      ASSERT currentUserFresh.role == currentUser.role  // role unchanged since token issued\n        → FAIL: ACTOR_ROLE_CHANGED_DURING_REQUEST (force re-authentication)\n      ASSERT currentUserFresh.tenantId == currentUser.tenantId\n      ASSERT currentUserFresh.isActive == true\n        → FAIL: ACTOR_ACCOUNT_SUSPENDED\n      WRITE role update\n    COMMIT TRANSACTION\n\n  [INV-10] AUDIT LOG — Written INSIDE the transaction, not after\n    WRITE audit_log {\n      actor:       currentUser.userId,\n      action:      'user:edit_role',\n      target:      targetUserId,\n      oldRole:     targetUser.role,\n      newRole:     newRole,\n      tenantId:    currentUser.tenantId,\n      timestamp:   now(),\n      requestIp:   requestContext.ip,\n      sessionId:   currentUser.sessionId\n    }\n\n  ─────────────────────────────────────────────────────────────────────────\n\n  EXECUTE role change\n  TRIGGER token revocation pipeline (see Section 3)\n  RETURN success\n```\n\n**Invariant Priority Matrix:**\n\n| Check | Prevents | Severity if missing |\n|-------|----------|---------------------|\n| INV-01 Tenant Isolation | Cross-tenant writes | Critical |\n| INV-02 Target Tenant | Cross-tenant reads | Critical |\n| INV-05 Vertical Guard | Self/upward escalation | Critical |\n| INV-06 Horizontal Guard | Peer manipulation | High |\n| INV-09 TOCTOU | Race conditions | High |\n| INV-04 Allowlist | Type confusion attacks | High |\n| INV-07 Self-modification | Bootstrap escalation | Medium |\n| INV-08 Owner Protection | Full tenant takeover | Critical |\n\n---\n\n## 3. Token Revocation and Cache Invalidation on Role Demotion\n\n### The Core Problem\n\n```\nTimeline:\n  T=0:  User has role=Admin, holds JWT valid for 1 hour\n  T=5m: Owner demotes user to Member\n  T=5m to T=60m: User's token still claims role=Admin\n  → 55-minute window of unauthorized elevated access\n```\n\n### Architecture: Layered Revocation Strategy\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                   REVOCATION PIPELINE                            │\n│                                                                  │\n│  Role Change Event                                               │\n│       │                                                          │\n│       ▼                                                          │\n│  ┌─────────────┐    ┌──────────────────┐   ┌────────────────┐   │\n│  │ Revocation  │───▶│  Session Store   │──▶│  Token         │   │\n│  │ Event Bus   │    │  (Redis/Memcache)│   │  Denylist      │   │\n│  └─────────────┘    └──────────────────┘   └────────────────┘   │\n│       │                                                          │\n│       ▼                                                          │\n│  ┌─────────────┐    ┌──────────────────┐                        │\n│  │ WebSocket   │    │  Permission       │                        │\n│  │ Push to     │    │  Cache Flush      │                        │\n│  │ Active Tabs │    │  (per userId)     │                        │\n│  └─────────────┘    └──────────────────┘                        │\n└─────────────────────────────────────────────────────────────────┘\n```\n\n### Implementation\n\n```\n// Revocation Event (published atomically with DB write)\nPUBLISH 'role.changed' {\n  userId:     targetUserId,\n  tenantId:   tenantId,\n  oldRole:    previousRole,\n  newRole:    assignedRole,\n  eventId:    uuid(),\n  occurredAt: now()\n}\n\n// ── STRATEGY 1: Short-lived tokens with mandatory rotation ─────\n// JWTs MUST have max TTL of 15 minutes for privileged roles\n// Refresh tokens check against revocation list on every use\nJWT_TTL_BY_ROLE = {\n  'Owner':   5 minutes,\n  'Admin':   10 minutes,\n  'Manager': 15 minutes,\n  'Member':  30 minutes,\n  'Guest':   60 minutes\n}\n\n// ── STRATEGY 2: Token Denylist (Redis) ───────────────────────\nfunction revokeAllSessionsForUser(userId, tenantId):\n  sessions = sessionStore.getAllSessions(userId, tenantId)\n  FOR EACH session IN sessions:\n    redis.set(\n      key:   \"denylist:jti:\" + session.jti,\n      value: \"revoked\",\n      ttl:   session.expiresAt - now()   // no need to store past expiry\n    )\n    redis.del(\"session:\" + session.sessionId)\n  redis.del(\"permission_cache:\" + userId + \":\" + tenantId)\n\n// ── STRATEGY 3: Middleware Token Validation (EVERY request) ──\nfunction validateToken(token, requestContext):\n  claims = jwt.verify(token, publicKey)\n\n  // Hard check: is this specific token revoked?\n  IF redis.exists(\"denylist:jti:\" + claims.jti):\n    → REJECT 401\n\n  // Soft check: has user's role generation counter advanced?\n  currentGeneration = redis.get(\"role_generation:\" + claims",
+  "outputHash": "c01ed1708f83476ea827fdfd13925844b7cdaeb2bbc1ffc8a03fae854c0e47d9",
+  "evaluatorVersion": "cp7-harness-2",
+  "evaluation": {
+    "satisfiedInvariants": 4,
+    "totalInvariants": 5,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+        "satisfied": true
+      },
+      {
+        "text": "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+        "satisfied": true
+      },
+      {
+        "text": "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+        "satisfied": true
+      },
+      {
+        "text": "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+        "satisfied": true
+      },
+      {
+        "text": "Fail-closed evaluation default",
+        "satisfied": false
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Only checking permission string without hierarchy and target-user ownership validation",
+        "avoided": true
+      },
+      {
+        "text": "Allowing Admin to assign Owner role",
+        "avoided": true
+      },
+      {
+        "text": "Ignoring cross-tenant target validation",
+        "avoided": true
+      }
+    ],
+    "passed": false,
+    "provisional": true,
+    "decision": "MANUAL_REVIEW_REQUIRED"
+  },
+  "success": false,
+  "failureClass": "TRUNCATION"
+}

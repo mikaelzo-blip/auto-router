@@ -1,0 +1,128 @@
+{
+  "checkpoint": "CP6.4",
+  "status": "live-account-selection-validated-and-production-shadow-soak-completed",
+  "branch": "hermes/autorouter-v2-cp6-quota-aware",
+  "startingHead": "5f09f1df4b0a52d9417eeef0a91cb37f7120430b",
+  "timestamp": "2026-09-14T12:17:00.000Z",
+  "accountSelection": {
+    "observedBehavior": "fill_first_priority",
+    "account1": {
+      "priority": 1,
+      "status": "reserve",
+      "startingNormalizedRatio": 0.03939695,
+      "servesRequestsWhileReserve": true
+    },
+    "account2": {
+      "priority": 2,
+      "status": "healthy",
+      "startingNormalizedRatio": 1.0,
+      "servesRequestsWhileReserve": false
+    },
+    "fillFirstBurnsReserveAccount": true,
+    "roundRobinEvaluation": {
+      "setting": "disabled",
+      "impact": "Round Robin ON would distribute 50% traffic to reserve account_1, worsening quota conservation. Round Robin OFF remains preferred."
+    },
+    "recommendation": "Reorder 9Router account priority so healthy account_2 is priority 1 and reserve account_1 is priority 2. Keep account selection strictly inside 9Router."
+  },
+  "candidateStates": {
+    "gemini-flash-low": { "status": "healthy", "effectiveRemainingRatio": 1.0, "limitingBuckets": [] },
+    "gemini-flash-medium": { "status": "healthy", "effectiveRemainingRatio": 1.0, "limitingBuckets": [] },
+    "gemini-flash-high": { "status": "healthy", "effectiveRemainingRatio": 1.0, "limitingBuckets": [] },
+    "terra": { "status": "exhausted", "effectiveRemainingRatio": 0.0, "limitingBuckets": ["codex_unavailable"] },
+    "luna-review": { "status": "exhausted", "effectiveRemainingRatio": 0.0, "limitingBuckets": ["codex_unavailable"] },
+    "sol": { "status": "exhausted", "effectiveRemainingRatio": 0.0, "enabled": false },
+    "astra": { "status": "exhausted", "effectiveRemainingRatio": 0.0, "enabled": false }
+  },
+  "providerPools": {
+    "antigravity": {
+      "status": "healthy",
+      "usableAccounts": 2,
+      "totalAccounts": 2,
+      "constrainedAccounts": 1,
+      "exhaustedAccounts": 0,
+      "bestRemainingRatio": 1.0
+    },
+    "codex": {
+      "status": "exhausted",
+      "usableAccounts": 0,
+      "totalAccounts": 1,
+      "constrainedAccounts": 0,
+      "exhaustedAccounts": 1,
+      "bestRemainingRatio": 0.0
+    }
+  },
+  "fallbacks": {
+    "explicitReviewFallback": {
+      "standard": "luna-review",
+      "quotaAware": "gemini-flash-high",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "switchReason": "quota_exhausted",
+      "doomedRequestAvoided": true
+    },
+    "hardConcurrencyFallback": {
+      "standard": "gemini-flash-high",
+      "quotaAware": "gemini-flash-high",
+      "terraAvoidedDueToExhaustion": true
+    },
+    "invariants": {
+      "noSemanticReasoningInflation": true,
+      "noSpecialistLeakage": true,
+      "solExcluded": true,
+      "astraExcluded": true
+    }
+  },
+  "shadowSoak": {
+    "requestsObserved": 50,
+    "durationSeconds": 0.34,
+    "GeminiPoolStatus": { "healthy": 50 },
+    "CodexPoolStatus": { "exhausted": 50 },
+    "wouldSwitchCount": 9,
+    "wouldSwitchRate": 0.18,
+    "actualProfileDistribution": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 18,
+      "gemini-flash-high": 9,
+      "luna-review": 9
+    },
+    "hypotheticalProfileDistribution": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 24,
+      "gemini-flash-high": 12
+    },
+    "quotaFallbackRecommendations": {
+      "luna-review -> gemini-flash-medium (quota_exhausted)": 6,
+      "luna-review -> gemini-flash-high (quota_exhausted)": 3
+    },
+    "noEligibleCandidateCount": 0,
+    "quotaTelemetryFailures": 0,
+    "quotaTelemetryTimeouts": 0,
+    "providerHealthChanges": 0,
+    "accountPoolChanges": 0
+  },
+  "pollingLoad": {
+    "callsPerRefresh": 4,
+    "refreshIntervalSeconds": 30,
+    "estimatedCallsPerHour": 480,
+    "recommendation": "Retain 30s interval; evaluate 60s + 429 event-driven refresh for multi-account scale"
+  },
+  "readinessGate": {
+    "gateA_multiAccountGeminiPoolStable": "PASS",
+    "gateB_exhaustedCodexRemovesTerraLuna": "PASS",
+    "gateC_reviewFallsBackSafely": "PASS",
+    "gateD_noDoomedRequestAttempted": "PASS",
+    "gateE_shadowWouldSwitchRational": "PASS",
+    "gateF_noSpecialistIsolationRegression": "PASS",
+    "gateG_accountSelectionOwnedBy9Router": "PASS",
+    "gateH_noSensitiveIdentityLeaks": "PASS",
+    "gateI_fullTestSuitePasses": "PASS",
+    "gateJ_productionShadowSoakStable": "PASS"
+  },
+  "testSuite": {
+    "totalFiles": 18,
+    "totalTests": 304,
+    "passed": 304,
+    "failed": 0
+  },
+  "finalRecommendation": "KEEP QUOTA_POLICY=shadow (pending 9Router account priority reordering to protect account_1 reserve capacity)"
+}

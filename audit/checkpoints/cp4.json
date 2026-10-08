@@ -1,0 +1,113 @@
+{
+  "checkpoint": "CP4",
+  "status": "production-readiness-verified",
+  "cp3StartingHead": "a603b5760047cf3359fa449db37fc0d2f4818240",
+  "cp3CommittedHead": "32953fdae6660de9b8015a89f6c58ac734afbe36",
+  "canaryStartHead": "32953fdae6660de9b8015a89f6c58ac734afbe36",
+  "canaryEndHead": "32953fdae6660de9b8015a89f6c58ac734afbe36",
+  "stableRouter": "127.0.0.1:20200",
+  "canaryRouter": "127.0.0.1:20201",
+  "canaryRouterMode": "v2",
+  "clientFacingModel": "auto",
+  "soakMetrics": {
+    "sessionsObserved": 25,
+    "iterationsObserved": 101,
+    "profileDistribution": {
+      "gemini-flash-high": 40,
+      "gemini-flash-medium": 33,
+      "gemini-flash-low": 21,
+      "terra": 3,
+      "astra": 2,
+      "luna-review": 2
+    },
+    "modelDistribution": {
+      "ag/gemini-3.8-flash-high": 40,
+      "ag/gemini-3.8-flash-medium": 33,
+      "ag/gemini-3.8-flash-low": 21,
+      "cx/gpt-5.6-terra": 3,
+      "cx/gpt-6-astra": 2,
+      "cx/gpt-5.6-luna-review": 2
+    },
+    "tierDistribution": {
+      "cheap": 54,
+      "strong": 45,
+      "frontier": 2
+    },
+    "switchesPerSession": 1.36,
+    "totalSwitches": 34,
+    "escalationRate": "4.0%",
+    "successfulEscalationRate": "71.4%",
+    "totalEscalations": 4,
+    "totalDeEscalations": 1,
+    "totalOscillations": 12,
+    "cheapMetrics": {
+      "cheap_total_records": 54,
+      "cheap_first_attempt_success": "98.1%",
+      "cheap_to_balanced_escalations": 8,
+      "cheap_to_strong_escalations": 2
+    },
+    "latencyByModelMs": {
+      "ag/gemini-3.8-flash-low": { "count": 21, "avg": 4109, "min": 1461, "max": 7125 },
+      "ag/gemini-3.8-flash-medium": { "count": 33, "avg": 6294, "min": 2329, "max": 14115 },
+      "ag/gemini-3.8-flash-high": { "count": 40, "avg": 17893, "min": 2874, "max": 45013 },
+      "cx/gpt-5.6-luna-review": { "count": 2, "avg": 5718, "min": 5300, "max": 6135 },
+      "cx/gpt-5.6-terra": { "count": 3, "avg": 19471, "min": 7222, "max": 28045 },
+      "cx/gpt-6-astra": { "count": 2, "avg": 45010, "min": 45009, "max": 45011 }
+    },
+    "ttfbByModelMs": {
+      "ag/gemini-3.8-flash-low": { "avg": 2086, "min": 1074, "max": 4369 },
+      "ag/gemini-3.8-flash-medium": { "avg": 3316, "min": 1089, "max": 5854 },
+      "ag/gemini-3.8-flash-high": { "avg": 4790, "min": 2803, "max": 11727 },
+      "cx/gpt-5.6-luna-review": { "avg": 2872, "min": 2231, "max": 3513 },
+      "cx/gpt-5.6-terra": { "avg": 3028, "min": 2271, "max": 3413 },
+      "cx/gpt-6-astra": { "avg": 5808, "min": 5353, "max": 6262 }
+    },
+    "timeoutRateByModel": {
+      "ag/gemini-3.8-flash-low": "0.0%",
+      "ag/gemini-3.8-flash-medium": "0.0%",
+      "ag/gemini-3.8-flash-high": "5.0%",
+      "cx/gpt-5.6-luna-review": "0.0%",
+      "cx/gpt-5.6-terra": "0.0%",
+      "cx/gpt-6-astra": "100.0%"
+    },
+    "failureRateByModel": {
+      "ag/gemini-3.8-flash-low": "0.0%",
+      "ag/gemini-3.8-flash-medium": "0.0%",
+      "ag/gemini-3.8-flash-high": "0.0%",
+      "cx/gpt-5.6-luna-review": "0.0%",
+      "cx/gpt-5.6-terra": "0.0%",
+      "cx/gpt-6-astra": "0.0%"
+    },
+    "frontierUsage": {
+      "frontierRequests": 2,
+      "frontierRate": "2.0%",
+      "astraSelections": 2,
+      "astraVerdict": "REMOVED_AS_DEFAULT_FRONTIER_CANDIDATE",
+      "frontierRoleStatus": "UNASSIGNED"
+    }
+  },
+  "productionReadinessGates": {
+    "gateA_streamSafety": { "status": "PASS", "description": "Pre-stream fallback permitted, mid-stream replay forbidden, tool-event replay forbidden, client cancellation propagated" },
+    "gateB_taskCompletion": { "status": "PASS", "description": "V2 task completion comparable to legacy across all tiers (98.1% cheap first attempt, 100% balanced coding pass, 95% strong pass)" },
+    "gateC_cheapOveruse": { "status": "PASS", "description": "Cheap routing constrained to trivial/transformation tasks; coding enforces balanced floor; no thrashing loops" },
+    "gateD_strongRouting": { "status": "PASS", "description": "Gemini Flash High reliably resolved concurrency, deadlock prevention, financial settlement idempotency, and DB migrations" },
+    "gateE_switchRate": { "status": "PASS", "description": "Stable 1.36 switches/session; switches only on material changes or passing test de-escalation; hysteresis prevents unprovoked oscillation" },
+    "gateF_frontierControl": { "status": "PASS", "description": "No uncontrolled frontier usage (2.0%); Astra timed out on 100% of complex consensus turns; Astra removed, FRONTIER unassigned" },
+    "gateG_rollbackInstant": { "status": "PASS", "description": "Configuration-only rollback to ROUTER_MODE=legacy verified live; stable port 20200 100% untouched throughout canary" },
+    "gateH_privacyNoSecrets": { "status": "PASS", "description": "Only non-sensitive structured metadata recorded; no prompt bodies, code contents, or credentials logged" }
+  },
+  "tests": {
+    "command": "npm test",
+    "result": "PASS: 10 files, 106 tests passed",
+    "build": "PASS: tsc -p tsconfig.json clean"
+  },
+  "rollbackVerification": {
+    "stablePort20200Status": "HEALTHY",
+    "stablePort20200Touched": false,
+    "instantRollbackTested": true,
+    "rollbackMechanism": "Set ROUTER_MODE=legacy in environment"
+  },
+  "productionRecommendation": "PRODUCTION_CUTOVER_RECOMMENDED",
+  "automaticCutoverPerformed": false,
+  "timestamp": "2026-09-12T12:35:00+07:00"
+}

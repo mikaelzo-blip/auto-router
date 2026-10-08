@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-3",
+  "category": "HARD_REASONING",
+  "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:15:38.387Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 2636,
+  "ttfbMs": 2302,
+  "usage": {
+    "promptTokens": 2607,
+    "completionTokens": 375,
+    "reasoningTokens": 263,
+    "totalTokens": 2982
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "A valid schedule is impossible. The dependency graph contains a directed cycle, which violates the DAG requirement for topological sorting.\n\nExact cycle:\n`T2 -> T3 -> T4 -> T5 -> T2`\n\nTasks `T2`, `T3`, `T4`, and `T5` form a cyclic deadlock where each task directly or indirectly waits for itself to finish. Break the dependency edge `T5 -> T2` or remove the chain `T2 -> T3 -> T4 -> T5` to make sched"
+}

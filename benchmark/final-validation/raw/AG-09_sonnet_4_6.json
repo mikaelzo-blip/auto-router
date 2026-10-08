@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-09",
+  "category": "AGENTIC",
+  "taskName": "LRU regression repair",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:45:12.497Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 5,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 19844,
+  "ttfbMs": 2049,
+  "score": 1,
+  "filesChanged": [
+    "src/cache/lru-cache.ts"
+  ],
+  "publicOutputSnippet": "✔ LruCache - basic set and get (0.3934ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0777ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.2673\n",
+  "hiddenOutputSnippet": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.4303ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0717ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 124.0862\n"
+}

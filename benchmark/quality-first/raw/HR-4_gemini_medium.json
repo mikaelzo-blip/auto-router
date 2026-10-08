@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-4",
+  "category": "HARD_REASONING",
+  "taskName": "Multi-Tenant Quota & Capacity Optimization",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:17:23.323Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 4345,
+  "ttfbMs": 3352,
+  "usage": {
+    "promptTokens": 2723,
+    "completionTokens": 1112,
+    "reasoningTokens": 849,
+    "totalTokens": 3835
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "### 1. Optimal Request Allocation\n\n* **Provider Alpha:** 60 requests\n* **Provider Beta:** 10 requests\n* **Provider Gamma:** 30 requests\n\n### 2. Total Dollar Cost\n\n* **Provider Alpha:** 60 requests × 2,000 tokens × ($0.002 / 1,000 tokens) = $0.24\n* **Provider Beta:** 10 requests × 2,000 tokens × ($0.001 / 1,000 tokens) = $0.02\n* **Provider Gamma:** 30 requests × 2,000 tokens × ($0.005 / 1,000 token"
+}

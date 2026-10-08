@@ -1,0 +1,25 @@
+{
+  "taskId": "AG-10",
+  "shape": "security-sensitive change",
+  "taskName": "Revoked session cross-module security fix",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T12:17:34.238Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 8,
+  "toolCalls": 12,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 24330,
+  "ttfbMs": 3469,
+  "score": 1,
+  "filesChanged": [
+    "src/token-validator.ts",
+    "src/session-service.ts"
+  ],
+  "publicOutputSnippet": "✔ SessionAuth - valid active session token validates successfully (0.487ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1893ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 98.8677\n",
+  "hiddenOutputSnippet": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.5615ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.0834ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.0566\n"
+}

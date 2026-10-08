@@ -1,0 +1,32 @@
+{
+  "taskId": "AR-2",
+  "category": "ARCHITECTURE",
+  "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:21:54.497Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 0.8,
+  "elapsedMs": 28752,
+  "ttfbMs": 2013,
+  "usage": {
+    "promptTokens": 2610,
+    "completionTokens": 934,
+    "reasoningTokens": 0,
+    "totalTokens": 3544
+  },
+  "reasoningErrors": [
+    "Missing per-tenant connection reservations or fair queueing"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 4,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "## 1. Why one shared FIFO pool fails\n\nA shared pool caps total connections, not each tenant’s share. Tenant 1 can occupy every pooled connection with 100 slow reports. Requests from the other 499 tenants then wait behind it or time out. FIFO admission also lets a Tenant 1 burst fill the queue before other tenants arrive.\n\nIncreasing the pool size does not fix isolation. PostgreSQL has `max_connect"
+}

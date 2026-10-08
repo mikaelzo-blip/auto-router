@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "setup": "bash scripts/setup.sh",
-    "health": "bash scripts/health-check.sh"
+    "health": "bash scripts/health-check.sh",
+    "shadow:corpus": "tsx scripts/shadow/shadow-corpus.ts"
   },
   "dependencies": {
     "dotenv": "^17.2.1",

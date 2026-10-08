@@ -1,0 +1,32 @@
+{
+  "taskId": "AR-2",
+  "category": "ARCHITECTURE",
+  "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+  "isTrap": true,
+  "trapAvoided": false,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:21:25.744Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0.4,
+  "elapsedMs": 33128,
+  "ttfbMs": 1420,
+  "usage": {
+    "promptTokens": 2610,
+    "completionTokens": 1149,
+    "reasoningTokens": 0,
+    "totalTokens": 3759
+  },
+  "reasoningErrors": [
+    "Fell for trap: did not reject naive unpartitioned shared pool"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 2,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "## 1. Why a single shared pool fails\n\nA global pool limits total connections, but it does not allocate them fairly.\n\n- Tenant 1’s 100 requests can occupy most or all available pool slots. Other tenants then wait behind Tenant 1’s work in the FIFO queue.\n- FIFO ordering preserves arrival order, not tenant fairness. A burst from one tenant can monopolize both active connections and queue capacity.\n-"
+}

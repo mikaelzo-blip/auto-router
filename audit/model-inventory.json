@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-09-12T10:55:35+07:00",
+  "source": "authenticated GET /v1/models against configured local upstream",
+  "count": 39,
+  "ids": [
+    "ar-fast", "ar-code", "ar-analysis", "ar-research",
+    "ag/gemini-3.8-flash-high", "ag/gemini-3.8-flash-medium", "ag/gemini-3.8-flash-low", "ag/gemini-3.8-flash",
+    "ag/gemini-3.7-flash-high", "ag/gemini-3.7-flash-medium", "ag/gemini-3.7-flash-low",
+    "ag/gemini-3.6-flash-high", "ag/gemini-3.6-flash-medium", "ag/gemini-3.6-flash-low",
+    "ag/gemini-3.5-flash-high", "ag/gemini-3-flash-agent", "ag/gemini-3.5-flash-low", "ag/gemini-3.5-flash-extra-low",
+    "ag/gemini-pro-agent", "ag/gemini-3.1-pro-low", "ag/claude-sonnet-4-6", "ag/claude-opus-4-6-thinking",
+    "ag/gpt-oss-120b-medium", "ag/gemini-3-flash", "cx/gpt-6-astra", "cx/gpt-5.6-sol", "cx/gpt-5.6-sol-review",
+    "cx/gpt-5.6-terra", "cx/gpt-5.6-terra-review", "cx/gpt-5.6-luna", "cx/gpt-5.6-luna-review",
+    "cx/gpt-5.5", "cx/gpt-5.5-review", "cx/gpt-5.4", "cx/gpt-5.4-review", "cx/gpt-5.4-mini",
+    "cx/gpt-5.4-mini-review", "cx/gpt-5.3-codex-spark", "cx/gpt-5.3-codex-spark-review"
+  ],
+  "requestedGroups": {
+    "LUNA": ["cx/gpt-5.6-luna", "cx/gpt-5.6-luna-review"],
+    "SOL": ["cx/gpt-5.6-sol", "cx/gpt-5.6-sol-review"],
+    "TERA_TERRA": ["cx/gpt-5.6-terra", "cx/gpt-5.6-terra-review"],
+    "ASTRA": ["cx/gpt-6-astra"],
+    "GEMINI": ["ag/gemini-3.8-flash-high", "ag/gemini-3.8-flash-medium", "ag/gemini-3.8-flash-low", "ag/gemini-3.8-flash", "ag/gemini-3.7-flash-high", "ag/gemini-3.7-flash-medium", "ag/gemini-3.7-flash-low", "ag/gemini-3.6-flash-high", "ag/gemini-3.6-flash-medium", "ag/gemini-3.6-flash-low", "ag/gemini-3.5-flash-high", "ag/gemini-3-flash-agent", "ag/gemini-3.5-flash-low", "ag/gemini-3.5-flash-extra-low", "ag/gemini-pro-agent", "ag/gemini-3.1-pro-low", "ag/gemini-3-flash"],
+    "CLAUDE": ["ag/claude-sonnet-4-6", "ag/claude-opus-4-6-thinking"]
+  },
+  "capabilityEvidence": "Registry IDs and upstream metadata were discovered; concrete model quality/capability benchmarking was not performed. No routing policy was activated."
+}

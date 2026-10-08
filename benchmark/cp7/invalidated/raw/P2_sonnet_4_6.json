@@ -1,0 +1,35 @@
+{
+  "caseId": "P2",
+  "track": "prd",
+  "name": "Offline-Capable Field Operations App Product Brief",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:32:09.156Z",
+  "ttfbMs": 1249,
+  "totalLatencyMs": 55577,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2238,
+    "completion": 3000
+  },
+  "outputSnippet": "# Product Requirements Document\n## FieldVault — Offline-First Substation Inspection Platform\n\n**Document Version:** 2.0.0  \n**Classification:** Internal — Engineering & Product  \n**Status:** Approved for Development  \n**Authors:** Product Architecture Team  \n**Last Revised:** 2025-01-15  \n\n---\n\n## T",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "workflow_completeness": 2,
+      "offline_first_storage_model": 2,
+      "sync_and_conflict_resolution": 2,
+      "permission_and_signature_integrity": 2,
+      "media_handling_and_compression": 2,
+      "regulatory_auditability": 2,
+      "edge_case_resilience": 2,
+      "acceptance_criteria": 2,
+      "prioritization_and_tradeoffs": 1,
+      "engineering_handoff_quality": 2
+    },
+    "passed": true
+  }
+}

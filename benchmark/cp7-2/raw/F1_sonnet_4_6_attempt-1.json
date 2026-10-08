@@ -1,0 +1,27 @@
+{
+  "caseId": "F1",
+  "family": "REPOSITORY_SCALE_MAINTENANCE",
+  "name": "Dependency Upgrade: Upstream API Adapter",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:39:11.377Z",
+  "ttfbMs": 2461,
+  "totalLatencyMs": 29414,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 6,
+    "toolCalls": 7,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/upstream/adapter.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ UpstreamAdapter - successfully fetches resource using modern v2 client (0.5097ms)\n✔ UpstreamAdapter - rejects with clean error when resource is not found (404) (0.2834ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.1992\n",
+    "hiddenTestOutput": "✔ Hidden: UpstreamAdapter - network failure propagates descriptive error (0.6292ms)\n✔ Hidden: UpstreamAdapter - preserves returned resource object identity and payload structure (0.0913ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.0876\n"
+  }
+}

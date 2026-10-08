@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-01",
+  "category": "AGENTIC",
+  "taskName": "Rate limiter bug repair",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:24:39.747Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 6,
+  "failedToolCalls": 1,
+  "prematureSuccess": false,
+  "elapsedMs": 30351,
+  "ttfbMs": 2073,
+  "score": 1,
+  "filesChanged": [
+    "src/rate-limiter.ts"
+  ],
+  "publicOutputSnippet": "✔ RateLimiter - allows requests within capacity (0.6056ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0919ms)\n✔ RateLimiter - allows new requests after window expires (0.0633ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 119.",
+  "hiddenOutputSnippet": "✔ Hidden: RateLimiter - exact window boundary condition (0.556ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.0689ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0813ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.7818\n"
+}

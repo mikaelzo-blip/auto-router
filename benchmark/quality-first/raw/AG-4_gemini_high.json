@@ -1,0 +1,26 @@
+{
+  "taskId": "AG-4",
+  "category": "AGENTIC",
+  "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+  "isTrap": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:51:09.008Z",
+  "operationalSuccess": false,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 195897,
+  "ttfbMs": 11922,
+  "iterations": 18,
+  "toolCalls": 17,
+  "failedToolCalls": 5,
+  "reasoningErrors": [
+    "Network/timeout error: The operation was aborted due to timeout"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "error": "The operation was aborted due to timeout"
+  }
+}

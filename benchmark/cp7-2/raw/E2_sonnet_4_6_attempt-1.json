@@ -1,0 +1,27 @@
+{
+  "caseId": "E2",
+  "family": "DATA_CONCURRENCY_MIGRATION",
+  "name": "Concurrency & Idempotency: Anti-Double-Allocation",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:36:53.413Z",
+  "ttfbMs": 2593,
+  "totalLatencyMs": 49097,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 6,
+    "toolCalls": 7,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/concurrency/reservation-lock.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ ReservationLock - basic sequential reservation (24.1456ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (31.0324ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 145.4549\n",
+    "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (14.1278ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (157.0264ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 300.6189\n"
+  }
+}

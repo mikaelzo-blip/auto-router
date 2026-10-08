@@ -1,0 +1,14 @@
+{
+  "caseId": "A4",
+  "track": "architecture",
+  "name": "Evolution & Migration Architecture (Monolith Evolution)",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-14T19:52:18.805Z",
+  "ttfbMs": 129224,
+  "totalLatencyMs": 180003,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "outputSnippet": "The operation was aborted due to timeout"
+}

@@ -1,0 +1,36 @@
+{
+  "caseId": "P1",
+  "track": "prd",
+  "name": "Financial Operations SaaS Product Requirements Document",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:21:43.832Z",
+  "ttfbMs": 4743,
+  "totalLatencyMs": 49962,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2265,
+    "completion": 11316,
+    "reasoning": 1314
+  },
+  "outputSnippet": "# Product Requirements Document (PRD)\n\n**Project Codename:** Project Balance  \n**Document Version:** 1.0.0-PROD  \n**Author:** Staff Technical Product Manager & Principal Enterprise Architect  \n**Status:** Ready for Engineering Review  \n**Target Delivery:** Q3/Q4\n\n---\n\n## 1. Problem Statement & Busin",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "problem_clarity_and_opportunity": 2,
+      "persona_and_jtbd_depth": 2,
+      "functional_requirements_moscow": 2,
+      "nfr_completeness": 2,
+      "workflow_state_machine": 2,
+      "edge_case_coverage": 2,
+      "acceptance_criteria_quality": 2,
+      "success_metrics_and_kpis": 2,
+      "non_goals_discipline": 2,
+      "implementation_handoff_readiness": 2
+    },
+    "passed": true
+  }
+}

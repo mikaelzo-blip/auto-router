@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-4",
+  "category": "AGENTIC",
+  "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:45:09.505Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 36551,
+  "ttfbMs": 2056,
+  "iterations": 6,
+  "toolCalls": 5,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/concurrency/reservation-lock.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ ReservationLock - basic sequential reservation (23.3498ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (30.5562ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.236\n",
+    "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (10.3049ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (156.4572ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 297.4651\n"
+  }
+}

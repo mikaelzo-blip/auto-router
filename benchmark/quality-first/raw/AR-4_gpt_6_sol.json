@@ -1,0 +1,32 @@
+{
+  "taskId": "AR-4",
+  "category": "ARCHITECTURE",
+  "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:28:01.603Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 0.8,
+  "elapsedMs": 59441,
+  "ttfbMs": 25194,
+  "usage": {
+    "promptTokens": 2611,
+    "completionTokens": 1809,
+    "reasoningTokens": 0,
+    "totalTokens": 4420
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [
+    "Omitted CREATE INDEX CONCURRENTLY"
+  ],
+  "details": {
+    "checklistScore": 4,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "A computed historical value needs a defined mapping. Assume `compute_reconciliation_id(journal_entries)` deterministically returns the batch UUID for a row, and every returned UUID exists in `reconciliation_batches` before that row is updated. If the mapping depends on mutable data, materialize it first; a retry must produce the same UUID.\n\n## 1. Why the one-step `ALTER TABLE` causes downtime\n\n`AD"
+}

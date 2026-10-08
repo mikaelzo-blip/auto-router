@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-09",
+  "category": "AGENTIC",
+  "taskName": "LRU regression repair",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:44:33.990Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 6,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 22097,
+  "ttfbMs": 3043,
+  "score": 1,
+  "filesChanged": [
+    "src/cache/lru-cache.ts"
+  ],
+  "publicOutputSnippet": "✔ LruCache - basic set and get (0.4463ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0836ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.6278\n",
+  "hiddenOutputSnippet": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.473ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0977ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.8392\n"
+}

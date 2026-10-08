@@ -1,0 +1,14 @@
+{
+  "caseId": "P1",
+  "track": "prd",
+  "name": "Financial Operations SaaS Product Requirements Document",
+  "candidate": "sol_high",
+  "modelId": "cx/gpt-5.6-sol",
+  "timestamp": "2026-09-14T19:22:41.217Z",
+  "ttfbMs": 56402,
+  "totalLatencyMs": 180004,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "outputSnippet": "The operation was aborted due to timeout"
+}

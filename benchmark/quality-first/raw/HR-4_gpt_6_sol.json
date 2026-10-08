@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-4",
+  "category": "HARD_REASONING",
+  "taskName": "Multi-Tenant Quota & Capacity Optimization",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:17:18.976Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 6936,
+  "ttfbMs": 5614,
+  "usage": {
+    "promptTokens": 2677,
+    "completionTokens": 186,
+    "reasoningTokens": 0,
+    "totalTokens": 2863
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "1. **Allocation:** Alpha 60, Beta 10, Gamma 30.\n2. **Total cost:** \\(60(0.004)+10(0.002)+30(0.010)=\\boxed{\\$0.56}\\).\n3. **Requests meeting the latency SLA:** Alpha and Gamma serve 90 requests at or below 600 ms, so **90%** meet the SLA.\n\nThis is the minimum-cost allocation: Beta is cheapest but its 800 ms latency limits it to 10 requests; Alpha is cheaper than Gamma and is used to its 60-request c"
+}

@@ -1,0 +1,27 @@
+{
+  "caseId": "D1",
+  "family": "FAILURE_RECOVERY",
+  "name": "Failure Recovery: Replace Bogus Cache Eviction Patch",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T05:15:46.502Z",
+  "ttfbMs": 2779,
+  "totalLatencyMs": 31489,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 12,
+    "toolCalls": 11,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/cache/lru-cache.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ LruCache - basic set and get (0.3966ms)\n✔ LruCache - eviction removes ONLY the least recently used item (0.0787ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.5803\n",
+    "hiddenTestOutput": "✔ Hidden: LruCache - continuous sequential eviction with 10 keys in cache of size 3 (0.4375ms)\n✔ Hidden: LruCache - update existing key refreshes recency without increasing size (0.0773ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.3098\n"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-06",
+  "shape": "async/concurrency fix",
+  "taskName": "Concurrent reservation and idempotency repair",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T12:13:04.300Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 30381,
+  "ttfbMs": 2041,
+  "score": 1,
+  "filesChanged": [
+    "src/concurrency/reservation-lock.ts"
+  ],
+  "publicOutputSnippet": "✔ ReservationLock - basic sequential reservation (21.6927ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (31.4512ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 144.2094\n",
+  "hiddenOutputSnippet": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (18.2162ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (157.6898ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skippe"
+}

@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-3",
+  "category": "ARCHITECTURE",
+  "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:24:37.962Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 9152,
+  "ttfbMs": 3449,
+  "usage": {
+    "promptTokens": 2632,
+    "completionTokens": 1933,
+    "reasoningTokens": 487,
+    "totalTokens": 4565
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "### 1. Dual-Write Problem: Transactional Outbox Pattern\n\nServices cannot commit to a local database and publish to a message broker atomically without 2PC. Solve this via the Transactional Outbox Pattern with Change Data Capture (CDC).\n\n```\n[Service Logic]\n       │\n       ▼ (Single ACID Transaction)\n┌────────────────────────────────────────┐\n│ Relational Database                    │\n│  ├── Domain"
+}

@@ -1,0 +1,28 @@
+{
+  "caseId": "E1",
+  "track": "agentic",
+  "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T19:33:55.047Z",
+  "ttfbMs": 2398,
+  "totalLatencyMs": 59382,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 24,
+    "failedToolCalls": 3,
+    "filesChanged": [
+      "src/rate-limiter.ts",
+      "src/cache-manager.ts"
+    ],
+    "diff": "",
+    "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "testsPassed": false,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "\n",
+    "hiddenTestOutput": "\n"
+  }
+}

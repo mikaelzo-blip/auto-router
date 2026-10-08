@@ -1,0 +1,27 @@
+{
+  "caseId": "B1",
+  "family": "MULTI_FILE_FEATURE_IMPLEMENTATION",
+  "name": "Multi-File Feature: Wildcard Event Bus",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T05:13:26.150Z",
+  "ttfbMs": 2106,
+  "totalLatencyMs": 35200,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 7,
+    "toolCalls": 10,
+    "failedToolCalls": 0,
+    "filesChanged": [
+      "src/events/dispatcher.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 0,
+    "publicTestOutput": "✔ EventBus - exact topic subscription (0.8041ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1169ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.0949ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.9379\n",
+    "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.5589ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.4092ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.606\n"
+  }
+}

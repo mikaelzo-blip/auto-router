@@ -1,0 +1,27 @@
+{
+  "taskId": "ST-09",
+  "category": "STRONG",
+  "taskName": "Latency regression diagnosis",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T10:33:58.976Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Omitted comparative benchmark of compressed vs uncompressed 2MB payloads",
+    "Omitted maintaining compression where beneficial without global shutdown"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.6,
+  "elapsedMs": 12552,
+  "ttfbMs": 8047,
+  "usage": {
+    "promptTokens": 2507,
+    "completionTokens": 1601,
+    "reasoningTokens": 760,
+    "totalTokens": 4108
+  },
+  "rawResponse": "### Likely Mechanism\n\nSynchronous or blocking CPU-bound compression on worker threads or the event loop. Default compression levels (gzip level 6, brotli level 4+) require substantial compute for 2MB buffers. This causes:\n\n1. Thread pool exhaustion or event-loop starvation while computing sliding-window matches over 2MB.\n2. Memory churn from allocating intermediate byte buffers, triggering garbage collection cycles under load.\n3. Serialization of work: time saved on network egress is smaller than the CPU execution time of the compression algorithm on large contiguous payloads.\n\nSmall responses bypass this threshold because sub-kilobyte payloads compress in microseconds and fit inside L1/L2 caches.\n\n---\n\n### Diagnosis Plan\n\nExecute these diagnostic steps to isolate serialization from compression and identify bottlenecks:\n\n1. **Isolate middleware execution time:** Inject telemetry around the compression middleware to record `compression_duration_ms` independently from route handler duration.\n2. **Profile application CPU:** Capture an on-CPU flame graph during a 2MB request load test.\n3. **Inspect memory allocations and runtime pauses:** Monitor GC pause times (STW), heap allocation rate, and buffer pool churn during peak compression load.\n4. **Inspect thread utilization:** Measure worker thread pool queue depth, active task duration, or event-loop lag.\n\n---\n\n### Measurements to Confirm\n\nCollect these specific metrics to prove compression CPU saturation:\n\n* **CPU Profiler Symbols:** Confirm top on-CPU frames are in `deflate`, `zlib`, `brotli`, or runtime compression bindings rather than JSON serialization.\n* **Latency Decomposition:** Verify that handler time remains flat while total request duration rises by the exact duration of `compression_duration_ms`.\n* **Runtime Thread/Loop Delays:**\n  * For Node.js: `libuv` event loop lag increases strictly during 2MB transfers.\n  * For Go: High scheduler run-queue latency (`schedlatency`) and time spent in `compress/flate.deflate`.\n  * For JVM: Increased safepoint wait time and high allocation in byte array construction.\n* **Ratio Metric:** Measure `nanoseconds_per_byte` compressed across payload sizes. An exponential or high-constant slope for 2MB confirms algorithmic saturation.\n\n---\n\n### Remediation Options\n\nImplement these changes to retain compression benefits without the p99 latency degradation.\n\n#### Option 1: Adjust Compression Level and Algorithm\n\nLower the compression level. The compression ratio gains between gzip level 1 and level 6 on JSON are typically under 5%, but CPU cost drops by 60–80%.\n\n* Set gzip to level `1` or `2`.\n* Switch to `zstd` with level `1` or `3` if the clients support it via `Accept-Encoding: zstd`.\n\n#### Option 2: Offload Compression to Ingress/Reverse Proxy\n\nDelegate compression to the edge or reverse proxy (e.g., Envoy, Nginx, Cloudflare, AWS ALB).\n\n1. Disable compression at the application pod layer.\n2. Terminate compression in Envoy/Nginx using optimized libraries like `zlib-ng` or native SIMD instructions.\n3. Free application runtimes to handle domain logic and memory allocation.\n\n#### Option 3: Stream the Output Instead of Buffering\n\nBuffer-then-compress models allocate large arrays twice. \n\n* Pipe JSON serialization streams directly through the compression transform stream to the socket.\n* Avoid buffering the entire 2MB payload in application memory before compression starts.\n* Reduces maximum resident memory footprint and flushes chunks concurrently with downstream consumption.\n\n#### Option 4: Implement Payload-Size Capping\n\nIf offloading is impossible and low levels do not remediate the p99 spike:\n\n* Modify compression middleware to inspect `Content-Length` or buffer size.\n* Skip compression if payload exceeds a determined threshold (e.g., >1MB) where CPU cost exceeds network transit time cost over high-bandwidth links."
+}

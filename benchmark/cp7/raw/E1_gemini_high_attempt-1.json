@@ -1,0 +1,25 @@
+{
+  "caseId": "E1",
+  "track": "agentic",
+  "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T19:32:55.664Z",
+  "ttfbMs": 56200,
+  "totalLatencyMs": 267789,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 15,
+    "failedToolCalls": 2,
+    "filesChanged": [],
+    "diff": "",
+    "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "testsPassed": false,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "\n",
+    "hiddenTestOutput": "\n"
+  }
+}

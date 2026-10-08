@@ -1,0 +1,25 @@
+{
+  "taskId": "AG-10",
+  "category": "AGENTIC",
+  "taskName": "Revoked session cross-module security fix",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:45:37.453Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 5,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 19592,
+  "ttfbMs": 3453,
+  "score": 1,
+  "filesChanged": [
+    "src/session-service.ts",
+    "src/token-validator.ts"
+  ],
+  "publicOutputSnippet": "✔ SessionAuth - valid active session token validates successfully (0.9336ms)\n✔ SessionAuth - revoked session token must be rejected as invalid (0.1669ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 119.3986\n",
+  "hiddenOutputSnippet": "✔ Hidden: SessionAuth - refreshed session invalidates predecessor session (0.5529ms)\n✔ Hidden: SessionAuth - non-existent session ID rejected as revoked (0.0784ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 134.9562\n"
+}

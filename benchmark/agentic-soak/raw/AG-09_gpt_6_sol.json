@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-09",
+  "shape": "parser/data transformation",
+  "taskName": "Billing calculator tax & discount allocation",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T12:15:28.842Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 4,
+  "toolCalls": 4,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 15302,
+  "ttfbMs": 3640,
+  "score": 1,
+  "filesChanged": [
+    "src/billing/calculator.ts"
+  ],
+  "publicOutputSnippet": "✔ BillingCalculator - standard invoice without discount (0.4471ms)\n✔ BillingCalculator - invoice with percentage discount (0.0856ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.5558\n",
+  "hiddenOutputSnippet": "✔ Hidden: BillingCalculator - non-taxable item proportion in tax calculation (0.5743ms)\n✔ Hidden: BillingCalculator - empty items array handling (0.0792ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.0973\n"
+}

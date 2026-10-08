@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-05",
+  "shape": "refactor with behavioral preservation",
+  "taskName": "Async upstream adapter migration",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T12:11:17.343Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 8,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 15969,
+  "ttfbMs": 2068,
+  "score": 1,
+  "filesChanged": [
+    "src/upstream/adapter.ts"
+  ],
+  "publicOutputSnippet": "✔ UpstreamAdapter - successfully fetches resource using modern v2 client (0.4962ms)\n✔ UpstreamAdapter - rejects with clean error when resource is not found (404) (0.2982ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.4461\n",
+  "hiddenOutputSnippet": "✔ Hidden: UpstreamAdapter - network failure propagates descriptive error (0.6012ms)\n✔ Hidden: UpstreamAdapter - preserves returned resource object identity and payload structure (0.0891ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.4849\n"
+}

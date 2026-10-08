@@ -1,0 +1,53 @@
+import "dotenv/config";
+import { BenchmarkRunner, PRIMARY_CALIBRATION_CANDIDATES } from "../../src/benchmark/harness.js";
+import type { BenchmarkFilterOptions } from "../../src/benchmark/types.js";
+
+function parseArgs(): BenchmarkFilterOptions {
+  const args = process.argv.slice(2);
+  const options: BenchmarkFilterOptions = {
+    resume: false,
+    attempts: 1
+  };
+
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!;
+    if (arg === "--resume") {
+      options.resume = true;
+    } else if (arg === "--model" && args[i + 1]) {
+      options.models = args[++i]!.split(",").map((s) => s.trim());
+    } else if (arg === "--case" && args[i + 1]) {
+      options.caseIds = args[++i]!.split(",").map((s) => s.trim());
+    } else if (arg === "--category" && args[i + 1]) {
+      options.categories = args[++i]!.split(",").map((s) => s.trim());
+    } else if (arg === "--attempts" && args[i + 1]) {
+      options.attempts = parseInt(args[++i]!, 10);
+    } else if (arg === "--timeout" && args[i + 1]) {
+      options.timeoutMs = parseInt(args[++i]!, 10);
+    } else if (arg === "--output" && args[i + 1]) {
+      options.outputPath = args[++i]!;
+    } else if (arg === "--judge" && args[i + 1]) {
+      options.judgeModel = args[++i]!;
+    }
+  }
+
+  return options;
+}
+
+async function main() {
+  const options = parseArgs();
+  const runner = new BenchmarkRunner();
+  console.log("=== AUTOROUTER V2 UNIFIED BENCHMARK HARNESS ===");
+  console.log("Options:", JSON.stringify(options, null, 2));
+
+  const summary = await runner.run(options);
+  console.log("\n=== SUMMARY ===");
+  console.log(`Total records: ${summary.totalRecords}`);
+  console.log(`Operational success rate: ${(summary.overallOperationalSuccessRate * 100).toFixed(1)}%`);
+  console.log(`Quality success rate when executed: ${(summary.overallQualitySuccessRateWhenExecuted * 100).toFixed(1)}%`);
+  console.log(`Denominator uniform: ${summary.denominatorUniform ? "YES" : "NO"}`);
+}
+
+main().catch((err) => {
+  console.error("Benchmark runner failed:", err);
+  process.exit(1);
+});

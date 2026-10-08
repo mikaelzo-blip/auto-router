@@ -1,0 +1,57 @@
+{
+  "caseId": "R1",
+  "track": "reasoning",
+  "name": "PostgreSQL Concurrency & Balance Reservation Invariants",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:22:03.209Z",
+  "ttfbMs": 5268,
+  "totalLatencyMs": 19377,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2341,
+    "completion": 4102,
+    "reasoning": 1480
+  },
+  "outputSnippet": "### 1. Production-Grade Transaction Execution\n\nTo guarantee that concurrent reservation requests never exceed available funds, you can use either an **Atomic Conditional Update** or a **Pessimistic Read-Modify-Write (`SELECT ... FOR UPDATE`)**. \n\nFor financial ledger systems where a ledger entry (au",
+  "evaluation": {
+    "satisfiedInvariants": 4,
+    "totalInvariants": 4,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Identifies check-then-act race condition in naive implementation leading to double-allocation",
+        "satisfied": true
+      },
+      {
+        "text": "Recommends atomic conditional UPDATE or SELECT ... FOR UPDATE with explicit transaction boundary",
+        "satisfied": true
+      },
+      {
+        "text": "Mandates deterministic row lock ordering (e.g. ORDER BY user_id ASC) when locking multiple wallets to prevent deadlocks",
+        "satisfied": true
+      },
+      {
+        "text": "Specifies database CHECK constraint `CONSTRAINT check_sufficient_balance CHECK (balance >= reserved)` as the ultimate defense-in-depth",
+        "satisfied": true
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Claiming application-level mutex/lock is sufficient across multiple service instances",
+        "avoided": true
+      },
+      {
+        "text": "Failing to sort IDs before acquiring multiple row locks",
+        "avoided": true
+      },
+      {
+        "text": "Omitting the schema CHECK constraint",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

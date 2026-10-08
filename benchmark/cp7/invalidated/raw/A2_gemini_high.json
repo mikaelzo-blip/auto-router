@@ -1,0 +1,36 @@
+{
+  "caseId": "A2",
+  "track": "architecture",
+  "name": "Multi-Tenant SaaS Architecture with Audit & Background Jobs",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:28:07.673Z",
+  "ttfbMs": 3853,
+  "totalLatencyMs": 61158,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2185,
+    "completion": 15372,
+    "reasoning": 2052
+  },
+  "outputSnippet": "## 1. Tenant Isolation & Storage Tiering\n\n### Strategic Trade-Off Analysis\n\n| Isolation Model | Architectural Topology | Strengths | Weaknesses | Blast Radius & Regulatory Profile |\n| :--- | :--- | :--- | :--- | :--- |\n| **Siloed (Tier 1)** | Dedicated compute instance & dedicated database engine pe",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "tenant_isolation_strategy": 2,
+      "rbac_and_context_propagation": 2,
+      "audit_trail_integrity": 2,
+      "background_job_fairness": 2,
+      "noisy_neighbor_mitigation": 2,
+      "data_model_boundaries": 2,
+      "backup_and_tenant_pitr": 2,
+      "zero_downtime_migration": 2,
+      "cost_complexity_tradeoffs": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

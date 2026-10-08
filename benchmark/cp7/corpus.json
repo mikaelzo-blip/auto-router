@@ -1,0 +1,346 @@
+{
+  "benchmark": "CP7 ARCHITECT / REASONING / AGENTIC CHALLENGER BENCHMARK",
+  "version": "1.0.0",
+  "totalCases": 16,
+  "tracks": {
+    "architecture": 4,
+    "prd": 4,
+    "reasoning": 4,
+    "agentic": 4
+  },
+  "cases": [
+    {
+      "caseId": "A1",
+      "track": "architecture",
+      "name": "Offline / Delayed-Processing Document System",
+      "prompt": "Design an offline/delayed-processing document ingestion architecture where client documents and messages arrive while the main processing cluster or database is intermittently offline or unavailable. Provide a complete architectural specification covering:\n1. Durability and persistent ingestion tier\n2. Queueing and backpressure control\n3. Idempotency and duplicate prevention across retries\n4. Failure recovery, poisoned message handling (DLQ), and circuit breaking\n5. Operational simplicity and minimal dependency overhead\n6. Security boundaries (authentication, data encryption at rest/transit, tenant isolation)\n7. Observability, metrics, and reconciliation alarms.\nSpecify data flow, storage choices, and operational trade-offs.",
+      "rubric": {
+        "dimensions": [
+          "durability_guarantee",
+          "queueing_and_backpressure",
+          "idempotency_mechanism",
+          "duplicate_detection",
+          "failure_recovery_and_dlq",
+          "operational_simplicity",
+          "security_and_encryption",
+          "observability_and_alerts",
+          "tradeoff_analysis",
+          "decision_clarity"
+        ],
+        "keyInvariants": [
+          "Local or edge ingestion buffer must guarantee fsync or persistent append-only storage before acknowledging receipt",
+          "Deterministic idempotency key derived from document payload hash or client transaction ID",
+          "Dead-letter queue (DLQ) with bounded retry exponential backoff and operator alert",
+          "Explicit operational simplicity rationale comparing lightweight disk/WAL vs heavyweight external brokers"
+        ]
+      }
+    },
+    {
+      "caseId": "A2",
+      "track": "architecture",
+      "name": "Multi-Tenant SaaS Architecture with Audit & Background Jobs",
+      "prompt": "Design a high-scale B2B multi-tenant SaaS architecture for financial and document compliance. Address:\n1. Tenant isolation strategy (pooled vs siloed vs hybrid database schemas)\n2. Role-Based Access Control (RBAC) and tenant context propagation across async workers\n3. Append-only tamper-evident audit history\n4. Background job scheduling, fair-share worker queueing, and noisy-neighbor mitigation\n5. Data model boundaries and foreign-key isolation\n6. Backup, tenant-level point-in-time recovery, and disaster recovery\n7. Zero-downtime database migration strategy across active tenants\n8. Cost vs complexity trade-offs for scaling from 100 to 10,000 tenants.",
+      "rubric": {
+        "dimensions": [
+          "tenant_isolation_strategy",
+          "rbac_and_context_propagation",
+          "audit_trail_integrity",
+          "background_job_fairness",
+          "noisy_neighbor_mitigation",
+          "data_model_boundaries",
+          "backup_and_tenant_pitr",
+          "zero_downtime_migration",
+          "cost_complexity_tradeoffs",
+          "decision_clarity"
+        ],
+        "keyInvariants": [
+          "Mandatory tenant_id discriminator on every query or schema-level separation with RLS",
+          "Context propagation through async queues with cryptographically signed actor context",
+          "Append-only audit log with cryptographic hash-chaining or write-once storage",
+          "Fair-share queueing preventing single tenant starvation"
+        ]
+      }
+    },
+    {
+      "caseId": "A3",
+      "track": "architecture",
+      "name": "High-Integrity Transaction Architecture",
+      "prompt": "Design a mission-critical transaction architecture for a ledger and balance reservation system preventing double-spend and double-allocation. Specify:\n1. Concurrency control and locking strategy under high race-condition contention\n2. Database transaction boundaries and row-level locking ordering\n3. Idempotency guarantees for external payment provider callbacks and internal retries\n4. Two-phase reservation/commit pattern (hold, capture, release, expire)\n5. End-of-day reconciliation and automated drift detection\n6. Failure modes, network partition resilience, and database failover handling\n7. Realistic implementation constraints using relational databases (e.g. PostgreSQL).",
+      "rubric": {
+        "dimensions": [
+          "concurrency_control_strategy",
+          "lock_ordering_and_deadlock_avoidance",
+          "idempotency_contract",
+          "reservation_lifecycle",
+          "reconciliation_and_drift_detection",
+          "failure_mode_analysis",
+          "database_boundary_realism",
+          "data_integrity_invariants",
+          "tradeoff_analysis",
+          "decision_clarity"
+        ],
+        "keyInvariants": [
+          "Pessimistic row locking (SELECT FOR UPDATE) with deterministic primary-key ordering to prevent deadlocks",
+          "Check constraints ensuring balance >= 0 at the database schema layer",
+          "Unique constraint on idempotency_key at database level",
+          "Outbox or CDC pattern for event emission to prevent dual-write anomalies"
+        ]
+      }
+    },
+    {
+      "caseId": "A4",
+      "track": "architecture",
+      "name": "Evolution & Migration Architecture (Monolith Evolution)",
+      "prompt": "You are the Principal Architect for an e-commerce and logistics platform running as a 7-year-old monolithic application. The monolith handles orders, payments, warehouse inventory, and shipping notifications. Deployment frequency has ground to a halt, database connection limits are saturated, and team ownership is tangled.\n\nEvaluate three evolutionary architectural strategies:\n1. Modular Monolith with bounded contexts and domain enforcement\n2. Strategic Microservices Extraction (strangler fig pattern)\n3. Event-Driven Architecture with asynchronous message boundaries\n\nDeliver a definitive technical recommendation, an architectural transition blueprint, team boundary mapping, data migration strategy, and operational risk mitigation plan.",
+      "rubric": {
+        "dimensions": [
+          "architectural_option_comparison",
+          "modular_monolith_depth",
+          "service_extraction_realism",
+          "event_driven_boundaries",
+          "definitive_recommendation",
+          "data_decomposition_strategy",
+          "strangler_fig_migration_path",
+          "operational_risk_mitigation",
+          "team_topology_alignment",
+          "decision_clarity"
+        ],
+        "keyInvariants": [
+          "Objective comparison of all three approaches with explicit pros/cons",
+          "Clear migration sequencing: modularize in-process boundaries before physical service extraction",
+          "Resolves shared database coupling (views/schemas/APIs before physical DB split)",
+          "Concrete recommendation with defensible rationale based on operational complexity"
+        ]
+      }
+    },
+    {
+      "caseId": "P1",
+      "track": "prd",
+      "name": "Financial Operations SaaS Product Requirements Document",
+      "prompt": "An executive stakeholder provided this raw brief: 'Our finance team spends 20 hours every week manually matching bank transactions against customer invoices in spreadsheets, chasing approvals over Slack, and manually entering reconciliations into NetSuite. We need an automated reconciliation and approval platform.'\n\nTransform this into a comprehensive Product Requirements Document (PRD) containing:\n1. Problem Statement & Business Opportunity\n2. User Personas (Finance Lead, AP Clerk, Controller)\n3. Jobs-to-be-Done (JTBD) Framework\n4. Functional Requirements (Categorized with MoSCoW prioritization)\n5. Non-Functional Requirements (Latency, Auditability, Security, Uptime)\n6. End-to-End Workflow & State Machine (Invoice -> Bank Match -> Approval -> ERP Sync)\n7. Edge Cases & Exception Handling\n8. Acceptance Criteria (Gherkin/Given-When-Then)\n9. Success Metrics (KPIs, North Star, Guardrail metrics)\n10. Explicit Non-Goals\n11. Phased Rollout Roadmap (Phase 1 MVP, Phase 2 Automation, Phase 3 Advanced Sync).",
+      "rubric": {
+        "dimensions": [
+          "problem_clarity_and_opportunity",
+          "persona_and_jtbd_depth",
+          "functional_requirements_moscow",
+          "nfr_completeness",
+          "workflow_state_machine",
+          "edge_case_coverage",
+          "acceptance_criteria_quality",
+          "success_metrics_and_kpis",
+          "non_goals_discipline",
+          "implementation_handoff_readiness"
+        ],
+        "keyInvariants": [
+          "Explicit state machine covering pending, matched, partial_match, manual_review, approved, synced",
+          "Clear distinction between MVP manual approval and automated straight-through processing",
+          "Specific measurable KPIs (e.g. reconciliation cycle time reduction from 20h to <2h, 95%+ auto-match rate)",
+          "Explicit non-goals (e.g. not building a full ERP, not replacing bank accounts)"
+        ]
+      }
+    },
+    {
+      "caseId": "P2",
+      "track": "prd",
+      "name": "Offline-Capable Field Operations App Product Brief",
+      "prompt": "Write a detailed Product Requirements Document for a mobile/tablet field inspection application used by utility technicians inspecting high-voltage substations in remote rural areas with zero cellular connectivity for hours or days.\n\nDefine requirements for:\n1. Core user workflows (Inspection Checklist, Photo Capture, Defect Tagging, Supervisor Sign-off)\n2. Offline-first data lifecycle & Local Storage\n3. Synchronization engine, delta sync, and conflict resolution policy (Last-Write-Wins vs User-Guided vs Field Priority)\n4. Permission boundaries & offline signature verification\n5. Multi-technician concurrent inspection of the same asset\n6. Battery/bandwidth conservation and media compression\n7. Audit trail and tamper-detection for regulatory compliance\n8. Edge cases (app crash during sync, partial photo upload, schema migration on offline devices)\n9. Acceptance criteria & phased MVP rollout.",
+      "rubric": {
+        "dimensions": [
+          "workflow_completeness",
+          "offline_first_storage_model",
+          "sync_and_conflict_resolution",
+          "permission_and_signature_integrity",
+          "media_handling_and_compression",
+          "regulatory_auditability",
+          "edge_case_resilience",
+          "acceptance_criteria",
+          "prioritization_and_tradeoffs",
+          "engineering_handoff_quality"
+        ],
+        "keyInvariants": [
+          "Explicit deterministic conflict resolution strategy (e.g. field authority for observations, supervisor authority for sign-offs)",
+          "Background resumable sync queue with chunked photo uploads and bandwidth throttling",
+          "Cryptographic offline signatures or tamper-evident device timestamps",
+          "Handles schema migrations gracefully when device has pending offline changes"
+        ]
+      }
+    },
+    {
+      "caseId": "P3",
+      "track": "prd",
+      "name": "Spreadsheet-to-SaaS Migration Product Specification",
+      "prompt": "Author a Product Requirements Document for a specialized B2B workflow tool designed to onboard enterprise customers who currently run critical inventory and procurement operations entirely on complex, messy Excel workbooks.\n\nStructure the PRD with:\n1. MVP Scope & User Journey\n2. Smart Import Engine (CSV/XLSX parser, schema inference, fuzzy header mapping)\n3. Validation & Error Correction Interface (in-browser grid editing, highlighting invalid cells, formula translation)\n4. Role model & Access Control during migration\n5. Phased parallel-run strategy (running Excel alongside SaaS)\n6. Backward compatibility & Excel export/re-import loop\n7. Customer onboarding milestone metrics and drop-off prevention\n8. Explicit non-goals\n9. Detailed Acceptance Criteria.",
+      "rubric": {
+        "dimensions": [
+          "mvp_scope_definition",
+          "import_engine_spec",
+          "error_recovery_ux",
+          "role_and_permission_model",
+          "parallel_run_strategy",
+          "excel_export_compatibility",
+          "onboarding_success_metrics",
+          "non_goals_discipline",
+          "acceptance_criteria",
+          "engineering_actionability"
+        ],
+        "keyInvariants": [
+          "In-line error correction workflow without forcing users to fix spreadsheet externally and re-upload from scratch",
+          "Bi-directional export parity so customers can back out if needed",
+          "Clear validation rules for required fields, unique SKUs, and numeric formatting",
+          "Defined migration phases: Sandbox dry-run -> Parallel run -> Cutover"
+        ]
+      }
+    },
+    {
+      "caseId": "P4",
+      "track": "prd",
+      "name": "AI-Assisted Document Workflow Product Requirements",
+      "prompt": "Create an engineering-grade PRD for an AI-assisted document ingestion and data extraction product that processes legal and medical vendor contracts. The system must combine automated LLM extraction with human-in-the-loop review.\n\nProvide rigorous specifications for:\n1. Problem statement & Target personas (Paralegal, Claims Officer, Compliance Director)\n2. Explicit boundary between deterministic extraction (regex, OCR anchors) vs probabilistic LLM extraction\n3. Confidence scoring thresholds and auto-routing rules (Auto-Approve >=95%, Reviewer Queue 70-94%, Reject/Reparse <70%)\n4. Human Reviewer UX (side-by-side PDF viewer with bounding box citations and field correction)\n5. Auditability and provenance tracking (every field linked to source page/coordinates and model version)\n6. Cost control, token budgets, and caching strategy\n7. Failure handling & fallback mechanisms\n8. Data privacy, PII redaction, and compliance (HIPAA / GDPR)\n9. Key metrics and Acceptance criteria.",
+      "rubric": {
+        "dimensions": [
+          "deterministic_vs_llm_boundary",
+          "confidence_threshold_routing",
+          "reviewer_ux_specification",
+          "provenance_and_auditability",
+          "cost_control_and_caching",
+          "pii_and_privacy_safeguards",
+          "failure_recovery_fallbacks",
+          "edge_cases",
+          "metrics_and_acceptance_criteria",
+          "engineering_handoff_clarity"
+        ],
+        "keyInvariants": [
+          "Explicit deterministic pre-filtering before invoking LLMs to control cost and latency",
+          "Exact confidence score cutoff rules with human-in-the-loop triage",
+          "Field-level citation provenance with page numbers and coordinate bounding boxes",
+          "Audit trail recording whether a field was AI-extracted or human-edited"
+        ]
+      }
+    },
+    {
+      "caseId": "R1",
+      "track": "reasoning",
+      "name": "PostgreSQL Concurrency & Balance Reservation Invariants",
+      "prompt": "A payment service has a `user_wallets` table in PostgreSQL: `(user_id UUID PRIMARY KEY, balance NUMERIC(12,2) NOT NULL, reserved NUMERIC(12,2) NOT NULL DEFAULT 0)`.\nTwo concurrent operations occur simultaneously on the same user wallet (current balance: $100.00, reserved: $0.00):\n- Request A: attempts to reserve $70.00.\n- Request B: attempts to reserve $50.00.\nTotal funds available ($100.00) are insufficient for both ($120.00).\n\n1. Provide the exact, production-grade SQL transaction or query sequence to guarantee that exactly one request succeeds and the other fails safely with zero race condition.\n2. Analyze what happens if naive `SELECT balance FROM user_wallets WHERE user_id = $1` is followed by application-level check `if (balance >= 70)` and `UPDATE user_wallets SET reserved = reserved + 70`.\n3. Compare an explicit row-locking transaction approach with an atomic conditional update approach, including their correctness, observability, and failure trade-offs.\n4. Address deadlock prevention if a transaction needs to lock multiple wallets.\n5. State the minimum required database schema constraint to guarantee invariants even if application code is buggy.",
+      "rubric": {
+        "invariants": [
+          "Identifies check-then-act race condition in naive implementation leading to double-allocation",
+          "Recommends atomic conditional UPDATE or SELECT ... FOR UPDATE with explicit transaction boundary",
+          "Mandates deterministic row lock ordering (e.g. ORDER BY user_id ASC) when locking multiple wallets to prevent deadlocks",
+          "Specifies database CHECK constraint `CONSTRAINT check_sufficient_balance CHECK (balance >= reserved)` as the ultimate defense-in-depth"
+        ],
+        "traps": [
+          "Claiming application-level mutex/lock is sufficient across multiple service instances",
+          "Failing to sort IDs before acquiring multiple row locks",
+          "Omitting the schema CHECK constraint"
+        ]
+      }
+    },
+    {
+      "caseId": "R2",
+      "track": "reasoning",
+      "name": "Distributed Idempotency & Webhook Retry Correctness",
+      "prompt": "An e-commerce order processing system receives `payment.succeeded` webhooks from Stripe. Because of network blips, Stripe may deliver the same webhook event multiple times concurrently or with delays.\n\n1. Formulate the exact idempotency protocol for processing this webhook.\n2. If the idempotency key is stored in Redis cache with an expiry, identify the failure modes under network partition, Redis eviction, or Redis restart.\n3. Formulate a relational database transaction design combining idempotency key recording and order state transition.\n4. How must the system respond when: (a) duplicate webhook arrives while the first is still executing in-flight; (b) duplicate webhook arrives after the first succeeded; (c) duplicate webhook arrives after the first failed due to downstream database crash?\n5. Write the SQL DDL and transaction logic proving atomicity and avoiding double fulfillment.",
+      "rubric": {
+        "invariants": [
+          "Idempotency record must be stored atomically within the same database transaction as the state mutation (or via outbox)",
+          "Identifies Redis-only deduplication failure modes (cache eviction, unpersisted writes, race window)",
+          "Handles concurrent in-flight duplicates via unique constraint violation with proper retry or 409/200 response",
+          "Distinguishes between retryable transient failure and terminal duplicate replay"
+        ],
+        "traps": [
+          "Storing idempotency key in Redis without database transactional synchronization",
+          "Returning HTTP 500 on duplicate webhook instead of HTTP 200 acknowledging receipt",
+          "Fulfilling order before durable commit of event processing record"
+        ]
+      }
+    },
+    {
+      "caseId": "R3",
+      "track": "reasoning",
+      "name": "Zero-Downtime Database Migration with Phased Rollback",
+      "prompt": "A PostgreSQL production database has an active table `users` with 50,000,000 rows receiving 5,000 read queries/sec and 500 write queries/sec. The table currently has a `full_name VARCHAR(255) NOT NULL` column. The requirement is to replace `full_name` with `first_name VARCHAR(100) NOT NULL` and `last_name VARCHAR(100) NOT NULL`.\n\n1. Design the step-by-step zero-downtime migration plan following the expand-and-contract pattern.\n2. Detail the exact DDL, triggers/dual-write logic, and batch backfill strategy. Why is `UPDATE users SET first_name = split_part(full_name, ' ', 1)` in a single transaction catastrophic?\n3. For each phase of the migration, specify how an immediate rollback is executed if the application deployment fails.\n4. When is it safe to drop the legacy `full_name` column, and what Postgres lock is acquired when dropping a column?",
+      "rubric": {
+        "invariants": [
+          "Prohibits single-statement table-wide UPDATE due to table bloat, lock contention, and transaction replication lag",
+          "Uses phased expand-and-contract: 1) add nullable columns; 2) dual-write (trigger or app code); 3) batch backfill with bounded chunk sizes (e.g. 1000-5000 rows by primary key); 4) enforce NOT NULL constraint via CHECK ... NOT VALID followed by VALIDATE CONSTRAINT; 5) switch reads; 6) remove dual-write; 7) drop old column",
+          "Defines explicit non-destructive rollback path at every phase",
+          "Identifies AccessExclusiveLock required for ALTER TABLE DROP COLUMN and schedules during low traffic or with low lock_timeout"
+        ],
+        "traps": [
+          "Proposing single massive UPDATE statement",
+          "Adding NOT NULL column without default in older Postgres or locking table",
+          "Dropping old column before all application replicas are running new code"
+        ]
+      }
+    },
+    {
+      "caseId": "R4",
+      "track": "reasoning",
+      "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+      "prompt": "Analyze a multi-tenant authorization system with the following role hierarchy in an organization: Owner > Admin > Manager > Member > Guest.\nAn Admin has permissions: `user:invite`, `user:edit_role`, `project:create`, `project:delete`.\n\n1. Identify at least three distinct privilege escalation vectors if the authorization check in `editUserRole(targetUserId, newRole)` only checks `currentUser.hasPermission('user:edit_role')`.\n2. Design the complete invariant checks required inside `editUserRole` to prevent horizontal, vertical, and cross-tenant privilege escalation.\n3. How must the system handle token revocation or cache invalidation when a user's role is demoted or revoked while active sessions exist?\n4. What prevents an Admin from inviting an external email and assigning them the Owner role?\n5. Provide the pseudocode or verification algorithm for fail-closed authorization.",
+      "rubric": {
+        "invariants": [
+          "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+          "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+          "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+          "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+          "Fail-closed evaluation default"
+        ],
+        "traps": [
+          "Only checking permission string without hierarchy and target-user ownership validation",
+          "Allowing Admin to assign Owner role",
+          "Ignoring cross-tenant target validation"
+        ]
+      }
+    },
+    {
+      "caseId": "E1",
+      "track": "agentic",
+      "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+      "prompt": "You are given a TypeScript codebase in the working directory. A sliding window rate limiter in `src/rate-limiter.ts` has a boundary calculation bug causing it to miscalculate active requests at the exact window boundary and sort timestamps improperly. Run the existing tests using `run_tests()`, inspect `src/rate-limiter.ts` and the immutable public test to understand the contract, identify the bug, fix it cleanly under `src/`, run tests again to verify all pass, and ensure no existing behavior regresses.",
+      "rubric": {
+        "type": "agentic_coding",
+        "targetFile": "src/rate-limiter.ts",
+        "testFile": "test/rate-limiter.test.ts",
+        "hiddenTestFile": "hidden/rate-limiter-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "E2",
+      "track": "agentic",
+      "name": "Multi-File Feature Implementation (Wildcard Event Bus)",
+      "prompt": "Implement wildcard topic subscriptions in the event bus module across `src/event-bus.ts` and `src/types.ts`. Subscribers should be able to subscribe to patterns like `order.*` or `*.created` and receive matching events. Ensure unsubscribe works cleanly, handler errors do not break other subscribers, and existing exact-match subscriptions remain 100% backward compatible. Verify the behavior with the immutable public test and hidden acceptance tests using `run_tests()`.",
+      "rubric": {
+        "type": "agentic_coding",
+        "targetFile": "src/event-bus.ts",
+        "testFile": "test/event-bus.test.ts",
+        "hiddenTestFile": "hidden/event-bus-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "E3",
+      "track": "agentic",
+      "name": "Failure Recovery (Cache Manager Eviction Defect)",
+      "prompt": "The test suite for `src/cache-manager.ts` is currently FAILING when running `run_tests()`. A previous developer attempted an optimization but introduced an eviction bug where expired items are not pruned properly before size limits are checked, and cache hits fail to refresh the LRU access order. Diagnose the failure from the test output, locate the defect in `src/cache-manager.ts`, fix the root cause (do not just suppress the test), and verify that all tests pass.",
+      "rubric": {
+        "type": "agentic_coding",
+        "targetFile": "src/cache-manager.ts",
+        "testFile": "test/cache-manager.test.ts",
+        "hiddenTestFile": "hidden/cache-manager-hidden.test.ts"
+      }
+    },
+    {
+      "caseId": "E4",
+      "track": "agentic",
+      "name": "Refactor Under Constraints (Order Service Strategy Decomposition)",
+      "prompt": "Refactor `src/order-service.ts` to separate pricing, discounts, and tax calculations into clean dedicated strategy classes or helper modules under `src/pricing/`, while preserving 100% of the public API and all test contracts in `test/order-service.test.ts`. Run `run_tests()` before and after your refactor to prove that all existing tests continue to pass with zero regressions.",
+      "rubric": {
+        "type": "agentic_coding",
+        "targetFile": "src/order-service.ts",
+        "testFile": "test/order-service.test.ts",
+        "hiddenTestFile": "hidden/order-service-hidden.test.ts"
+      }
+    }
+  ]
+}

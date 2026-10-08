@@ -1,0 +1,27 @@
+{
+  "caseId": "E3",
+  "track": "agentic",
+  "name": "Failure Recovery (Cache Manager Eviction Defect)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-15T04:45:32.757Z",
+  "ttfbMs": 2845,
+  "totalLatencyMs": 40612,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 7,
+    "toolCalls": 8,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/cache-manager.ts"
+    ],
+    "diff": "diff --git \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\" \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-sonnet_4_6\\\\src/cache-manager.ts\"\nindex b986444..34b0aec 100644\n--- \"a/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\benchmark\\\\cp7\\\\fixtures\\\\repo\\\\src/cache-manager.ts\"\n+++ \"b/C:\\\\Projects\\\\router\\\\auto-router-v2\\\\tmp\\\\cp7-agentic\\\\E3-sonnet_4_6\\\\src/cache-manager.ts\"\n@@ -24,7 +24,9 @@ export class CacheManager<T = any> {\n       return undefined;\n     }\n \n-    // Defect 1: Does not refresh LRU access order (should delete and re-insert into Map)\n+    // Refresh LRU access order: move the entry to the tail of the Map\n+    this.items.delete(key);\n+    this.items.set(key, entry);\n     return entry.value;\n   }\n \n@@ -49,7 +51,7 @@ export class CacheManager<T = any> {\n       // Defect 2: Pop removes the newest item instead of the oldest (shift)!\n       if (this.items.size > this.maxSize) {\n         const keys = Array.from(this.items.keys());\n-        const victim = keys.pop(); // BUG: should be keys.shift() or first key\n+        const victim = keys.shift(); // Evict the least-recently-used (oldest / head of Map)\n         if (victim) {\n           this.items.delete(victim);\n         }\n",
+    "diffHash": "4141579eeebc3ddb440278167d61de370d47bdbf7596e3aa46af44e033725fe1",
+    "testsPassed": true,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "✔ CacheManager - basic set and get (0.7624ms)\n✔ CacheManager - TTL expiration (0.1145ms)\n✔ CacheManager - LRU eviction respects access order (0.0799ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 101.4581\n",
+    "hiddenTestOutput": "✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2993ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.1492\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:111\n✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2993ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\Projects\\router\\auto-router-v2\\tmp\\cp7-agentic\\E3-sonnet_4_6\\test-hidden\\hid"
+  }
+}

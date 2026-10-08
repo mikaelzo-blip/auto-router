@@ -1,0 +1,1227 @@
+[
+  {
+    "caseId": "A1",
+    "track": "architecture",
+    "name": "Offline / Delayed-Processing Document System",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:19:19.728Z",
+    "ttfbMs": 3998,
+    "totalLatencyMs": 53903,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2165,
+      "completion": 11790,
+      "reasoning": 2939
+    },
+    "outputSnippet": "## Architectural Topology & Component Interaction\n\n```\n[ Clients / Edge Producers ]\n             │\n             ▼ (TLS 1.3 / mTLS)\n   ┌───────────────────┐\n   │ L4/L7 Ingress LB  │ (Envoy / AWS NLB)\n   └─────────┬─────────┘\n             │\n             ▼\n   ┌──────────────────────────────────────────",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "durability_guarantee": 2,
+        "queueing_and_backpressure": 2,
+        "idempotency_mechanism": 2,
+        "duplicate_detection": 2,
+        "failure_recovery_and_dlq": 2,
+        "operational_simplicity": 2,
+        "security_and_encryption": 2,
+        "observability_and_alerts": 2,
+        "tradeoff_analysis": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A1",
+    "track": "architecture",
+    "name": "Offline / Delayed-Processing Document System",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:20:03.136Z",
+    "ttfbMs": 1253,
+    "totalLatencyMs": 43407,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2198,
+      "completion": 3000
+    },
+    "outputSnippet": "# Offline/Delayed-Processing Document Ingestion Architecture\n\n## Executive Summary\n\nThis architecture provides a durable, secure, operationally simple ingestion pipeline for document and message intake during primary cluster unavailability. The design prioritizes **write availability** (AP in CAP te",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "durability_guarantee": 2,
+        "queueing_and_backpressure": 2,
+        "idempotency_mechanism": 2,
+        "duplicate_detection": 2,
+        "failure_recovery_and_dlq": 2,
+        "operational_simplicity": 2,
+        "security_and_encryption": 2,
+        "observability_and_alerts": 1,
+        "tradeoff_analysis": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A2",
+    "track": "architecture",
+    "name": "Multi-Tenant SaaS Architecture with Audit & Background Jobs",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:28:07.673Z",
+    "ttfbMs": 3853,
+    "totalLatencyMs": 61158,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2185,
+      "completion": 15372,
+      "reasoning": 2052
+    },
+    "outputSnippet": "## 1. Tenant Isolation & Storage Tiering\n\n### Strategic Trade-Off Analysis\n\n| Isolation Model | Architectural Topology | Strengths | Weaknesses | Blast Radius & Regulatory Profile |\n| :--- | :--- | :--- | :--- | :--- |\n| **Siloed (Tier 1)** | Dedicated compute instance & dedicated database engine pe",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "tenant_isolation_strategy": 2,
+        "rbac_and_context_propagation": 2,
+        "audit_trail_integrity": 2,
+        "background_job_fairness": 2,
+        "noisy_neighbor_mitigation": 2,
+        "data_model_boundaries": 2,
+        "backup_and_tenant_pitr": 2,
+        "zero_downtime_migration": 2,
+        "cost_complexity_tradeoffs": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A2",
+    "track": "architecture",
+    "name": "Multi-Tenant SaaS Architecture with Audit & Background Jobs",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:27:06.513Z",
+    "ttfbMs": 1439,
+    "totalLatencyMs": 41052,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2206,
+      "completion": 3000
+    },
+    "outputSnippet": "# High-Scale B2B Multi-Tenant SaaS Architecture for Financial & Document Compliance\n\n---\n\n## Table of Contents\n\n1. Tenant Isolation Strategy\n2. RBAC & Tenant Context Propagation\n3. Append-Only Tamper-Evident Audit History\n4. Background Job Scheduling & Fair-Share Queueing\n5. Data Model Boundaries & ",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "tenant_isolation_strategy": 2,
+        "rbac_and_context_propagation": 2,
+        "audit_trail_integrity": 2,
+        "background_job_fairness": 2,
+        "noisy_neighbor_mitigation": 1,
+        "data_model_boundaries": 2,
+        "backup_and_tenant_pitr": 2,
+        "zero_downtime_migration": 2,
+        "cost_complexity_tradeoffs": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A3",
+    "track": "architecture",
+    "name": "High-Integrity Transaction Architecture",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:28:55.930Z",
+    "ttfbMs": 4238,
+    "totalLatencyMs": 48256,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2161,
+      "completion": 12627,
+      "reasoning": 2812
+    },
+    "outputSnippet": "### System Domain Model & Core Accounting Invariants\n\nThe ledger is implemented as an immutable, append-only directed graph of financial transfers adhering to the formal principles of multi-currency double-entry bookkeeping. \n\n```\n                                  +----------------------------------",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "concurrency_control_strategy": 2,
+        "lock_ordering_and_deadlock_avoidance": 2,
+        "idempotency_contract": 2,
+        "reservation_lifecycle": 2,
+        "reconciliation_and_drift_detection": 2,
+        "failure_mode_analysis": 2,
+        "database_boundary_realism": 2,
+        "data_integrity_invariants": 2,
+        "tradeoff_analysis": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A3",
+    "track": "architecture",
+    "name": "High-Integrity Transaction Architecture",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:29:36.878Z",
+    "ttfbMs": 2059,
+    "totalLatencyMs": 40947,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2187,
+      "completion": 3000
+    },
+    "outputSnippet": "# Mission-Critical Transaction Architecture: Ledger & Balance Reservation System\n\n## Executive Summary\n\nThis architecture prevents double-spend and double-allocation through deterministic lock ordering, idempotent state machines, two-phase reservation patterns, and reconciliation-driven drift correc",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "concurrency_control_strategy": 2,
+        "lock_ordering_and_deadlock_avoidance": 2,
+        "idempotency_contract": 2,
+        "reservation_lifecycle": 2,
+        "reconciliation_and_drift_detection": 2,
+        "failure_mode_analysis": 1,
+        "database_boundary_realism": 2,
+        "data_integrity_invariants": 2,
+        "tradeoff_analysis": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A4",
+    "track": "architecture",
+    "name": "Evolution & Migration Architecture (Monolith Evolution)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:31:03.882Z",
+    "ttfbMs": 5352,
+    "totalLatencyMs": 36658,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2158,
+      "completion": 7162,
+      "reasoning": 2149
+    },
+    "outputSnippet": "---\n\n### 1. Comparative Evaluation Matrix & Trade-Off Analysis\n\n| Dimension | Strategy 1: Modular Monolith | Strategy 2: Strangler Fig Extraction | Strategy 3: Pure Event-Driven Architecture (EDA) |\n| :--- | :--- | :--- | :--- |\n| **Blast Radius & Failure Modes** | **Medium–High**: Runtime crashes (",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "architectural_option_comparison": 2,
+        "modular_monolith_depth": 2,
+        "service_extraction_realism": 2,
+        "event_driven_boundaries": 2,
+        "definitive_recommendation": 2,
+        "data_decomposition_strategy": 2,
+        "strangler_fig_migration_path": 2,
+        "operational_risk_mitigation": 2,
+        "team_topology_alignment": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "A4",
+    "track": "architecture",
+    "name": "Evolution & Migration Architecture (Monolith Evolution)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:30:27.223Z",
+    "ttfbMs": 1606,
+    "totalLatencyMs": 50345,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2190,
+      "completion": 3000
+    },
+    "outputSnippet": "# Evolutionary Architecture Transition: E-Commerce & Logistics Platform\n\n## Executive Technical Assessment\n\n---\n\n## Part I: Problem Decomposition & Root Cause Analysis\n\nBefore evaluating strategies, we must precisely characterize the failure modes to avoid solving symptoms rather than causes.\n\n### C",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "architectural_option_comparison": 2,
+        "modular_monolith_depth": 2,
+        "service_extraction_realism": 2,
+        "event_driven_boundaries": 2,
+        "definitive_recommendation": 2,
+        "data_decomposition_strategy": 2,
+        "strangler_fig_migration_path": 2,
+        "operational_risk_mitigation": 2,
+        "team_topology_alignment": 2,
+        "decision_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "E1",
+    "track": "agentic",
+    "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:45:16.761Z",
+    "ttfbMs": 3223,
+    "totalLatencyMs": 118159,
+    "httpStatus": 200,
+    "success": false,
+    "failureClass": "TEST_FAILURE",
+    "agenticDetails": {
+      "iterations": 15,
+      "toolCalls": 15,
+      "failedToolCalls": 2,
+      "filesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": true,
+      "publicTestOutput": "✔ SlidingWindowRateLimiter - allows requests up to limit (0.435ms)\n✖ SlidingWindowRateLimiter - boundary expiration allows new requests (0.8784ms)\n✔ SlidingWindowRateLimiter - remaining requests calculation (0.0929ms)\nℹ tests 3\nℹ suites 0\nℹ pass 2\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.0262\n\n✖ failing tests:\n\ntest at test\\rate-limiter.test.ts:1:492\n✖ SlidingWindowRateLimiter - boundary expiration allows new requests (0.8784ms)\n  AssertionError [ERR_ASSERTION]: Request at ex",
+      "hiddenTestOutput": "✔ Hidden: multi-key isolation (0.4944ms)\n✔ Hidden: sliding window rolling burst recovery (0.0844ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.8178\n"
+    }
+  },
+  {
+    "caseId": "E1",
+    "track": "agentic",
+    "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:46:30.504Z",
+    "ttfbMs": 3384,
+    "totalLatencyMs": 73742,
+    "httpStatus": 200,
+    "success": true,
+    "agenticDetails": {
+      "iterations": 8,
+      "toolCalls": 8,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/rate-limiter.ts",
+        "test/rate-limiter.test.ts"
+      ],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "publicTestOutput": "✔ SlidingWindowRateLimiter - allows requests up to limit (0.4527ms)\n✔ SlidingWindowRateLimiter - boundary expiration allows new requests (0.0709ms)\n✔ SlidingWindowRateLimiter - remaining requests calculation (0.0868ms)\n✔ SlidingWindowRateLimiter - timestamp at exact boundary is expired (0.0487ms)\n✔ SlidingWindowRateLimiter - one ms past boundary is allowed (0.0514ms)\n✔ SlidingWindowRateLimiter - isAllowed and getRemainingRequests consistent at boundary (0.0439ms)\n✔ SlidingWindowRateLimiter - req",
+      "hiddenTestOutput": "✔ Hidden: multi-key isolation (0.4211ms)\n✔ Hidden: sliding window rolling burst recovery (0.0746ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 141.0835\n"
+    }
+  },
+  {
+    "caseId": "E2",
+    "track": "agentic",
+    "name": "Multi-File Feature Implementation (Wildcard Event Bus)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:52:47.898Z",
+    "ttfbMs": 7334,
+    "totalLatencyMs": 98001,
+    "httpStatus": 200,
+    "success": false,
+    "failureClass": "TEST_FAILURE",
+    "agenticDetails": {
+      "iterations": 15,
+      "toolCalls": 15,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "test/event-bus.test.ts"
+      ],
+      "testsPassed": true,
+      "hiddenTestsPassed": false,
+      "publicTestOutput": "GIT LOG:\n 0d1bdf9 test(router): validate healthy-account priority and quota auto readiness\n1992b08 test(router): validate live quota pool and production shadow policy\n5f09f1d fix(router): isolate specialist intent and quota conservation policy\n97dbb64 fix(router): validate live quota mapping and shadow conservation\n83a5e4d feat(router): implement CP6 quota-aware routing and telemetry foundation\n\n✔ check git log (29.8607ms)\n✔ EventBus - exact topic subscription and delivery (0.2162ms)\n✔ EventBus ",
+      "hiddenTestOutput": "✖ Hidden: wildcard prefix pattern matching (order.*) (1.8717ms)\n✖ Hidden: wildcard suffix pattern matching (*.created) (0.2365ms)\n✖ Hidden: wildcard unsubscribe (0.1757ms)\nℹ tests 3\nℹ suites 0\nℹ pass 0\nℹ fail 3\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 142.821\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:103\n✖ Hidden: wildcard prefix pattern matching (order.*) (1.8717ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n  + []"
+    }
+  },
+  {
+    "caseId": "E2",
+    "track": "agentic",
+    "name": "Multi-File Feature Implementation (Wildcard Event Bus)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:54:42.579Z",
+    "ttfbMs": 2858,
+    "totalLatencyMs": 114680,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 8,
+      "toolCalls": 11,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/types.ts",
+        "src/event-bus.ts"
+      ],
+      "testsPassed": false,
+      "hiddenTestsPassed": false
+    }
+  },
+  {
+    "caseId": "E3",
+    "track": "agentic",
+    "name": "Failure Recovery (Cache Manager Eviction Defect)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:57:26.116Z",
+    "ttfbMs": 6952,
+    "totalLatencyMs": 153094,
+    "httpStatus": 0,
+    "success": false,
+    "failureClass": "TIMEOUT",
+    "agenticDetails": {
+      "iterations": 11,
+      "toolCalls": 10,
+      "failedToolCalls": 1,
+      "filesChanged": [],
+      "testsPassed": false,
+      "hiddenTestsPassed": false
+    }
+  },
+  {
+    "caseId": "E3",
+    "track": "agentic",
+    "name": "Failure Recovery (Cache Manager Eviction Defect)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:58:04.387Z",
+    "ttfbMs": 3028,
+    "totalLatencyMs": 38270,
+    "httpStatus": 200,
+    "success": false,
+    "failureClass": "TEST_FAILURE",
+    "agenticDetails": {
+      "iterations": 8,
+      "toolCalls": 8,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/cache-manager.ts"
+      ],
+      "testsPassed": true,
+      "hiddenTestsPassed": false,
+      "publicTestOutput": "✔ CacheManager - basic set and get (0.8459ms)\n✔ CacheManager - TTL expiration (0.1287ms)\n✔ CacheManager - LRU eviction respects access order (0.1104ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.3815\n",
+      "hiddenTestOutput": "✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2184ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.2445\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:111\n✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2184ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\Projects\\router\\auto-router-v2\\tmp\\cp7-agentic\\E3-sonnet_4_6\\test-hidden\\hi"
+    }
+  },
+  {
+    "caseId": "E4",
+    "track": "agentic",
+    "name": "Refactor Under Constraints (Order Service Strategy Decomposition)",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T16:00:22.194Z",
+    "ttfbMs": 4868,
+    "totalLatencyMs": 126464,
+    "httpStatus": 200,
+    "success": true,
+    "agenticDetails": {
+      "iterations": 15,
+      "toolCalls": 15,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/pricing/pricing-calculator.ts",
+        "src/pricing/discount-calculator.ts",
+        "src/pricing/tax-calculator.ts"
+      ],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "publicTestOutput": "✔ OrderService - empty order returns zeros (1.4708ms)\n✔ OrderService - calculates subtotal and category taxes without discount (0.1723ms)\n✔ OrderService - calculates percentage discount correctly (0.1053ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.2153\n",
+      "hiddenTestOutput": "✔ Hidden: fixed discount exceeding subtotal caps discount at subtotal (0.4555ms)\n✔ Hidden: throws error on zero or negative quantity (0.2122ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.9272\n"
+    }
+  },
+  {
+    "caseId": "E4",
+    "track": "agentic",
+    "name": "Refactor Under Constraints (Order Service Strategy Decomposition)",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T16:01:39.322Z",
+    "ttfbMs": 3373,
+    "totalLatencyMs": 77127,
+    "httpStatus": 200,
+    "success": true,
+    "agenticDetails": {
+      "iterations": 12,
+      "toolCalls": 18,
+      "failedToolCalls": 0,
+      "filesChanged": [
+        "src/pricing/item-pricer.ts",
+        "src/pricing/discount-calculator.ts",
+        "src/pricing/tax-calculator.ts",
+        "src/pricing/index.ts",
+        "src/order-service.ts"
+      ],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "publicTestOutput": "✔ OrderService - empty order returns zeros (0.6854ms)\n✔ OrderService - calculates subtotal and category taxes without discount (0.1337ms)\n✔ OrderService - calculates percentage discount correctly (0.067ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 94.5399\n",
+      "hiddenTestOutput": "✔ Hidden: fixed discount exceeding subtotal caps discount at subtotal (0.4447ms)\n✔ Hidden: throws error on zero or negative quantity (0.1989ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 123.5815\n"
+    }
+  },
+  {
+    "caseId": "P1",
+    "track": "prd",
+    "name": "Financial Operations SaaS Product Requirements Document",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:21:43.832Z",
+    "ttfbMs": 4743,
+    "totalLatencyMs": 49962,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2265,
+      "completion": 11316,
+      "reasoning": 1314
+    },
+    "outputSnippet": "# Product Requirements Document (PRD)\n\n**Project Codename:** Project Balance  \n**Document Version:** 1.0.0-PROD  \n**Author:** Staff Technical Product Manager & Principal Enterprise Architect  \n**Status:** Ready for Engineering Review  \n**Target Delivery:** Q3/Q4\n\n---\n\n## 1. Problem Statement & Busin",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "problem_clarity_and_opportunity": 2,
+        "persona_and_jtbd_depth": 2,
+        "functional_requirements_moscow": 2,
+        "nfr_completeness": 2,
+        "workflow_state_machine": 2,
+        "edge_case_coverage": 2,
+        "acceptance_criteria_quality": 2,
+        "success_metrics_and_kpis": 2,
+        "non_goals_discipline": 2,
+        "implementation_handoff_readiness": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P1",
+    "track": "prd",
+    "name": "Financial Operations SaaS Product Requirements Document",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:20:53.868Z",
+    "ttfbMs": 1409,
+    "totalLatencyMs": 50731,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2322,
+      "completion": 3000
+    },
+    "outputSnippet": "# Product Requirements Document (PRD)\n## Automated Financial Reconciliation & Approval Platform\n\n---\n\n**Document Metadata**\n\n| Field | Value |\n|---|---|\n| Version | 1.0.0 |\n| Status | Draft — Pending Stakeholder Review |\n| Author | Platform Architecture Team |\n| Last Updated | 2025-01-01 |\n| Reviewe",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "problem_clarity_and_opportunity": 2,
+        "persona_and_jtbd_depth": 2,
+        "functional_requirements_moscow": 2,
+        "nfr_completeness": 2,
+        "workflow_state_machine": 2,
+        "edge_case_coverage": 2,
+        "acceptance_criteria_quality": 2,
+        "success_metrics_and_kpis": 2,
+        "non_goals_discipline": 2,
+        "implementation_handoff_readiness": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P2",
+    "track": "prd",
+    "name": "Offline-Capable Field Operations App Product Brief",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:33:36.198Z",
+    "ttfbMs": 6632,
+    "totalLatencyMs": 87040,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2208,
+      "completion": 17733,
+      "reasoning": 4700
+    },
+    "outputSnippet": "# High-Voltage Substation Field Inspection Mobile Platform\n## System Architecture & Product Requirements Document (PRD)\n\n---\n\n## 1. Core User Workflows\n\n```\n  ┌─────────────────┐\n  │ Asset Selection │\n  └────────┬────────┘\n           │\n           ▼\n  ┌────────────────────────────────────────────────",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "workflow_completeness": 2,
+        "offline_first_storage_model": 2,
+        "sync_and_conflict_resolution": 2,
+        "permission_and_signature_integrity": 2,
+        "media_handling_and_compression": 2,
+        "regulatory_auditability": 2,
+        "edge_case_resilience": 2,
+        "acceptance_criteria": 2,
+        "prioritization_and_tradeoffs": 1,
+        "engineering_handoff_quality": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P2",
+    "track": "prd",
+    "name": "Offline-Capable Field Operations App Product Brief",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:32:09.156Z",
+    "ttfbMs": 1249,
+    "totalLatencyMs": 55577,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2238,
+      "completion": 3000
+    },
+    "outputSnippet": "# Product Requirements Document\n## FieldVault — Offline-First Substation Inspection Platform\n\n**Document Version:** 2.0.0  \n**Classification:** Internal — Engineering & Product  \n**Status:** Approved for Development  \n**Authors:** Product Architecture Team  \n**Last Revised:** 2025-01-15  \n\n---\n\n## T",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "workflow_completeness": 2,
+        "offline_first_storage_model": 2,
+        "sync_and_conflict_resolution": 2,
+        "permission_and_signature_integrity": 2,
+        "media_handling_and_compression": 2,
+        "regulatory_auditability": 2,
+        "edge_case_resilience": 2,
+        "acceptance_criteria": 2,
+        "prioritization_and_tradeoffs": 1,
+        "engineering_handoff_quality": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P3",
+    "track": "prd",
+    "name": "Spreadsheet-to-SaaS Migration Product Specification",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:34:30.782Z",
+    "ttfbMs": 4860,
+    "totalLatencyMs": 54584,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2187,
+      "completion": 11565,
+      "reasoning": 1898
+    },
+    "outputSnippet": "# Product Requirements Document (PRD)\n\n**Title:** Enterprise Inventory & Procurement Onboarding Engine (EIPO)  \n**Document Version:** 2.4.0-PROD  \n**Status:** Approved for Implementation  \n**Target Execution Window:** Q3–Q4  \n**Audience:** Staff/Principal Engineers, Product Operations, Technical Imp",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "mvp_scope_definition": 2,
+        "import_engine_spec": 2,
+        "error_recovery_ux": 2,
+        "role_and_permission_model": 2,
+        "parallel_run_strategy": 2,
+        "excel_export_compatibility": 2,
+        "onboarding_success_metrics": 2,
+        "non_goals_discipline": 2,
+        "acceptance_criteria": 2,
+        "engineering_actionability": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P3",
+    "track": "prd",
+    "name": "Spreadsheet-to-SaaS Migration Product Specification",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:35:35.340Z",
+    "ttfbMs": 1426,
+    "totalLatencyMs": 64556,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2213,
+      "completion": 3000
+    },
+    "outputSnippet": "# Product Requirements Document\n\n## ExcelBridge: Enterprise Inventory & Procurement Migration Platform\n\n**Document Version:** 1.0.0\n**Status:** Draft for Review\n**Classification:** Internal — Product & Engineering\n**Author:** Principal Product Architect\n**Date:** 2025-07-01\n**Revision Cycle:** Bi-we",
+    "evaluation": {
+      "score": 20,
+      "maxScore": 20,
+      "scoreRatio": 1,
+      "dimensions": {
+        "mvp_scope_definition": 2,
+        "import_engine_spec": 2,
+        "error_recovery_ux": 2,
+        "role_and_permission_model": 2,
+        "parallel_run_strategy": 2,
+        "excel_export_compatibility": 2,
+        "onboarding_success_metrics": 2,
+        "non_goals_discipline": 2,
+        "acceptance_criteria": 2,
+        "engineering_actionability": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P4",
+    "track": "prd",
+    "name": "AI-Assisted Document Workflow Product Requirements",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:37:20.756Z",
+    "ttfbMs": 4035,
+    "totalLatencyMs": 54881,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2248,
+      "completion": 12883,
+      "reasoning": 1942
+    },
+    "outputSnippet": "# Engineering Product Requirements Document (PRD)\n\n**System Title:** CortexExtract: Enterprise Legal & Medical Contract Ingestion & Verification Engine  \n**Document Version:** 2.4.0-PROD  \n**Status:** Approved for Implementation  \n**Target System Classification:** Mission-Critical / High-Integrity F",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "deterministic_vs_llm_boundary": 2,
+        "confidence_threshold_routing": 2,
+        "reviewer_ux_specification": 2,
+        "provenance_and_auditability": 2,
+        "cost_control_and_caching": 2,
+        "pii_and_privacy_safeguards": 2,
+        "failure_recovery_fallbacks": 2,
+        "edge_cases": 2,
+        "metrics_and_acceptance_criteria": 2,
+        "engineering_handoff_clarity": 1
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "P4",
+    "track": "prd",
+    "name": "AI-Assisted Document Workflow Product Requirements",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:36:25.874Z",
+    "ttfbMs": 1170,
+    "totalLatencyMs": 50533,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2285,
+      "completion": 3000
+    },
+    "outputSnippet": "# Engineering-Grade PRD: AI-Assisted Legal & Medical Vendor Contract Intelligence Platform\n\n**Document ID:** PRD-CVCI-2024-001  \n**Version:** 1.0.0  \n**Status:** Draft for Engineering Review  \n**Classification:** Internal — Confidential  \n**Authors:** Product Engineering  \n**Reviewers:** Legal, Comp",
+    "evaluation": {
+      "score": 19,
+      "maxScore": 20,
+      "scoreRatio": 0.95,
+      "dimensions": {
+        "deterministic_vs_llm_boundary": 2,
+        "confidence_threshold_routing": 2,
+        "reviewer_ux_specification": 2,
+        "provenance_and_auditability": 2,
+        "cost_control_and_caching": 2,
+        "pii_and_privacy_safeguards": 2,
+        "failure_recovery_fallbacks": 2,
+        "edge_cases": 1,
+        "metrics_and_acceptance_criteria": 2,
+        "engineering_handoff_clarity": 2
+      },
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R1",
+    "track": "reasoning",
+    "name": "PostgreSQL Concurrency & Balance Reservation Invariants",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:22:03.209Z",
+    "ttfbMs": 5268,
+    "totalLatencyMs": 19377,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2341,
+      "completion": 4102,
+      "reasoning": 1480
+    },
+    "outputSnippet": "### 1. Production-Grade Transaction Execution\n\nTo guarantee that concurrent reservation requests never exceed available funds, you can use either an **Atomic Conditional Update** or a **Pessimistic Read-Modify-Write (`SELECT ... FOR UPDATE`)**. \n\nFor financial ledger systems where a ledger entry (au",
+    "evaluation": {
+      "satisfiedInvariants": 4,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Identifies check-then-act race condition in naive implementation leading to double-allocation",
+          "satisfied": true
+        },
+        {
+          "text": "Recommends atomic conditional UPDATE or SELECT ... FOR UPDATE with explicit transaction boundary",
+          "satisfied": true
+        },
+        {
+          "text": "Mandates deterministic row lock ordering (e.g. ORDER BY user_id ASC) when locking multiple wallets to prevent deadlocks",
+          "satisfied": true
+        },
+        {
+          "text": "Specifies database CHECK constraint `CONSTRAINT check_sufficient_balance CHECK (balance >= reserved)` as the ultimate defense-in-depth",
+          "satisfied": true
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Claiming application-level mutex/lock is sufficient across multiple service instances",
+          "avoided": true
+        },
+        {
+          "text": "Failing to sort IDs before acquiring multiple row locks",
+          "avoided": true
+        },
+        {
+          "text": "Omitting the schema CHECK constraint",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R1",
+    "track": "reasoning",
+    "name": "PostgreSQL Concurrency & Balance Reservation Invariants",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:23:08.928Z",
+    "ttfbMs": 1525,
+    "totalLatencyMs": 55423,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2345,
+      "completion": 3000
+    },
+    "outputSnippet": "# Production-Grade Wallet Reservation: Complete Analysis\n\n## 1. Exact Production-Grade SQL Transaction\n\n### Primary Approach: Atomic Conditional UPDATE with RETURNING\n\n```sql\n-- Single atomic statement — no explicit transaction block needed for single statement\n-- but shown in transaction context fo",
+    "evaluation": {
+      "satisfiedInvariants": 3,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Identifies check-then-act race condition in naive implementation leading to double-allocation",
+          "satisfied": true
+        },
+        {
+          "text": "Recommends atomic conditional UPDATE or SELECT ... FOR UPDATE with explicit transaction boundary",
+          "satisfied": true
+        },
+        {
+          "text": "Mandates deterministic row lock ordering (e.g. ORDER BY user_id ASC) when locking multiple wallets to prevent deadlocks",
+          "satisfied": true
+        },
+        {
+          "text": "Specifies database CHECK constraint `CONSTRAINT check_sufficient_balance CHECK (balance >= reserved)` as the ultimate defense-in-depth",
+          "satisfied": false
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Claiming application-level mutex/lock is sufficient across multiple service instances",
+          "avoided": true
+        },
+        {
+          "text": "Failing to sort IDs before acquiring multiple row locks",
+          "avoided": true
+        },
+        {
+          "text": "Omitting the schema CHECK constraint",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R2",
+    "track": "reasoning",
+    "name": "Distributed Idempotency & Webhook Retry Correctness",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:39:00.801Z",
+    "ttfbMs": 5686,
+    "totalLatencyMs": 36948,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2208,
+      "completion": 8959,
+      "reasoning": 2946
+    },
+    "outputSnippet": "### 1. Exact Idempotency Protocol for Stripe Webhooks\n\nStripe guarantees **at-least-once delivery**. A robust idempotency protocol must decouple the transport-level acknowledgment from domain-level side effects using a multi-phase verification, deduplication, and atomic state-transition lifecycle.\n\n",
+    "evaluation": {
+      "satisfiedInvariants": 3,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Idempotency record must be stored atomically within the same database transaction as the state mutation (or via outbox)",
+          "satisfied": true
+        },
+        {
+          "text": "Identifies Redis-only deduplication failure modes (cache eviction, unpersisted writes, race window)",
+          "satisfied": true
+        },
+        {
+          "text": "Handles concurrent in-flight duplicates via unique constraint violation with proper retry or 409/200 response",
+          "satisfied": true
+        },
+        {
+          "text": "Distinguishes between retryable transient failure and terminal duplicate replay",
+          "satisfied": false
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Storing idempotency key in Redis without database transactional synchronization",
+          "avoided": true
+        },
+        {
+          "text": "Returning HTTP 500 on duplicate webhook instead of HTTP 200 acknowledging receipt",
+          "avoided": true
+        },
+        {
+          "text": "Fulfilling order before durable commit of event processing record",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R2",
+    "track": "reasoning",
+    "name": "Distributed Idempotency & Webhook Retry Correctness",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:38:23.852Z",
+    "ttfbMs": 1988,
+    "totalLatencyMs": 53441,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2235,
+      "completion": 3000
+    },
+    "outputSnippet": "# Production-Grade Idempotent Webhook Processing System\n\n## Table of Contents\n1. Idempotency Protocol Formulation\n2. Redis Failure Mode Analysis\n3. Relational Database Transaction Design\n4. Duplicate Arrival Response Matrix\n5. SQL DDL and Transaction Logic\n\n---\n\n## 1. Idempotency Protocol Formulatio",
+    "evaluation": {
+      "satisfiedInvariants": 3,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Idempotency record must be stored atomically within the same database transaction as the state mutation (or via outbox)",
+          "satisfied": true
+        },
+        {
+          "text": "Identifies Redis-only deduplication failure modes (cache eviction, unpersisted writes, race window)",
+          "satisfied": true
+        },
+        {
+          "text": "Handles concurrent in-flight duplicates via unique constraint violation with proper retry or 409/200 response",
+          "satisfied": true
+        },
+        {
+          "text": "Distinguishes between retryable transient failure and terminal duplicate replay",
+          "satisfied": false
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Storing idempotency key in Redis without database transactional synchronization",
+          "avoided": true
+        },
+        {
+          "text": "Returning HTTP 500 on duplicate webhook instead of HTTP 200 acknowledging receipt",
+          "avoided": true
+        },
+        {
+          "text": "Fulfilling order before durable commit of event processing record",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R3",
+    "track": "reasoning",
+    "name": "Zero-Downtime Database Migration with Phased Rollback",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:39:37.955Z",
+    "ttfbMs": 7085,
+    "totalLatencyMs": 37153,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2262,
+      "completion": 8555,
+      "reasoning": 2077
+    },
+    "outputSnippet": "---\n\n### 1. Step-by-Step Zero-Downtime Migration Plan (Expand-and-Contract)\n\nThis migration uses the **Expand-and-Contract (Parallel Run)** pattern to process 50,000,000 rows under active load (5,000 read QPS, 500 write QPS) without locking out concurrent transactions or exceeding connection pool ca",
+    "evaluation": {
+      "satisfiedInvariants": 4,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Prohibits single-statement table-wide UPDATE due to table bloat, lock contention, and transaction replication lag",
+          "satisfied": true
+        },
+        {
+          "text": "Uses phased expand-and-contract: 1) add nullable columns; 2) dual-write (trigger or app code); 3) batch backfill with bounded chunk sizes (e.g. 1000-5000 rows by primary key); 4) enforce NOT NULL constraint via CHECK ... NOT VALID followed by VALIDATE CONSTRAINT; 5) switch reads; 6) remove dual-write; 7) drop old column",
+          "satisfied": true
+        },
+        {
+          "text": "Defines explicit non-destructive rollback path at every phase",
+          "satisfied": true
+        },
+        {
+          "text": "Identifies AccessExclusiveLock required for ALTER TABLE DROP COLUMN and schedules during low traffic or with low lock_timeout",
+          "satisfied": true
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Proposing single massive UPDATE statement",
+          "avoided": true
+        },
+        {
+          "text": "Adding NOT NULL column without default in older Postgres or locking table",
+          "avoided": true
+        },
+        {
+          "text": "Dropping old column before all application replicas are running new code",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R3",
+    "track": "reasoning",
+    "name": "Zero-Downtime Database Migration with Phased Rollback",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:40:25.217Z",
+    "ttfbMs": 1426,
+    "totalLatencyMs": 47261,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2266,
+      "completion": 3000
+    },
+    "outputSnippet": "# Zero-Downtime PostgreSQL Column Migration: Expand-and-Contract Pattern\n\n## Architecture Overview\n\n```\n┌─────────────────────────────────────────────────────────────────┐\n│                    MIGRATION PHASES                              │\n│                                                          ",
+    "evaluation": {
+      "satisfiedInvariants": 4,
+      "totalInvariants": 4,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Prohibits single-statement table-wide UPDATE due to table bloat, lock contention, and transaction replication lag",
+          "satisfied": true
+        },
+        {
+          "text": "Uses phased expand-and-contract: 1) add nullable columns; 2) dual-write (trigger or app code); 3) batch backfill with bounded chunk sizes (e.g. 1000-5000 rows by primary key); 4) enforce NOT NULL constraint via CHECK ... NOT VALID followed by VALIDATE CONSTRAINT; 5) switch reads; 6) remove dual-write; 7) drop old column",
+          "satisfied": true
+        },
+        {
+          "text": "Defines explicit non-destructive rollback path at every phase",
+          "satisfied": true
+        },
+        {
+          "text": "Identifies AccessExclusiveLock required for ALTER TABLE DROP COLUMN and schedules during low traffic or with low lock_timeout",
+          "satisfied": true
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Proposing single massive UPDATE statement",
+          "avoided": true
+        },
+        {
+          "text": "Adding NOT NULL column without default in older Postgres or locking table",
+          "avoided": true
+        },
+        {
+          "text": "Dropping old column before all application replicas are running new code",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R4",
+    "track": "reasoning",
+    "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-14T15:41:51.071Z",
+    "ttfbMs": 11456,
+    "totalLatencyMs": 36734,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2219,
+      "completion": 8053,
+      "reasoning": 2542
+    },
+    "outputSnippet": "### 1. Privilege Escalation Vectors\n\nIf `editUserRole(targetUserId, newRole)` asserts only that the invoking user holds `user:edit_role`, the authorization boundary fails to evaluate the relationship between the actor, the target, the assigned role, and the organizational boundary. This enables the ",
+    "evaluation": {
+      "satisfiedInvariants": 5,
+      "totalInvariants": 5,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+          "satisfied": true
+        },
+        {
+          "text": "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+          "satisfied": true
+        },
+        {
+          "text": "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+          "satisfied": true
+        },
+        {
+          "text": "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+          "satisfied": true
+        },
+        {
+          "text": "Fail-closed evaluation default",
+          "satisfied": true
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Only checking permission string without hierarchy and target-user ownership validation",
+          "avoided": true
+        },
+        {
+          "text": "Allowing Admin to assign Owner role",
+          "avoided": true
+        },
+        {
+          "text": "Ignoring cross-tenant target validation",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  },
+  {
+    "caseId": "R4",
+    "track": "reasoning",
+    "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-14T15:41:14.336Z",
+    "ttfbMs": 1438,
+    "totalLatencyMs": 49119,
+    "httpStatus": 200,
+    "success": true,
+    "tokens": {
+      "prompt": 2244,
+      "completion": 3000
+    },
+    "outputSnippet": "# Multi-Tenant Authorization System: Comprehensive Security Analysis\n\n## 1. Privilege Escalation Vectors\n\n### Vector 1: Vertical Escalation — Role Elevation Beyond Actor's Level\n\n```\nATTACK: Admin promotes another user to Owner\nCONDITION: Check only validates user:edit_role permission\nEXPLOIT:\n  cur",
+    "evaluation": {
+      "satisfiedInvariants": 4,
+      "totalInvariants": 5,
+      "avoidedTraps": 3,
+      "totalTraps": 3,
+      "invariantResults": [
+        {
+          "text": "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+          "satisfied": true
+        },
+        {
+          "text": "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+          "satisfied": false
+        },
+        {
+          "text": "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+          "satisfied": true
+        },
+        {
+          "text": "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+          "satisfied": true
+        },
+        {
+          "text": "Fail-closed evaluation default",
+          "satisfied": true
+        }
+      ],
+      "trapResults": [
+        {
+          "text": "Only checking permission string without hierarchy and target-user ownership validation",
+          "avoided": true
+        },
+        {
+          "text": "Allowing Admin to assign Owner role",
+          "avoided": true
+        },
+        {
+          "text": "Ignoring cross-tenant target validation",
+          "avoided": true
+        }
+      ],
+      "passed": true
+    }
+  }
+]

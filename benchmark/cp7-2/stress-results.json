@@ -1,0 +1,110 @@
+[
+  {
+    "caseId": "S1",
+    "family": "STRESS_TEST",
+    "name": "Transaction Engine Atomic Rollback & Money Conservation",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:43:30.128Z",
+    "ttfbMs": 9987,
+    "totalLatencyMs": 32268,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 6,
+      "toolCalls": 7,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/engine.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ TransactionEngine - successful transfer updates balances and writes ledger (0.6042ms)\n✔ TransactionEngine - atomic rollback when ledger write fails (0.2758ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 90.8309\n",
+      "hiddenTestOutput": "✔ Hidden: TransactionEngine - insufficient funds does not create ledger entries (0.673ms)\n✔ Hidden: TransactionEngine - consecutive transfers preserve conservation of money (0.1528ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.2747\n"
+    }
+  },
+  {
+    "caseId": "S1",
+    "family": "STRESS_TEST",
+    "name": "Transaction Engine Atomic Rollback & Money Conservation",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:44:45.930Z",
+    "ttfbMs": 2033,
+    "totalLatencyMs": 75802,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 10,
+      "toolCalls": 9,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/engine.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ TransactionEngine - successful transfer updates balances and writes ledger (0.5291ms)\n✔ TransactionEngine - atomic rollback when ledger write fails (0.2381ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.5019\n",
+      "hiddenTestOutput": "✔ Hidden: TransactionEngine - insufficient funds does not create ledger entries (0.4446ms)\n✔ Hidden: TransactionEngine - consecutive transfers preserve conservation of money (0.09ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.9269\n"
+    }
+  },
+  {
+    "caseId": "S2",
+    "family": "STRESS_TEST",
+    "name": "Fulfillment Saga Compensating Transactions",
+    "candidate": "sonnet_4_6",
+    "modelId": "ag/claude-sonnet-4-6",
+    "timestamp": "2026-09-15T05:45:14.499Z",
+    "ttfbMs": 2809,
+    "totalLatencyMs": 28569,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 7,
+      "toolCalls": 7,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/saga.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ FulfillmentSaga - successful order confirms all steps (0.4134ms)\n✔ FulfillmentSaga - payment failure triggers compensating inventory rollback (0.0851ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.2817\n",
+      "hiddenTestOutput": "✔ Hidden: FulfillmentSaga - delivery failure compensates both payment and inventory (0.4274ms)\n✔ Hidden: FulfillmentSaga - out of stock fails fast without charging or dispatching (0.0726ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.2146\n"
+    }
+  },
+  {
+    "caseId": "S2",
+    "family": "STRESS_TEST",
+    "name": "Fulfillment Saga Compensating Transactions",
+    "candidate": "gemini_high",
+    "modelId": "ag/gemini-3.8-flash-high",
+    "timestamp": "2026-09-15T05:46:00.974Z",
+    "ttfbMs": 2515,
+    "totalLatencyMs": 46475,
+    "httpStatus": 200,
+    "success": true,
+    "evaluatorVersion": "cp7-2-agentic-harness-1",
+    "agenticDetails": {
+      "iterations": 10,
+      "toolCalls": 9,
+      "failedToolCalls": 1,
+      "filesChanged": [
+        "src/saga.ts"
+      ],
+      "prohibitedFilesChanged": [],
+      "testsPassed": true,
+      "hiddenTestsPassed": true,
+      "recoveryEvents": 1,
+      "publicTestOutput": "✔ FulfillmentSaga - successful order confirms all steps (0.5652ms)\n✔ FulfillmentSaga - payment failure triggers compensating inventory rollback (0.1392ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.6003\n",
+      "hiddenTestOutput": "✔ Hidden: FulfillmentSaga - delivery failure compensates both payment and inventory (0.4663ms)\n✔ Hidden: FulfillmentSaga - out of stock fails fast without charging or dispatching (0.0787ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.3653\n"
+    }
+  }
+]

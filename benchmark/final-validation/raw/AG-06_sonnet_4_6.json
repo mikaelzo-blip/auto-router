@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-06",
+  "category": "AGENTIC",
+  "taskName": "Safe schema migrator hidden regression",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:42:02.717Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 7,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 67790,
+  "ttfbMs": 6987,
+  "score": 1,
+  "filesChanged": [
+    "src/db/migrator.ts"
+  ],
+  "publicOutputSnippet": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.5793ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 118.9063\n",
+  "hiddenOutputSnippet": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.7961ms)\n✔ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.096ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.3609\n"
+}

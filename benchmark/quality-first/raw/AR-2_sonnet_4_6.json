@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-2",
+  "category": "ARCHITECTURE",
+  "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:23:26.647Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 0.8,
+  "elapsedMs": 53179,
+  "ttfbMs": 1317,
+  "usage": {
+    "promptTokens": 2686,
+    "completionTokens": 3000,
+    "reasoningTokens": 0,
+    "totalTokens": 5686
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 4,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "# Multi-Tenant PostgreSQL Connection Management\n\n## 1. Why Standard Shared FIFO Pool Fails\n\n**Root cause:** A single FIFO queue with a global connection ceiling has no tenant identity. Connection acquisition is first-come-first-served across all 499 tenants.\n\n**Concrete failure cascade:**\n\nTenant 1 fires 100 concurrent report queries. Each waits in queue and holds a connection for the duration of "
+}

@@ -1,0 +1,61 @@
+{
+  "caseId": "R4",
+  "track": "reasoning",
+  "name": "Hierarchical Authorization & Privilege Escalation Boundary Analysis",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:41:51.071Z",
+  "ttfbMs": 11456,
+  "totalLatencyMs": 36734,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2219,
+    "completion": 8053,
+    "reasoning": 2542
+  },
+  "outputSnippet": "### 1. Privilege Escalation Vectors\n\nIf `editUserRole(targetUserId, newRole)` asserts only that the invoking user holds `user:edit_role`, the authorization boundary fails to evaluate the relationship between the actor, the target, the assigned role, and the organizational boundary. This enables the ",
+  "evaluation": {
+    "satisfiedInvariants": 5,
+    "totalInvariants": 5,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Vertical escalation: Caller cannot grant a role equal to or higher than their own hierarchy level (Admin cannot assign Owner)",
+        "satisfied": true
+      },
+      {
+        "text": "Self-escalation / target hierarchy: Caller cannot edit roles of users who possess equal or higher hierarchy (Admin cannot demote or modify Owner)",
+        "satisfied": true
+      },
+      {
+        "text": "Cross-tenant IDOR: Must assert targetUserId belongs to the exact same organization_id as the authenticated context",
+        "satisfied": true
+      },
+      {
+        "text": "Immediate session invalidation / token versioning upon role change to prevent stale privilege persistence",
+        "satisfied": true
+      },
+      {
+        "text": "Fail-closed evaluation default",
+        "satisfied": true
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Only checking permission string without hierarchy and target-user ownership validation",
+        "avoided": true
+      },
+      {
+        "text": "Allowing Admin to assign Owner role",
+        "avoided": true
+      },
+      {
+        "text": "Ignoring cross-tenant target validation",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

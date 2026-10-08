@@ -1,0 +1,35 @@
+{
+  "caseId": "A2",
+  "track": "architecture",
+  "name": "Multi-Tenant SaaS Architecture with Audit & Background Jobs",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:27:06.513Z",
+  "ttfbMs": 1439,
+  "totalLatencyMs": 41052,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2206,
+    "completion": 3000
+  },
+  "outputSnippet": "# High-Scale B2B Multi-Tenant SaaS Architecture for Financial & Document Compliance\n\n---\n\n## Table of Contents\n\n1. Tenant Isolation Strategy\n2. RBAC & Tenant Context Propagation\n3. Append-Only Tamper-Evident Audit History\n4. Background Job Scheduling & Fair-Share Queueing\n5. Data Model Boundaries & ",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "tenant_isolation_strategy": 2,
+      "rbac_and_context_propagation": 2,
+      "audit_trail_integrity": 2,
+      "background_job_fairness": 2,
+      "noisy_neighbor_mitigation": 1,
+      "data_model_boundaries": 2,
+      "backup_and_tenant_pitr": 2,
+      "zero_downtime_migration": 2,
+      "cost_complexity_tradeoffs": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

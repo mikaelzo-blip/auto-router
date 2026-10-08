@@ -1,0 +1,32 @@
+{
+  "taskId": "AR-4",
+  "category": "ARCHITECTURE",
+  "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:27:02.161Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 0.8,
+  "elapsedMs": 42915,
+  "ttfbMs": 1777,
+  "usage": {
+    "promptTokens": 2611,
+    "completionTokens": 1853,
+    "reasoningTokens": 0,
+    "totalTokens": 4464
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [
+    "Omitted CREATE INDEX CONCURRENTLY"
+  ],
+  "details": {
+    "checklistScore": 4,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "A zero-blocking PostgreSQL migration is not possible: every `ALTER TABLE` needs a brief table lock. The goal is to keep those locks short, fail fast if they cannot be acquired, and move scans and row updates outside long-running DDL transactions. Test the exact sequence on the production PostgreSQL major version and partition layout.\n\n## 1. Why the naive `ALTER TABLE` causes downtime\n\n`ADD COLUMN "
+}

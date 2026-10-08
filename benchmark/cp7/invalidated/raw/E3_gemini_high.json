@@ -1,0 +1,21 @@
+{
+  "caseId": "E3",
+  "track": "agentic",
+  "name": "Failure Recovery (Cache Manager Eviction Defect)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:57:26.116Z",
+  "ttfbMs": 6952,
+  "totalLatencyMs": 153094,
+  "httpStatus": 0,
+  "success": false,
+  "failureClass": "TIMEOUT",
+  "agenticDetails": {
+    "iterations": 11,
+    "toolCalls": 10,
+    "failedToolCalls": 1,
+    "filesChanged": [],
+    "testsPassed": false,
+    "hiddenTestsPassed": false
+  }
+}

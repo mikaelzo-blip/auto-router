@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-11",
+  "shape": "cross-module API contract change",
+  "taskName": "Safe schema migrator 3-phase rollout",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T12:19:23.062Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": false,
+  "iterations": 7,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": true,
+  "elapsedMs": 49016,
+  "ttfbMs": 4156,
+  "score": 0.5,
+  "filesChanged": [
+    "src/db/migrator.ts"
+  ],
+  "publicOutputSnippet": "✔ SchemaMigrator - 3-phase safe rollout adds not-null column with backfill (0.5724ms)\nℹ tests 1\nℹ suites 0\nℹ pass 1\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.6774\n",
+  "hiddenOutputSnippet": "✔ Hidden: SchemaMigrator - setNotNullConstraint must fail if null values remain in table (0.6512ms)\n✖ Hidden: SchemaMigrator - idempotent addNullableColumn does not overwrite existing data (0.1074ms)\nℹ tests 2\nℹ suites 0\nℹ pass 1\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 146.2952\n\n✖ "
+}

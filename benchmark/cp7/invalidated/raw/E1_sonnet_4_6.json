@@ -1,0 +1,25 @@
+{
+  "caseId": "E1",
+  "track": "agentic",
+  "name": "Repository Inspection + Bug Fix (Rate Limiter Boundary)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:46:30.504Z",
+  "ttfbMs": 3384,
+  "totalLatencyMs": 73742,
+  "httpStatus": 200,
+  "success": true,
+  "agenticDetails": {
+    "iterations": 8,
+    "toolCalls": 8,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/rate-limiter.ts",
+      "test/rate-limiter.test.ts"
+    ],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "publicTestOutput": "✔ SlidingWindowRateLimiter - allows requests up to limit (0.4527ms)\n✔ SlidingWindowRateLimiter - boundary expiration allows new requests (0.0709ms)\n✔ SlidingWindowRateLimiter - remaining requests calculation (0.0868ms)\n✔ SlidingWindowRateLimiter - timestamp at exact boundary is expired (0.0487ms)\n✔ SlidingWindowRateLimiter - one ms past boundary is allowed (0.0514ms)\n✔ SlidingWindowRateLimiter - isAllowed and getRemainingRequests consistent at boundary (0.0439ms)\n✔ SlidingWindowRateLimiter - req",
+    "hiddenTestOutput": "✔ Hidden: multi-key isolation (0.4211ms)\n✔ Hidden: sliding window rolling burst recovery (0.0746ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 141.0835\n"
+  }
+}

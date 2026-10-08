@@ -1,0 +1,36 @@
+{
+  "caseId": "A3",
+  "track": "architecture",
+  "name": "High-Integrity Transaction Architecture",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:28:55.930Z",
+  "ttfbMs": 4238,
+  "totalLatencyMs": 48256,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2161,
+    "completion": 12627,
+    "reasoning": 2812
+  },
+  "outputSnippet": "### System Domain Model & Core Accounting Invariants\n\nThe ledger is implemented as an immutable, append-only directed graph of financial transfers adhering to the formal principles of multi-currency double-entry bookkeeping. \n\n```\n                                  +----------------------------------",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "concurrency_control_strategy": 2,
+      "lock_ordering_and_deadlock_avoidance": 2,
+      "idempotency_contract": 2,
+      "reservation_lifecycle": 2,
+      "reconciliation_and_drift_detection": 2,
+      "failure_mode_analysis": 2,
+      "database_boundary_realism": 2,
+      "data_integrity_invariants": 2,
+      "tradeoff_analysis": 2,
+      "decision_clarity": 2
+    },
+    "passed": true
+  }
+}

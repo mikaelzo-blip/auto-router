@@ -1,0 +1,26 @@
+{
+  "taskId": "ST-10",
+  "category": "STRONG",
+  "taskName": "Authorization cache revocation trap",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:34:24.643Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [
+    "Omitted cache reconciliation / TTL safeguard"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.8,
+  "elapsedMs": 14719,
+  "ttfbMs": 1226,
+  "usage": {
+    "promptTokens": 2524,
+    "completionTokens": 623,
+    "reasoningTokens": 0,
+    "totalTokens": 3147
+  },
+  "rawResponse": "### Race\n\nLet the cached permission be version `v` with access granted.\n\n1. Request A reads the grant from PostgreSQL into memory, or begins a transaction that can still see it.\n2. Revocation deletes the Redis key.\n3. The revocation transaction has not committed. Request A writes its previously read grant back to Redis.\n4. The revocation commits.\n5. Later requests read the stale grant from Redis.\n\n`DEL` before commit is not sufficient: an in-flight reader can repopulate the cache, and a rollback can leave the cache unnecessarily empty. Deleting after commit alone also has a stale-fill race unless cache writes are fenced.\n\n### Safe revocation path\n\nUse a monotonically increasing authorization version for each user, resource, or other cache scope. Keep the version in PostgreSQL as the source of truth.\n\n1. **Revoke and advance the version atomically.** In one PostgreSQL transaction, revoke the permission, increment its scope’s version, and insert an outbox event containing the scope and new version. Commit all three together.\n2. **Do not publish invalidation before commit.** A worker processes the outbox after commit and updates Redis’s version fence. CDC can deliver the same committed event instead of an application-managed outbox worker.\n3. **Fence cache fills and reads.** Cache entries carry the version under which they were computed. Accept an entry only if its version matches the current fence. A fill may publish only if its version is not older than the fence; implement that check-and-write atomically, for example with a Redis Lua script. If a reader began before revocation and tries to write afterward, the newer fence rejects the stale fill.\n4. **Handle event ordering and retries.** Apply fence updates monotonically (`max(current, event_version)`). Make event processing idempotent. Retain and retry outbox events until delivery; alert on lag. Do not treat a missing or delayed event as proof that the cache is current.\n5. **Define cache-miss behavior.** Load permissions and their version from a consistent PostgreSQL snapshot. Before caching or authorizing from that result, ensure its version is not behind the current fence. If the fence is unavailable or cannot be checked, bypass the cache and use the authoritative database path, or fail closed.\n\nA post-commit invalidation without fencing is weaker: a stale reader can refill between commit and invalidation, or after invalidation if it started earlier. Version fencing prevents that refill from becoming valid.\n\n### Emergency behavior for sensitive actions\n\nFor high-impact operations, do not rely on asynchronously invalidated Redis state. Check authorization against PostgreSQL after the revocation commit, using a transaction or query with visibility guarantees appropriate to the operation. If the database or required consistency check is unavailable, deny the action. Keep ordinary cached authorization for less sensitive paths only if its maximum staleness is an explicit, accepted policy.\n\nThe core invariant: **once a revocation commits, no authorization decision may accept a cache entry computed at an older permission version.**"
+}

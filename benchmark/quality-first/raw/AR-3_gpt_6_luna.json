@@ -1,0 +1,33 @@
+{
+  "taskId": "AR-3",
+  "category": "ARCHITECTURE",
+  "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:24:00.584Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0.6,
+  "elapsedMs": 33935,
+  "ttfbMs": 4903,
+  "usage": {
+    "promptTokens": 2630,
+    "completionTokens": 1031,
+    "reasoningTokens": 0,
+    "totalTokens": 3661
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [
+    "Missing persistent saga coordinator state",
+    "Missing timeout / network partition handling during compensation"
+  ],
+  "details": {
+    "checklistScore": 3,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "## Architecture\n\nUse an **orchestrated Saga**. Order Service owns the checkout workflow; Payment Service and Inventory Service own their data and operations. A durable message broker transports commands and events, but the broker is not the source of Saga truth.\n\n```text\nClient\n  │\n  ▼\nOrder Service + Saga DB\n  │ commands/events via transactional outbox\n  ▼\nMessage broker\n  ├── Payment Service + l"
+}

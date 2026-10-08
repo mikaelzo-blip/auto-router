@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-01",
+  "category": "AGENTIC",
+  "taskName": "Rate limiter bug repair",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:25:04.691Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 7,
+  "toolCalls": 7,
+  "failedToolCalls": 2,
+  "prematureSuccess": false,
+  "elapsedMs": 24943,
+  "ttfbMs": 2598,
+  "score": 1,
+  "filesChanged": [
+    "src/rate-limiter.ts"
+  ],
+  "publicOutputSnippet": "✔ RateLimiter - allows requests within capacity (0.4711ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.3562ms)\n✔ RateLimiter - allows new requests after window expires (0.1039ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 114.",
+  "hiddenOutputSnippet": "✔ Hidden: RateLimiter - exact window boundary condition (0.4588ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.0811ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0837ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.4825\n"
+}

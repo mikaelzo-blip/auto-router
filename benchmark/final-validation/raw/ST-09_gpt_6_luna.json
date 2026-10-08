@@ -1,0 +1,27 @@
+{
+  "taskId": "ST-09",
+  "category": "STRONG",
+  "taskName": "Latency regression diagnosis",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:33:30.577Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Omitted comparative benchmark of compressed vs uncompressed 2MB payloads",
+    "Omitted maintaining compression where beneficial without global shutdown"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.6,
+  "elapsedMs": 19834,
+  "ttfbMs": 1582,
+  "usage": {
+    "promptTokens": 2507,
+    "completionTokens": 769,
+    "reasoningTokens": 0,
+    "totalTokens": 3276
+  },
+  "rawResponse": "### Likely mechanism\n\nCompression is probably CPU-bound for large, poorly compressible JSON. A 2 MB payload takes much more CPU to encode than small responses; under load, compression can saturate application cores, queue requests, and double p99. Lower egress is consistent with compression reducing bytes sent, but does not prove it caused the latency increase.\n\nAlso check for accidental **double compression**, synchronous compression on request threads, and compression work repeated on retries or cache misses.\n\n### Diagnosis plan\n\n1. **Compare before and after** at the same traffic mix and concurrency. Separate 2 MB responses from smaller responses; compare p50, p95, and p99.\n2. **Inspect CPU profiles** on application pods during the regression. Look for time in compression libraries, JSON serialization, buffer copying, allocation, and garbage collection.\n3. **Measure each stage** for large responses: handler time, serialization time, compression time, queue or thread-pool wait, and response write time. Use tracing or sampled instrumentation; avoid logging full payloads.\n4. **Record per-response properties:** uncompressed and compressed byte counts, encoding, compression ratio, compression level, and whether the response was already compressed.\n5. **Check saturation and contention:** pod CPU throttling, runnable threads, request queues, worker-pool limits, GC pauses, memory pressure, and downstream time. Verify whether p99 tracks compression CPU or queueing.\n6. **Run controlled tests** with representative 2 MB payloads, including highly compressible and poorly compressible JSON. Compare compression enabled and disabled, and vary algorithm and level. Hold concurrency and hardware constant.\n7. **Verify wire behavior:** confirm `Content-Encoding`, `Content-Length` or chunked transfer behavior, `Vary: Accept-Encoding`, and that clients request supported encodings. Check proxies and gateways for a second compression layer.\n\n### Measurements that confirm the diagnosis\n\nThe compression hypothesis is strong if, for affected responses:\n\n- Compression and related copying consume a substantial share of CPU.\n- Compression time rises with payload size or concurrency, while handler and downstream time remain stable.\n- CPU throttling, thread-pool wait, or queue time increases alongside p99.\n- Lower compression levels or a faster algorithm reduce CPU and p99 while preserving valid response bodies.\n- Poorly compressible payloads show high CPU with little byte reduction.\n- Disabling compression only for a controlled large-response cohort reduces p99 and CPU without changing other response classes.\n\nIf compression time is low, CPU profiles point elsewhere, or p99 does not respond to a controlled compression change, investigate serialization, allocation/GC, buffering, thread contention, and network or proxy backpressure instead.\n\n### Remediation options\n\n- **Tune compression level or algorithm** toward lower CPU cost; validate latency, size, and client compatibility with representative payloads.\n- **Apply a size- and content-aware policy.** Keep compression for responses where measured byte savings justify CPU cost; selectively skip it for large or poorly compressible responses. Base thresholds on benchmarks, not size alone.\n- **Avoid duplicate work.** Prevent double compression and repeated serialization/compression; cache precompressed representations where responses are stable and cache keys include content negotiation.\n- **Reduce CPU contention.** Bound compression concurrency, isolate compression workers from latency-sensitive request handling, or add application capacity if profiles show genuine CPU saturation. Bound queues to avoid moving latency into unbounded waiting.\n- **Reduce payload cost** where contract-compatible: remove redundant fields or offer pagination/streaming only if API semantics permit it.\n- **Roll out gradually** with per-size latency, CPU, error, and egress dashboards. Preserve decompressed body equivalence, content-negotiation behavior, and correct headers; test clients that do not support the selected encoding."
+}

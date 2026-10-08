@@ -1,0 +1,30 @@
+{
+  "taskId": "AR-4",
+  "category": "ARCHITECTURE",
+  "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:28:13.698Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 12092,
+  "ttfbMs": 3431,
+  "usage": {
+    "promptTokens": 2626,
+    "completionTokens": 2734,
+    "reasoningTokens": 794,
+    "totalTokens": 5360
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 5,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "### 1. Naive Migration Failure Modes\n\n1. **Lock Queue Starvation**:\n   `ALTER TABLE journal_entries ADD COLUMN ...` acquires an `ACCESS EXCLUSIVE` lock on the partitioned table and propagates it to every child partition. Any long-running read query blocks the `ALTER TABLE`. Subsequent reads and writes queue behind the `ACCESS EXCLUSIVE` request, exhausting the connection pool within seconds.\n\n2. *"
+}

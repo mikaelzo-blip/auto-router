@@ -1,0 +1,27 @@
+{
+  "caseId": "A1",
+  "family": "BUG_DIAGNOSIS_AND_REPAIR",
+  "name": "Localized Bug with Misleading Symptom (Rate Limiter)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T05:12:28.569Z",
+  "ttfbMs": 3002,
+  "totalLatencyMs": 18607,
+  "httpStatus": 200,
+  "success": true,
+  "evaluatorVersion": "cp7-2-agentic-harness-1",
+  "agenticDetails": {
+    "iterations": 10,
+    "toolCalls": 9,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/rate-limiter.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "testsPassed": true,
+    "hiddenTestsPassed": true,
+    "recoveryEvents": 1,
+    "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4143ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0768ms)\n✔ RateLimiter - allows new requests after window expires (0.0532ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.7831\n",
+    "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.4436ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.069ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0768ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.5276\n"
+  }
+}

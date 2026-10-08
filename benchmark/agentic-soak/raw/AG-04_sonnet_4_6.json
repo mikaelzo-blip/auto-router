@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-04",
+  "shape": "test-fix loop",
+  "taskName": "Rate limiter bug repair",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T12:10:27.339Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": false,
+  "iterations": 6,
+  "toolCalls": 6,
+  "failedToolCalls": 1,
+  "prematureSuccess": true,
+  "elapsedMs": 14795,
+  "ttfbMs": 2206,
+  "score": 0.5,
+  "filesChanged": [
+    "src/rate-limiter.ts"
+  ],
+  "publicOutputSnippet": "✔ RateLimiter - allows requests within capacity (0.4109ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0843ms)\n✔ RateLimiter - allows new requests after window expires (0.0574ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 103.",
+  "hiddenOutputSnippet": "✖ Hidden: RateLimiter - exact window boundary condition (1.2951ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.1044ms)\n✖ Hidden: RateLimiter - token count calculation accuracy (0.1807ms)\nℹ tests 3\nℹ suites 0\nℹ pass 1\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.2453\n\n✖ failing te"
+}

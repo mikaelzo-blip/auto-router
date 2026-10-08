@@ -1,0 +1,26 @@
+{
+  "taskId": "ST-02",
+  "category": "STRONG",
+  "taskName": "Debug a PostgreSQL oversell incident",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T10:27:06.641Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "correct": true,
+  "criticalOmissions": [
+    "Omitted atomic conditional UPDATE with available/stock predicate"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.8,
+  "elapsedMs": 12576,
+  "ttfbMs": 7906,
+  "usage": {
+    "promptTokens": 2537,
+    "completionTokens": 1968,
+    "reasoningTokens": 1176,
+    "totalTokens": 4505
+  },
+  "rawResponse": "### Race Diagnosis\n\nTime-of-check to time-of-use (TOCTOU) race condition in `READ COMMITTED` isolation. \n\n1. Transaction 1 executes `SELECT available` and reads `10`.\n2. Transaction 2 executes `SELECT available` concurrently and reads `10`.\n3. Application validates `7 <= 10` for both transactions.\n4. Transaction 1 executes `UPDATE` adding `7` to `reserved` and commits.\n5. Transaction 2 executes `UPDATE`. Under `READ COMMITTED`, Transaction 2 waits for Transaction 1 to commit, then re-evaluates the `UPDATE` on the newly committed row version.\n6. The `UPDATE` query lacks a conditional check on `available`. Transaction 2 unconditionally increments `reserved` by `7`.\n7. Total reserved becomes `14` against `10` available. Invariant violated.\n\n---\n\n### Invariant Enforcement\n\nAdd a database check constraint to enforce the non-negative invariant at the storage engine layer.\n\n```sql\nALTER TABLE inventory \nADD CONSTRAINT chk_inventory_non_negative_available \nCHECK (available >= 0);\n```\n\n---\n\n### Remediation 1: Atomic SQL (Optimistic Execution)\n\nEliminate the separate `SELECT` statement. Perform state validation and mutation in a single atomic `UPDATE` with a conditional predicate.\n\n```sql\nUPDATE inventory\nSET reserved = reserved + $2,\n    available = available - $2\nWHERE sku = $1 AND available >= $2\nRETURNING available;\n```\n\nCheck updated row count in application logic:\n* Rows updated = 1: Reservation succeeded.\n* Rows updated = 0: Reservation failed due to insufficient stock. Do not retry.\n\n---\n\n### Remediation 2: Pessimistic Row Locking\n\nSerialize access to the SKU row using `SELECT ... FOR UPDATE` within an explicit transaction.\n\n```sql\nBEGIN;\n\nSELECT available \nFROM inventory \nWHERE sku = $1 \nFOR UPDATE;\n\n-- Application checks: if (available < requested) { ROLLBACK; return Error; }\n\nUPDATE inventory \nSET reserved = reserved + $2,\n    available = available - $2\nWHERE sku = $1;\n\nCOMMIT;\n```\n\nTransaction 2 blocks at `SELECT ... FOR UPDATE` until Transaction 1 commits. Transaction 2 reads the updated `available` balance of `3`, fails the application-level validation, and rolls back.\n\n---\n\n### Failure Handling and Retry Behavior\n\n#### Error Types\n* Lock acquisition timeouts: SQLSTATE `55P03` (`lock_not_available`) or statement timeouts.\n* Deadlocks: SQLSTATE `40P01` (`deadlock_detected`).\n* Serialization failures: SQLSTATE `40001` (`serialization_failure`) if elevated to `REPEATABLE READ` or `SERIALIZABLE`.\n\n#### Retry Rules\n1. Distinguish domain failures from concurrency failures. Zero rows updated or `available < requested` indicates insufficient inventory; terminate immediately without retrying.\n2. For SQLSTATE `40001`, `40P01`, and `55P03`, roll back the active transaction immediately to release held locks.\n3. Re-execute the entire transaction block from the beginning.\n4. Apply truncated exponential backoff with full jitter before each attempt:\n   $$\\text{sleep} = \\text{random}(0, \\min(T_{\\max}, T_{\\text{base}} \\times 2^{\\text{attempt}}))$$\n5. Set maximum attempts to 3. If retries exhaust, abort and return a 503 or transient upstream error."
+}

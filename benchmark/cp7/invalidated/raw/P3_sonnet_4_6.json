@@ -1,0 +1,35 @@
+{
+  "caseId": "P3",
+  "track": "prd",
+  "name": "Spreadsheet-to-SaaS Migration Product Specification",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:35:35.340Z",
+  "ttfbMs": 1426,
+  "totalLatencyMs": 64556,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2213,
+    "completion": 3000
+  },
+  "outputSnippet": "# Product Requirements Document\n\n## ExcelBridge: Enterprise Inventory & Procurement Migration Platform\n\n**Document Version:** 1.0.0\n**Status:** Draft for Review\n**Classification:** Internal — Product & Engineering\n**Author:** Principal Product Architect\n**Date:** 2025-07-01\n**Revision Cycle:** Bi-we",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "mvp_scope_definition": 2,
+      "import_engine_spec": 2,
+      "error_recovery_ux": 2,
+      "role_and_permission_model": 2,
+      "parallel_run_strategy": 2,
+      "excel_export_compatibility": 2,
+      "onboarding_success_metrics": 2,
+      "non_goals_discipline": 2,
+      "acceptance_criteria": 2,
+      "engineering_actionability": 2
+    },
+    "passed": true
+  }
+}

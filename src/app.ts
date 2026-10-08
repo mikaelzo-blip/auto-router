@@ -2,8 +2,33 @@ import { Readable } from "node:stream";
 import Fastify, { type FastifyError, type FastifyInstance } from "fastify";
 import type { AppConfig } from "./config.js";
 import { routeRequest, supportsRequirements } from "./router.js";
+import { createSessionStore, routeShadow, type ShadowRequest } from "./shadow-router.js";
+import { DEFAULT_SHADOW_PROFILES } from "./shadow-profiles.js";
 import type { ChatCompletionRequest, ChatMessage } from "./types.js";
 import { sanitizedUpstreamError, UpstreamClient } from "./upstream.js";
+import { StreamLifecycleTracker, classifyUpstreamError, withStreamTimeouts } from "./reliability.js";
+import {
+  determineAutoReasoning,
+  resolveReasoningDecision,
+  applyReasoningToPayload,
+  normalizeReasoningEffort,
+  type ReasoningContext
+} from "./reasoning.js";
+import { classify429, QuotaCooldownTracker } from "./quota/cooldown.js";
+import { NineRouterQuotaSource } from "./quota/source.js";
+import {
+  resolveQuotaDecision,
+  filterAndRankWithQuota,
+  evaluateCandidateQuota,
+  DEFAULT_QUOTA_THRESHOLDS
+} from "./quota/policy.js";
+import type { QuotaDecisionResult } from "./quota/policy.js";
+import type { QuotaSource } from "./quota/types.js";
+import {
+  evaluateAgenticShadow,
+  createAgenticSessionStore,
+  type ShadowAgenticDecision
+} from "./agentic-shadow.js";
 
 const chatSchema = {
   type: "object",
@@ -59,10 +84,22 @@ export function buildApp(config: AppConfig): FastifyInstance {
   const upstream = new UpstreamClient(
     config.upstreamBaseUrl,
     config.upstreamApiKey,
-    config.upstreamTimeoutMs,
+    {
+      connectTimeoutMs: config.connectTimeoutMs ?? config.upstreamTimeoutMs,
+      headerTimeoutMs: config.headerTimeoutMs ?? config.upstreamTimeoutMs,
+      firstByteTimeoutMs: config.firstByteTimeoutMs ?? config.upstreamTimeoutMs,
+      streamIdleTimeoutMs: config.streamIdleTimeoutMs ?? config.upstreamTimeoutMs
+    },
     config.classifierModel,
     config.classifierTimeoutMs
   );
+
+  const timeoutConfig = {
+    connectTimeoutMs: config.connectTimeoutMs ?? config.upstreamTimeoutMs,
+    headerTimeoutMs: config.headerTimeoutMs ?? config.upstreamTimeoutMs,
+    firstByteTimeoutMs: config.firstByteTimeoutMs ?? config.upstreamTimeoutMs,
+    streamIdleTimeoutMs: config.streamIdleTimeoutMs ?? config.upstreamTimeoutMs
+  };
 
   const startedAt = Date.now();
 
@@ -74,6 +111,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
     fallbackEvents: 0,
     routeCounts: {} as Record<string, number>,
     statusCounts: {} as Record<string, number>,
+    streamLifecycle: {} as Record<string, number>,
     latencySamples: [] as number[]
   };
 
@@ -83,8 +121,124 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
   const MAX_LATENCY_SAMPLES = 200;
   const READINESS_CACHE_MS = 15_000;
+  const shadowStore = createSessionStore(15 * 60_000);
+  const rawProfiles = config.shadowProfiles ?? DEFAULT_SHADOW_PROFILES;
+  const shadowProfiles = rawProfiles
+    .map((p) => {
+      if ((p.id === "luna-agentic" || p.id === "sonnet-agentic") && (config.agenticPrimaryEnabled || config.sonnetAgenticEnabled)) {
+        return { ...p, enabled: true, enabledForExecution: true };
+      }
+      return p;
+    })
+    .filter((profile) => config.routerMode !== "v2" || !profile.model.startsWith("ar-"));
+
+  function v2FallbackModels(requirements: { vision: boolean; tools: boolean }): string[] {
+    const fallbackModel = config.routing.globalFallbackModel;
+    const fallbackCapabilities = config.routing.modelCapabilities[fallbackModel];
+    return fallbackModel.startsWith("ar-") || !fallbackCapabilities || !supportsRequirements(fallbackCapabilities, requirements)
+      ? []
+      : [fallbackModel];
+  }
+
+  function v2CandidateModels(requirements: { vision: boolean; tools: boolean }): string[] {
+    const profileModels = shadowProfiles
+      .filter((profile) => profile.enabled && supportsRequirements(profile.hardCapabilities, requirements))
+      .map((profile) => profile.model);
+    return uniqueModels([...profileModels, ...v2FallbackModels(requirements)]);
+  }
+
+  const quotaTracker = new QuotaCooldownTracker();
+  const quotaSource: QuotaSource = config.quotaSource ?? new NineRouterQuotaSource({
+    baseUrl: config.quotaSourceBaseUrl ?? "http://127.0.0.1:20128",
+    apiKey: config.upstreamApiKey,
+    refreshTtlMs: config.quotaRefreshTtlMs ?? 30_000,
+    staleFallbackMs: config.quotaStaleFallbackMs ?? 60_000,
+    timeoutMs: config.quotaSourceTimeoutMs ?? 5000
+  });
+  const quotaPolicy = config.quotaPolicy ?? "off";
+  const quotaThresholds = config.quotaThresholds ?? DEFAULT_QUOTA_THRESHOLDS;
+
+  app.addHook("onClose", async () => {
+    quotaSource.close();
+  });
+
+  function computeShadow(body: ChatCompletionRequest, sessionId = "anonymous") {
+    const latestUser = [...body.messages].reverse().find((message) => message.role === "user");
+    const currentIntent = typeof latestUser?.content === "string" ? latestUser.content : undefined;
+    const recentMessages = body.messages.slice(-3);
+    const recentFailure = recentMessages.some((message) => message.role === "tool" && /fail|error|reject/i.test(String(message.content)))
+      ? "recent tool failure"
+      : undefined;
+    const recentTestOutcome = recentMessages.some((message) => /tests? (passed|green)|build passed/i.test(String(message.content)))
+      ? "passed"
+      : recentMessages.some((message) => /tests? (failed|red)|build failed/i.test(String(message.content)))
+        ? "failed"
+        : undefined;
+    const shadowRequest: ShadowRequest = {
+      sessionId,
+      messages: body.messages,
+      currentIntent,
+      recentFailure,
+      recentTestOutcome,
+      hasVisionInput: Boolean(body.messages.some((message) => Array.isArray(message.content) && message.content.some((part) => part && typeof part === "object" && ["image_url", "input_image", "image"].includes(String((part as { type?: unknown }).type))))),
+      toolsProvided: Boolean(body.tools?.length || body.functions?.length),
+      policy: "balanced"
+    };
+    return routeShadow(shadowRequest, shadowProfiles, shadowStore);
+  }
+
+  const agenticSessionStore = createAgenticSessionStore(120_000);
+
+  function computeAgenticShadow(
+    body: ChatCompletionRequest,
+    actualProfile: string,
+    actualModel: string,
+    quotaSnapshot?: any,
+    sessionId = "anonymous"
+  ): ShadowAgenticDecision {
+    const lunaProfile = shadowProfiles.find((p) => p.id === "luna-agentic");
+    const lunaQuotaState = (lunaProfile && quotaSnapshot)
+      ? evaluateCandidateQuota(lunaProfile, quotaSnapshot, quotaTracker, undefined, quotaThresholds)
+      : undefined;
+
+    const sonnetProfile = shadowProfiles.find((p) => p.id === "sonnet-agentic");
+    const sonnetQuotaState = (sonnetProfile && quotaSnapshot)
+      ? evaluateCandidateQuota(sonnetProfile, quotaSnapshot, quotaTracker, undefined, quotaThresholds)
+      : undefined;
+
+    const recentMessages = body.messages.slice(-3);
+    const recentFailure = recentMessages.some((message) => message.role === "tool" && /fail|error|reject/i.test(String(message.content)))
+      ? "recent tool failure"
+      : undefined;
+    const recentTestOutcome = recentMessages.some((message) => /tests? (passed|green)|build passed/i.test(String(message.content)))
+      ? "passed"
+      : recentMessages.some((message) => /tests? (failed|red)|build failed/i.test(String(message.content)))
+        ? "failed"
+        : undefined;
+
+    return evaluateAgenticShadow(
+      {
+        sessionId,
+        messages: body.messages,
+        recentFailure,
+        recentTestOutcome,
+        toolsProvided: Boolean(body.tools?.length || body.functions?.length),
+        claudeQuotaStatus: sonnetQuotaState?.status,
+        claudeQuotaRatio: sonnetQuotaState?.effectiveRemainingRatio,
+        agenticQuotaStatus: lunaQuotaState?.status ?? sonnetQuotaState?.status,
+        agenticQuotaRatio: lunaQuotaState?.effectiveRemainingRatio ?? sonnetQuotaState?.effectiveRemainingRatio
+      },
+      actualProfile,
+      actualModel,
+      agenticSessionStore
+    );
+  }
 
   function configuredUpstreams(): string[] {
+    if (config.routerMode === "v2") {
+      return v2CandidateModels({ vision: false, tools: false });
+    }
+
     const models: string[] = [];
 
     for (const route of Object.values(config.routing.routes)) {
@@ -286,6 +440,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
       statusCodes: metrics.statusCounts,
 
       latency: latencyStats(),
+      streamLifecycle: metrics.streamLifecycle,
 
       readiness: readinessCache?.value
         ? {
@@ -335,13 +490,113 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       try {
-        return await routeRequest(
+        const actual = await routeRequest(
           request.body,
           config.routing,
           config.classifierModel
             ? upstream
             : undefined
         );
+        let shadowV2;
+        try {
+          shadowV2 = computeShadow(request.body, request.headers["x-session-id"]?.toString());
+        } catch {
+          if (config.routerMode === "v2") {
+            return reply.code(503).send(
+              openAiError("V2 execution profile unavailable", "model_unavailable")
+            );
+          }
+          shadowV2 = { error: "shadow routing unavailable" };
+        }
+
+        const clientEffort = normalizeReasoningEffort(request.body.reasoning_effort ?? (request.body.reasoning as any)?.effort);
+        const reasoningContext: ReasoningContext = {
+          taskType: shadowV2 && typeof shadowV2 === "object" && "taskType" in shadowV2 ? (shadowV2 as any).taskType : undefined,
+          complexity: shadowV2 && typeof shadowV2 === "object" && "complexity" in shadowV2 ? (shadowV2 as any).complexity : undefined,
+          risk: shadowV2 && typeof shadowV2 === "object" && "risk" in shadowV2 ? (shadowV2 as any).risk : undefined,
+          promptText: typeof request.body.messages?.[request.body.messages.length - 1]?.content === "string" ? String(request.body.messages[request.body.messages.length - 1]?.content) : undefined,
+          selectedProfile: shadowV2 && typeof shadowV2 === "object" && "selectedProfile" in shadowV2 ? (shadowV2 as any).selectedProfile : undefined
+        };
+        const autoReasoning = determineAutoReasoning(reasoningContext);
+        const matchedProfile = (reasoningContext.selectedProfile ? shadowProfiles.find((p) => p.id === reasoningContext.selectedProfile) : undefined) ??
+          shadowProfiles.find((p) => p.model === actual.upstreamModel) ??
+          shadowProfiles[0]!;
+
+        const currentPolicy = config.reasoningPolicy ?? "passthrough";
+        let resolvedReasoning = resolveReasoningDecision({
+          policy: currentPolicy,
+          clientEffort,
+          autoDesired: autoReasoning.desired,
+          profile: matchedProfile,
+          escalationApplied: autoReasoning.escalationApplied,
+          deescalationApplied: autoReasoning.deescalationApplied,
+          reasons: autoReasoning.reasons
+        });
+
+        const quotaSnapshot = await quotaSource.getSnapshot();
+        const quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowV2 && typeof shadowV2 === "object" && "selectedProfile" in shadowV2 ? (shadowV2 as any).selectedProfile : undefined,
+          taskType: reasoningContext.taskType ?? "general",
+          specialistIntent: shadowV2 && typeof shadowV2 === "object" && "specialistIntent" in shadowV2 ? (shadowV2 as any).specialistIntent : undefined,
+          complexity: reasoningContext.complexity ?? "medium",
+          risk: reasoningContext.risk ?? "low",
+          minimumQualityTier: shadowV2 && typeof shadowV2 === "object" && "minimumQualityTier" in shadowV2 ? (shadowV2 as any).minimumQualityTier : "cheap",
+          requiredCapabilities: shadowV2 && typeof shadowV2 === "object" && "requiredCapabilities" in shadowV2 ? (shadowV2 as any).requiredCapabilities : { tools: false, vision: false },
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        const baselineProfile = (quotaPolicy === "auto" && quotaDecision.selectedProfile)
+          ? shadowProfiles.find((p) => p.id === quotaDecision.selectedProfile) ?? matchedProfile
+          : matchedProfile;
+
+        const shadowAgentic = computeAgenticShadow(
+          request.body,
+          baselineProfile.id,
+          baselineProfile.model,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+
+        const effectiveProfile = ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && shadowAgentic?.wouldUseSonnet)
+          ? shadowProfiles.find((p) => p.id === "luna-agentic") ?? shadowProfiles.find((p) => p.id === "sonnet-agentic") ?? baselineProfile
+          : baselineProfile;
+
+        const debugModel = config.routerMode === "v2"
+          ? effectiveProfile.model
+          : actual.upstreamModel;
+
+        return {
+          ...actual,
+          ...(config.routerMode === "v2" ? { upstreamModel: debugModel } : {}),
+          actual: { route: actual.route, upstreamModel: actual.upstreamModel },
+          selectedProfile: effectiveProfile.id,
+          selectedModel: effectiveProfile.model,
+          sonnetAgenticEnabled: config.sonnetAgenticEnabled ?? false,
+          complexity: reasoningContext.complexity ?? "medium",
+          risk: reasoningContext.risk ?? "low",
+          shadowV2,
+          shadowAgentic,
+          reasoning: resolvedReasoning.debugSummary,
+          quota: {
+            policy: quotaDecision.policy,
+            status: quotaDecision.status,
+            effectiveRemainingRatio: quotaDecision.effectiveRemainingRatio,
+            limitingBuckets: quotaDecision.limitingBuckets,
+            snapshotAgeMs: quotaDecision.snapshotAgeMs,
+            stale: quotaDecision.stale,
+            selectionEffect: quotaDecision.selectionEffect,
+            decisionReason: quotaDecision.decisionReason,
+            hypotheticalProfile: quotaDecision.hypotheticalProfile,
+            hypotheticalModel: quotaDecision.hypotheticalModel,
+            wouldSwitch: quotaDecision.wouldSwitch,
+            switchReason: quotaDecision.switchReason,
+            candidateStates: quotaDecision.candidateStates
+          }
+        };
       } catch (error) {
         return reply.code(400).send(
           openAiError(
@@ -354,6 +609,75 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
     }
   );
+
+  app.get("/debug/quota", async (request, reply) => {
+    const snapshot = await quotaSource.getSnapshot();
+    const activeCooldowns = quotaTracker.getActiveCooldowns();
+
+    const candidateStates: Record<string, any> = {};
+    for (const profile of shadowProfiles) {
+      candidateStates[profile.id] = evaluateCandidateQuota(
+        profile,
+        snapshot,
+        quotaTracker,
+        undefined,
+        quotaThresholds
+      );
+    }
+
+    const pools: Record<string, any> = {};
+    if (snapshot.accounts) {
+      const agProfile = shadowProfiles.find((p) => p.id === "gemini-flash-low");
+      if (agProfile && candidateStates[agProfile.id]?.pool) {
+        const p = candidateStates[agProfile.id].pool;
+        pools["antigravity"] = {
+          provider: "antigravity",
+          accountsTotal: p.totalAccountCount,
+          accountsUsable: p.usableAccountCount,
+          poolStatus: p.status,
+          bestRemainingRatio: p.bestRemainingRatio,
+          accounts: p.accounts?.map((a: any) => ({
+            accountAlias: a.accountAlias,
+            status: a.status,
+            effectiveRemainingRatio: a.effectiveRemainingRatio,
+            limitingBuckets: a.limitingBuckets,
+            resetAt: a.resetAt,
+            providerHealth: a.providerHealth
+          }))
+        };
+      }
+      const cxProfile = shadowProfiles.find((p) => p.id === "codex-5.3");
+      if (cxProfile && candidateStates[cxProfile.id]?.pool) {
+        const p = candidateStates[cxProfile.id].pool;
+        pools["codex"] = {
+          provider: "codex",
+          accountsTotal: p.totalAccountCount,
+          accountsUsable: p.usableAccountCount,
+          poolStatus: p.status,
+          bestRemainingRatio: p.bestRemainingRatio,
+          accounts: p.accounts?.map((a: any) => ({
+            accountAlias: a.accountAlias,
+            status: a.status,
+            effectiveRemainingRatio: a.effectiveRemainingRatio,
+            limitingBuckets: a.limitingBuckets,
+            resetAt: a.resetAt,
+            providerHealth: a.providerHealth
+          }))
+        };
+      }
+    }
+
+    return {
+      policy: quotaPolicy,
+      stale: snapshot.stale,
+      observedAt: snapshot.observedAt,
+      providerHealth: snapshot.providerHealth,
+      buckets: snapshot.buckets,
+      candidateStates,
+      activeCooldowns,
+      pools
+    };
+  });
 
   app.post<{ Body: ChatCompletionRequest }>(
     "/v1/chat/completions",
@@ -429,6 +753,17 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      let shadowResult: ReturnType<typeof computeShadow> | undefined;
+      try {
+        shadowResult = computeShadow(request.body, request.headers["x-session-id"]?.toString());
+      } catch (error) {
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed");
+        if (config.routerMode === "v2") {
+          return reply.code(503).send(
+            openAiError("V2 execution profile unavailable", "model_unavailable")
+          );
+        }
+      }
 
       // Automatic grounded search hanya untuk virtual model "auto".
       //
@@ -524,6 +859,17 @@ export function buildApp(config: AppConfig): FastifyInstance {
                   answerText.trim() +
                   sourceText;
 
+                const groundedModel = config.routerMode === "v2"
+                  ? (shadowResult
+                    ? shadowProfiles.find((profile) => profile.id === shadowResult.selectedProfile)?.model
+                    : undefined) ?? v2CandidateModels({ vision: false, tools: false })[0]
+                  : decision.upstreamModel;
+                if (!groundedModel) {
+                  return reply.code(503).send(
+                    openAiError("V2 execution profile unavailable", "model_unavailable")
+                  );
+                }
+
                 reply.header(
                   "x-auto-router-route",
                   decision.route
@@ -531,7 +877,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
                 reply.header(
                   "x-auto-router-model",
-                  decision.upstreamModel
+                  groundedModel
                 );
 
                 reply.header(
@@ -552,7 +898,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
                   created:
                     Math.floor(Date.now() / 1000),
                   model:
-                    decision.upstreamModel,
+                    groundedModel,
 
                   choices: [{
                     index: 0,
@@ -575,24 +921,184 @@ export function buildApp(config: AppConfig): FastifyInstance {
         }
       }
 
-      const forwarded = {
+      let selectedModel = decision.upstreamModel;
+      let selectionCandidates = config.routerMode === "v2"
+        ? v2CandidateModels(decision.requirements)
+        : uniqueModels(
+          config.routing.routes[
+            decision.route
+          ]?.selectionPriority ?? [
+            decision.upstreamModel,
+            config.routing.globalFallbackModel
+          ]
+        ).filter((model) =>
+          supportsRequirements(
+            config.routing.modelCapabilities[model]!,
+            decision.requirements
+          )
+        );
+      if (config.routerMode === "v2" && selectionCandidates[0]) {
+        selectedModel = selectionCandidates[0];
+      }
+
+      let quotaDecision: QuotaDecisionResult | undefined;
+      let quotaSnapshot: any | undefined;
+      if (config.routerMode === "v2" && shadowResult) {
+        quotaSnapshot = await quotaSource.getSnapshot();
+        quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowResult.selectedProfile,
+          taskType: shadowResult.taskType,
+          specialistIntent: shadowResult.specialistIntent,
+          complexity: shadowResult.complexity,
+          risk: shadowResult.risk,
+          minimumQualityTier: shadowResult.minimumQualityTier,
+          requiredCapabilities: shadowResult.requiredCapabilities,
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        if (quotaPolicy === "auto") {
+          if (!quotaDecision.selectedProfile) {
+            reply.header("x-auto-router-quota-policy", "auto");
+            reply.header("x-auto-router-quota-status", "exhausted");
+            reply.header("x-auto-router-quota-effect", "no_eligible_candidate");
+            return reply.code(503).send(
+              openAiError("No eligible model currently available", "model_unavailable")
+            );
+          }
+          const selectedProfileId = quotaDecision.selectedProfile;
+          const profile = shadowProfiles.find((p) => p.id === selectedProfileId);
+          if (profile) {
+            selectedModel = profile.model;
+            const quotaRanked = filterAndRankWithQuota({
+              taskType: shadowResult.taskType,
+              specialistIntent: shadowResult.specialistIntent,
+              complexity: shadowResult.complexity,
+              risk: shadowResult.risk,
+              minimumQualityTier: shadowResult.minimumQualityTier,
+              requiredCapabilities: shadowResult.requiredCapabilities,
+              profiles: shadowProfiles,
+              snapshot: quotaSnapshot,
+              cooldownTracker: quotaTracker,
+              policy: "auto",
+              thresholds: quotaThresholds
+            });
+            const altModels = quotaRanked
+              .filter((p) => p.id !== profile.id)
+              .map((p) => p.model);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
+          }
+        } else {
+          const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
+          if (profile) {
+            selectedModel = profile.model;
+            const altModels = shadowResult.alternatives
+              .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
+              .filter((m): m is string => Boolean(m));
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
+          }
+        }
+      }
+
+      let forwarded = {
         ...request.body,
-        model: decision.upstreamModel
+        model: selectedModel
       };
 
-      const candidates = uniqueModels(
-        config.routing.routes[
-          decision.route
-        ]?.selectionPriority ?? [
-          decision.upstreamModel,
-          config.routing.globalFallbackModel
-        ]
-      ).filter((model) =>
-        supportsRequirements(
-          config.routing.modelCapabilities[model]!,
-          decision.requirements
-        )
-      );
+      const clientEffort = normalizeReasoningEffort(request.body.reasoning_effort ?? (request.body.reasoning as any)?.effort);
+      const reasoningContext: ReasoningContext = {
+        taskType: shadowResult?.taskType,
+        complexity: shadowResult?.complexity,
+        risk: shadowResult?.risk,
+        recentFailure: shadowResult && "recentFailure" in shadowResult ? (shadowResult as any).recentFailure : undefined,
+        recentTestOutcome: shadowResult && "recentTestOutcome" in shadowResult ? (shadowResult as any).recentTestOutcome : undefined,
+        selectedProfile: shadowResult?.selectedProfile
+      };
+      const autoReasoning = determineAutoReasoning(reasoningContext);
+      const effectiveProfileId = (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+        ? quotaDecision.selectedProfile
+        : shadowResult?.selectedProfile;
+
+      const matchedProfile = (effectiveProfileId ? shadowProfiles.find((p) => p.id === effectiveProfileId) : undefined) ??
+        shadowProfiles.find((p) => p.model === selectedModel) ??
+        shadowProfiles[0]!;
+
+      const currentPolicy = config.reasoningPolicy ?? "passthrough";
+      let resolvedReasoning = resolveReasoningDecision({
+        policy: currentPolicy,
+        clientEffort,
+        autoDesired: autoReasoning.desired,
+        profile: matchedProfile,
+        escalationApplied: autoReasoning.escalationApplied,
+        deescalationApplied: autoReasoning.deescalationApplied,
+        reasons: autoReasoning.reasons
+      });
+
+      if (currentPolicy === "auto") {
+        forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+      } else if (currentPolicy === "passthrough") {
+        if (clientEffort) {
+          forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+        } else {
+          delete (forwarded as Record<string, unknown>).reasoning;
+        }
+      } else if (currentPolicy === "shadow") {
+        if (clientEffort) {
+          forwarded = applyReasoningToPayload(forwarded, clientEffort);
+        } else {
+          delete (forwarded as Record<string, unknown>).reasoning;
+        }
+      }
+
+      let agenticShadow: ReturnType<typeof computeAgenticShadow> | undefined;
+      try {
+        agenticShadow = computeAgenticShadow(
+          request.body,
+          matchedProfile.id,
+          selectedModel,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+      } catch (err) {
+        request.log.warn({ err }, "agentic shadow calculation failed; continuing");
+      }
+
+      let candidates = selectionCandidates;
+
+      if (config.routerMode === "v2" && (config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet) {
+        selectedModel = "cx/gpt-6-luna";
+        const fallbackSonnet = "ag/claude-sonnet-4-6";
+        const fallbackSol = "cx/gpt-6-sol";
+        const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
+        candidates = uniqueModels([
+          selectedModel,
+          fallbackSonnet,
+          fallbackSol,
+          geminiHighModel,
+          ...v2FallbackModels(shadowResult?.requiredCapabilities ?? { vision: false, tools: false })
+        ]);
+        forwarded = {
+          ...forwarded,
+          model: selectedModel
+        };
+
+        const lunaProfile = shadowProfiles.find((p) => p.id === "luna-agentic") ?? shadowProfiles.find((p) => p.id === "sonnet-agentic");
+        if (lunaProfile && currentPolicy === "auto") {
+          resolvedReasoning = resolveReasoningDecision({
+            policy: currentPolicy,
+            clientEffort,
+            autoDesired: autoReasoning.desired,
+            profile: lunaProfile,
+            escalationApplied: autoReasoning.escalationApplied,
+            deescalationApplied: autoReasoning.deescalationApplied,
+            reasons: autoReasoning.reasons
+          });
+          forwarded = applyReasoningToPayload(forwarded, resolvedReasoning.effectiveReasoningEffort);
+        }
+      }
 
       if (candidates.length === 0) {
         return reply.code(400).send(
@@ -612,6 +1118,8 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
 
         let response: Response | undefined;
+        let successfulModel = selectedModel;
+        const unavailableProviders = new Set<string>();
 
         for (
           let index = 0;
@@ -620,6 +1128,10 @@ export function buildApp(config: AppConfig): FastifyInstance {
         ) {
 
           const model = candidates[index]!;
+          if (model.startsWith("cx/") && unavailableProviders.has("codex")) {
+            continue;
+          }
+          successfulModel = model;
 
           metrics.upstreamAttempts += 1;
 
@@ -660,6 +1172,22 @@ export function buildApp(config: AppConfig): FastifyInstance {
             continue;
           }
 
+          if (response.status === 429 || response.status === 403) {
+            const errClone = response.clone();
+            const text = await errClone.text().catch(() => "");
+            const headerObj: Record<string, string> = {};
+            response.headers.forEach((v, k) => {
+              headerObj[k.toLowerCase()] = v;
+            });
+            quotaTracker.recordResponse(model, response.status, text, headerObj);
+            const provider = model.startsWith("cx/") ? "codex" : model.startsWith("ag/") ? "antigravity" : undefined;
+            const classification = classify429(response.status, text, headerObj);
+            if (provider && classification.isQuotaExhaustion) {
+              quotaTracker.recordResponse(provider, response.status, text, headerObj);
+              unavailableProviders.add(provider);
+            }
+          }
+
           if (
             !await shouldFallback(
               response,
@@ -690,6 +1218,16 @@ export function buildApp(config: AppConfig): FastifyInstance {
           );
         }
 
+        if (quotaDecision) {
+          reply.header("x-auto-router-quota-policy", quotaDecision.policy);
+          reply.header("x-auto-router-quota-status", quotaDecision.status);
+          reply.header("x-auto-router-quota-remaining", quotaDecision.effectiveRemainingRatio.toFixed(4));
+          reply.header("x-auto-router-quota-limiting-bucket", quotaDecision.limitingBuckets.join(","));
+          reply.header("x-auto-router-quota-effect", quotaDecision.selectionEffect);
+        } else {
+          reply.header("x-auto-router-quota-policy", quotaPolicy);
+        }
+
         if (!response.ok) {
           return reply
             .code(
@@ -708,6 +1246,64 @@ export function buildApp(config: AppConfig): FastifyInstance {
           "x-auto-router-route",
           decision.route
         );
+
+        reply.header(
+          "x-auto-router-model",
+          successfulModel
+        );
+
+        reply.header(
+          "x-auto-router-mode",
+          config.routerMode
+        );
+
+        reply.header(
+          "x-auto-router-reasoning-policy",
+          resolvedReasoning.policy
+        );
+        reply.header(
+          "x-auto-router-reasoning-desired",
+          resolvedReasoning.desiredReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-effective",
+          resolvedReasoning.effectiveReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-clamped",
+          String(resolvedReasoning.clamped)
+        );
+
+        if (agenticShadow) {
+          reply.header("x-auto-router-shadow-agentic-eligible", agenticShadow.shadowAgenticEligible ? "true" : "false");
+          reply.header("x-auto-router-shadow-agentic-profile", agenticShadow.shadowAgenticProfile);
+          reply.header("x-auto-router-shadow-agentic-model", agenticShadow.shadowAgenticModel);
+          reply.header("x-auto-router-shadow-agentic-reason", agenticShadow.shadowAgenticReason);
+        }
+
+        if (config.routerMode === "v2" && shadowResult) {
+          const effectiveProfile = ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet)
+            ? (successfulModel === "cx/gpt-6-luna" ? "luna-agentic" : successfulModel === "ag/claude-sonnet-4-6" ? "sonnet-agentic" : "gemini-flash-high")
+            : (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+              ? quotaDecision.selectedProfile
+              : shadowResult.selectedProfile;
+          reply.header(
+            "x-auto-router-profile",
+            effectiveProfile
+          );
+          reply.header(
+            "x-auto-router-tier",
+            ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet && (successfulModel === "cx/gpt-6-luna" || successfulModel === "ag/claude-sonnet-4-6"))
+              ? "strong"
+              : shadowResult.minimumQualityTier
+          );
+          reply.header(
+            "x-auto-router-switch-reason",
+            ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet)
+              ? (successfulModel === "cx/gpt-6-luna" ? agenticShadow.shadowAgenticReason : `upstream_fallback_to_${successfulModel.replace(/[^a-zA-Z0-9_-]/g, "_")}`)
+              : (quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason)
+          );
+        }
 
         const contentType =
           response.headers.get(
@@ -736,13 +1332,21 @@ export function buildApp(config: AppConfig): FastifyInstance {
             "keep-alive"
           );
 
-          return reply.send(
-            Readable.fromWeb(
-              response.body as
-                import("node:stream/web")
-                  .ReadableStream
-            )
+          const lifecycle = new StreamLifecycleTracker((state) => {
+            metrics.streamLifecycle[state] = (metrics.streamLifecycle[state] ?? 0) + 1;
+          });
+          const timedBody = withStreamTimeouts(
+            response.body as unknown as ReadableStream<Uint8Array>,
+            timeoutConfig,
+            lifecycle
           );
+          request.log.info(
+            { lifecycle: lifecycle.snapshot().state, route: decision.route },
+            "upstream stream started"
+          );
+          return reply.send(Readable.fromWeb(
+            timedBody as unknown as import("node:stream/web").ReadableStream
+          ));
         }
 
         const body =
@@ -757,7 +1361,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         request.log.warn(
           {
             category:
-              upstreamErrorCategory(error),
+                          classifyUpstreamError(error),
             route: decision.route
           },
           "upstream request failed"
@@ -1012,23 +1616,190 @@ export function buildApp(config: AppConfig): FastifyInstance {
       }
 
       measuredRoute = decision.route;
+      let shadowResult: ReturnType<typeof computeShadow> | undefined;
+      try {
+        shadowResult = computeShadow(routingRequest, request.headers["x-session-id"]?.toString());
+      } catch (error) {
+        request.log.warn({ category: "shadow_router_failure", error: error instanceof Error ? error.name : "unknown" }, "shadow routing failed");
+        if (config.routerMode === "v2") {
+          return reply.code(503).send(
+            openAiError("V2 execution profile unavailable", "model_unavailable")
+          );
+        }
+      }
 
-      const candidates = uniqueModels(
-        config.routing.routes[
-          decision.route
-        ]?.selectionPriority ?? [
-          decision.upstreamModel,
-          config.routing.globalFallbackModel
-        ]
-      ).filter((model) =>
-        supportsRequirements(
-          config.routing.modelCapabilities[model]!,
-          decision.requirements
-        )
-      );
+      const clientEffort = normalizeReasoningEffort(body.reasoning_effort ?? (body.reasoning as any)?.effort);
+      const reasoningContext: ReasoningContext = {
+        taskType: shadowResult?.taskType,
+        complexity: shadowResult?.complexity,
+        risk: shadowResult?.risk,
+        selectedProfile: shadowResult?.selectedProfile
+      };
+      const autoReasoning = determineAutoReasoning(reasoningContext);
+      const matchedProfile = (shadowResult ? shadowProfiles.find((p) => p.id === shadowResult.selectedProfile) : undefined) ??
+        shadowProfiles.find((p) => p.model === decision.upstreamModel) ??
+        shadowProfiles[0]!;
+
+      const currentPolicy = config.reasoningPolicy ?? "passthrough";
+      let resolvedReasoning = resolveReasoningDecision({
+        policy: currentPolicy,
+        clientEffort,
+        autoDesired: autoReasoning.desired,
+        profile: matchedProfile,
+        escalationApplied: autoReasoning.escalationApplied,
+        deescalationApplied: autoReasoning.deescalationApplied,
+        reasons: autoReasoning.reasons
+      });
+
+      let forwardedBody: Record<string, unknown> = {
+        ...body
+      };
+      if (currentPolicy === "auto") {
+        forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+      } else if (currentPolicy === "passthrough") {
+        if (clientEffort) {
+          forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+        } else {
+          delete forwardedBody.reasoning;
+        }
+      } else if (currentPolicy === "shadow") {
+        if (clientEffort) {
+          forwardedBody = applyReasoningToPayload(forwardedBody, clientEffort);
+        } else {
+          delete forwardedBody.reasoning;
+        }
+      }
+
+      let selectedModel = decision.upstreamModel;
+      let selectionCandidates = config.routerMode === "v2"
+        ? v2CandidateModels(decision.requirements)
+        : uniqueModels(
+          config.routing.routes[
+            decision.route
+          ]?.selectionPriority ?? [
+            decision.upstreamModel,
+            config.routing.globalFallbackModel
+          ]
+        ).filter((model) =>
+          supportsRequirements(
+            config.routing.modelCapabilities[model]!,
+            decision.requirements
+          )
+        );
+      if (config.routerMode === "v2" && selectionCandidates[0]) {
+        selectedModel = selectionCandidates[0];
+      }
+
+      let quotaDecision: QuotaDecisionResult | undefined;
+      let quotaSnapshot: any | undefined;
+      if (config.routerMode === "v2" && shadowResult) {
+        quotaSnapshot = await quotaSource.getSnapshot();
+        quotaDecision = resolveQuotaDecision({
+          standardSelectedProfile: shadowResult.selectedProfile,
+          taskType: shadowResult.taskType,
+          specialistIntent: shadowResult.specialistIntent,
+          complexity: shadowResult.complexity,
+          risk: shadowResult.risk,
+          minimumQualityTier: shadowResult.minimumQualityTier,
+          requiredCapabilities: shadowResult.requiredCapabilities,
+          profiles: shadowProfiles,
+          snapshot: quotaSnapshot,
+          cooldownTracker: quotaTracker,
+          quotaPolicy,
+          thresholds: quotaThresholds
+        });
+
+        if (quotaPolicy === "auto") {
+          if (!quotaDecision.selectedProfile) {
+            reply.header("x-auto-router-quota-policy", "auto");
+            reply.header("x-auto-router-quota-status", "exhausted");
+            reply.header("x-auto-router-quota-effect", "no_eligible_candidate");
+            return reply.code(503).send(
+              openAiError("No eligible model currently available", "model_unavailable")
+            );
+          }
+          const selectedProfileId = quotaDecision.selectedProfile;
+          const profile = shadowProfiles.find((p) => p.id === selectedProfileId);
+          if (profile) {
+            selectedModel = profile.model;
+            const quotaRanked = filterAndRankWithQuota({
+              taskType: shadowResult.taskType,
+              specialistIntent: shadowResult.specialistIntent,
+              complexity: shadowResult.complexity,
+              risk: shadowResult.risk,
+              minimumQualityTier: shadowResult.minimumQualityTier,
+              requiredCapabilities: shadowResult.requiredCapabilities,
+              profiles: shadowProfiles,
+              snapshot: quotaSnapshot,
+              cooldownTracker: quotaTracker,
+              policy: "auto",
+              thresholds: quotaThresholds
+            });
+            const altModels = quotaRanked
+              .filter((p) => p.id !== profile.id)
+              .map((p) => p.model);
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
+          }
+        } else {
+          const profile = shadowProfiles.find((p) => p.id === shadowResult.selectedProfile);
+          if (profile) {
+            selectedModel = profile.model;
+            const altModels = shadowResult.alternatives
+              .map((altId) => shadowProfiles.find((p) => p.id === altId)?.model)
+              .filter((m): m is string => Boolean(m));
+            selectionCandidates = uniqueModels([profile.model, ...altModels, ...v2FallbackModels(shadowResult.requiredCapabilities)]);
+          }
+        }
+      }
+
+      let agenticShadow: ReturnType<typeof computeAgenticShadow> | undefined;
+      try {
+        agenticShadow = computeAgenticShadow(
+          routingRequest,
+          matchedProfile.id,
+          selectedModel,
+          quotaSnapshot,
+          request.headers["x-session-id"]?.toString()
+        );
+      } catch (err) {
+        request.log.warn({ err }, "agentic shadow calculation failed; continuing");
+      }
+
+      let candidates = selectionCandidates;
+
+      if (config.routerMode === "v2" && (config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet) {
+        selectedModel = "cx/gpt-6-luna";
+        const fallbackSonnet = "ag/claude-sonnet-4-6";
+        const fallbackSol = "cx/gpt-6-sol";
+        const geminiHighModel = shadowProfiles.find((p) => p.id === "gemini-flash-high")?.model ?? "ag/gemini-3.8-flash-high";
+        candidates = uniqueModels([
+          selectedModel,
+          fallbackSonnet,
+          fallbackSol,
+          geminiHighModel,
+          ...v2FallbackModels(shadowResult?.requiredCapabilities ?? { vision: false, tools: false })
+        ]);
+        forwardedBody = {
+          ...forwardedBody,
+          model: selectedModel
+        };
+
+        const lunaProfile = shadowProfiles.find((p) => p.id === "luna-agentic") ?? shadowProfiles.find((p) => p.id === "sonnet-agentic");
+        if (lunaProfile && currentPolicy === "auto") {
+          resolvedReasoning = resolveReasoningDecision({
+            policy: currentPolicy,
+            clientEffort,
+            autoDesired: autoReasoning.desired,
+            profile: lunaProfile,
+            escalationApplied: autoReasoning.escalationApplied,
+            deescalationApplied: autoReasoning.deescalationApplied,
+            reasons: autoReasoning.reasons
+          });
+          forwardedBody = applyReasoningToPayload(forwardedBody, resolvedReasoning.effectiveReasoningEffort);
+        }
+      }
 
       if (candidates.length === 0) {
-
         return reply.code(400).send(
           openAiError(
             "No configured model supports the requested capabilities",
@@ -1046,6 +1817,8 @@ export function buildApp(config: AppConfig): FastifyInstance {
       try {
 
         let response: Response | undefined;
+        let successfulModel = selectedModel;
+        const unavailableProviders = new Set<string>();
 
         for (
           let index = 0;
@@ -1054,6 +1827,10 @@ export function buildApp(config: AppConfig): FastifyInstance {
         ) {
 
           const model = candidates[index]!;
+          if (model.startsWith("cx/") && unavailableProviders.has("codex")) {
+            continue;
+          }
+          successfulModel = model;
 
           metrics.upstreamAttempts += 1;
 
@@ -1061,7 +1838,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
             response = await upstream.responses(
               {
-                ...body,
+                ...forwardedBody,
                 model
               },
               cancellation.signal
@@ -1078,6 +1855,22 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
             metrics.fallbackEvents += 1;
             continue;
+          }
+
+          if (response.status === 429 || response.status === 403) {
+            const errClone = response.clone();
+            const text = await errClone.text().catch(() => "");
+            const headerObj: Record<string, string> = {};
+            response.headers.forEach((v, k) => {
+              headerObj[k.toLowerCase()] = v;
+            });
+            quotaTracker.recordResponse(model, response.status, text, headerObj);
+            const provider = model.startsWith("cx/") ? "codex" : model.startsWith("ag/") ? "antigravity" : undefined;
+            const classification = classify429(response.status, text, headerObj);
+            if (provider && classification.isQuotaExhaustion) {
+              quotaTracker.recordResponse(provider, response.status, text, headerObj);
+              unavailableProviders.add(provider);
+            }
           }
 
           if (
@@ -1100,8 +1893,48 @@ export function buildApp(config: AppConfig): FastifyInstance {
           );
         }
 
-        if (!response.ok) {
+        if (quotaDecision) {
+          reply.header("x-auto-router-quota-policy", quotaDecision.policy);
+          reply.header("x-auto-router-quota-status", quotaDecision.status);
+          reply.header("x-auto-router-quota-remaining", quotaDecision.effectiveRemainingRatio.toFixed(4));
+          reply.header("x-auto-router-quota-limiting-bucket", quotaDecision.limitingBuckets.join(","));
+          reply.header("x-auto-router-quota-effect", quotaDecision.selectionEffect);
+        } else {
+          reply.header("x-auto-router-quota-policy", quotaPolicy);
+        }
 
+        if (agenticShadow) {
+          reply.header("x-auto-router-shadow-agentic-eligible", agenticShadow.shadowAgenticEligible ? "true" : "false");
+          reply.header("x-auto-router-shadow-agentic-profile", agenticShadow.shadowAgenticProfile);
+          reply.header("x-auto-router-shadow-agentic-model", agenticShadow.shadowAgenticModel);
+          reply.header("x-auto-router-shadow-agentic-reason", agenticShadow.shadowAgenticReason);
+        }
+
+        if (config.routerMode === "v2" && shadowResult) {
+          const effectiveProfile = ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet)
+            ? (successfulModel === "cx/gpt-6-luna" ? "luna-agentic" : successfulModel === "ag/claude-sonnet-4-6" ? "sonnet-agentic" : "gemini-flash-high")
+            : (quotaPolicy === "auto" && quotaDecision?.selectedProfile)
+              ? quotaDecision.selectedProfile
+              : shadowResult.selectedProfile;
+          reply.header(
+            "x-auto-router-profile",
+            effectiveProfile
+          );
+          reply.header(
+            "x-auto-router-tier",
+            ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet && (successfulModel === "cx/gpt-6-luna" || successfulModel === "ag/claude-sonnet-4-6"))
+              ? "strong"
+              : shadowResult.minimumQualityTier
+          );
+          reply.header(
+            "x-auto-router-switch-reason",
+            ((config.agenticPrimaryEnabled || config.sonnetAgenticEnabled) && agenticShadow?.wouldUseSonnet)
+              ? (successfulModel === "cx/gpt-6-luna" ? agenticShadow.shadowAgenticReason : `upstream_fallback_to_${successfulModel.replace(/[^a-zA-Z0-9_-]/g, "_")}`)
+              : (quotaDecision?.wouldSwitch && quotaPolicy === "auto" ? quotaDecision.switchReason : shadowResult.switchReason)
+          );
+        }
+
+        if (!response.ok) {
           return reply
             .code(
               publicUpstreamStatus(
@@ -1122,7 +1955,24 @@ export function buildApp(config: AppConfig): FastifyInstance {
 
         reply.header(
           "x-auto-router-model",
-          decision.upstreamModel
+          successfulModel
+        );
+
+        reply.header(
+          "x-auto-router-reasoning-policy",
+          resolvedReasoning.policy
+        );
+        reply.header(
+          "x-auto-router-reasoning-desired",
+          resolvedReasoning.desiredReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-effective",
+          resolvedReasoning.effectiveReasoningEffort
+        );
+        reply.header(
+          "x-auto-router-reasoning-clamped",
+          String(resolvedReasoning.clamped)
         );
 
         const contentType =
@@ -1150,12 +2000,21 @@ export function buildApp(config: AppConfig): FastifyInstance {
             "keep-alive"
           );
 
-          return reply.send(
-            Readable.fromWeb(
-              response.body as
-                import("node:stream/web").ReadableStream
-            )
+          const lifecycle = new StreamLifecycleTracker((state) => {
+            metrics.streamLifecycle[state] = (metrics.streamLifecycle[state] ?? 0) + 1;
+          });
+          const timedBody = withStreamTimeouts(
+            response.body as unknown as ReadableStream<Uint8Array>,
+            timeoutConfig,
+            lifecycle
           );
+          request.log.info(
+            { lifecycle: lifecycle.snapshot().state, route: decision.route },
+            "upstream responses stream started"
+          );
+          return reply.send(Readable.fromWeb(
+            timedBody as unknown as import("node:stream/web").ReadableStream
+          ));
         }
 
         const result =
@@ -1170,7 +2029,7 @@ export function buildApp(config: AppConfig): FastifyInstance {
         request.log.warn(
           {
             category:
-              upstreamErrorCategory(error),
+                          classifyUpstreamError(error),
             route: decision.route
           },
           "Responses API upstream request failed"
@@ -1398,27 +2257,6 @@ function publicUpstreamStatus(
   }
 
   return 502;
-}
-
-function upstreamErrorCategory(
-  error: unknown
-): string {
-
-  if (
-    error instanceof DOMException &&
-    error.name === "AbortError"
-  ) {
-    return "aborted";
-  }
-
-  if (
-    error instanceof Error &&
-    error.name === "TimeoutError"
-  ) {
-    return "timeout";
-  }
-
-  return "connection_failure";
 }
 
 async function shouldFallback(

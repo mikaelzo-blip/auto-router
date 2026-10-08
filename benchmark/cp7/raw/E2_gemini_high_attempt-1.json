@@ -1,0 +1,25 @@
+{
+  "caseId": "E2",
+  "track": "agentic",
+  "name": "Multi-File Feature Implementation (Wildcard Event Bus)",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-15T04:40:34.469Z",
+  "ttfbMs": 3064,
+  "totalLatencyMs": 76686,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 15,
+    "toolCalls": 15,
+    "failedToolCalls": 3,
+    "filesChanged": [],
+    "diff": "",
+    "diffHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "testsPassed": true,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "✔ EventBus - exact topic subscription and delivery (0.4429ms)\n✔ EventBus - exact topic unsubscribe (0.0956ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.2058\n",
+    "hiddenTestOutput": "✖ Hidden: wildcard prefix pattern matching (order.*) (1.7882ms)\n✖ Hidden: wildcard suffix pattern matching (*.created) (0.2265ms)\n✖ Hidden: wildcard unsubscribe (0.1712ms)\nℹ tests 3\nℹ suites 0\nℹ pass 0\nℹ fail 3\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 102.0655\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:103\n✖ Hidden: wildcard prefix pattern matching (order.*) (1.7882ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n  + actual - expected\n  \n  + ["
+  }
+}

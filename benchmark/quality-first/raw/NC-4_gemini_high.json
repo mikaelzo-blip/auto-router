@@ -1,0 +1,28 @@
+{
+  "taskId": "NC-4",
+  "category": "NORMAL_CODING",
+  "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:13:21.732Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "passed": false,
+  "score": 0,
+  "elapsedMs": 13921,
+  "ttfbMs": 5201,
+  "reasoningErrors": [
+    "Failed public unit tests",
+    "Failed hidden acceptance / edge-case tests"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": false,
+    "hiddenPassed": false,
+    "testOutputSnippet": "PUBLIC TESTS FAILED:\nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nError: Transform failed with 1 error:\nC:\\Projects\\router\\auto-router-v2\\tmp\\qfirst-eval\\nc-NC-4-gemini_high\\src\\semver.ts:14:21: ERROR: Expected \";\" but found \"invalid\"\n    at failureErrorWithLog (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:1752:15)\n    at C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:1019:50\n    at responseCallbacks.<computed> (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:886:9)\n    at handleIncomingPacket (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:941:12)\n    at Socket.readFromStdout (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:864:7)\n    at Socket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)\n  "
+  },
+  "rawOutputSnippet": "```typescript\nconst SEMVER_REGEX =\n  /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/;\n\ninterface ParsedSemver {\n  major: bigint;\n  minor: bigint;\n  patch: bigint;\n  prerelease: string[] | null;\n}\n\nfunction parseSemver(version: string): ParsedSemver {\n  if (typeof ve"
+}

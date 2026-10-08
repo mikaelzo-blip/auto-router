@@ -1,0 +1,929 @@
+{
+  "timestamp": "2026-09-14T09:02:28Z",
+  "durationSeconds": 2.85,
+  "totalRequests": 50,
+  "successfulRequests": 50,
+  "failedRequests": 0,
+  "switchesThatWouldHaveHappened": 41,
+  "switchRate": 0.82,
+  "standardRoutingDistribution": {
+    "gemini-flash-low": 14,
+    "gemini-flash-medium": 17,
+    "gemini-flash-high": 10,
+    "luna-review": 9
+  },
+  "hypotheticalRoutingDistribution": {
+    "terra": 41,
+    "luna-review": 9
+  },
+  "switchReasonsDistribution": {
+    "quota_reserve": 41,
+    "none": 9
+  },
+  "limitingBucketDistribution": {
+    "gemini_flash_pro": 41,
+    "gemini_weekly": 41,
+    "codex_weekly": 9
+  },
+  "averageRemainingRatio": 0.1154,
+  "cooldownEvents": 0,
+  "staleSnapshotOccurrences": 0,
+  "quotaPollFailureCount": 0,
+  "providerHealth": {
+    "antigravity": "healthy",
+    "codex": "healthy"
+  },
+  "liveQuotaBuckets": {
+    "gemini_flash_pro": {
+      "id": "gemini_flash_pro",
+      "provider": "antigravity",
+      "scope": "model_shared",
+      "used": 908,
+      "limit": 1000,
+      "remaining": 92,
+      "remainingRatio": 0.09247579,
+      "resetAt": "2026-09-18T07:36:38.000Z",
+      "observedAt": "2026-09-14T09:02:00.682Z",
+      "stale": false
+    },
+    "gemini_weekly": {
+      "id": "gemini_weekly",
+      "provider": "antigravity",
+      "scope": "weekly",
+      "used": 908,
+      "limit": 1000,
+      "remaining": 92,
+      "remainingRatio": 0.09247579,
+      "resetAt": "2026-09-18T07:36:38.000Z",
+      "observedAt": "2026-09-14T09:02:00.682Z",
+      "stale": false
+    },
+    "codex_session": {
+      "id": "codex_session",
+      "provider": "codex",
+      "scope": "session",
+      "used": 0,
+      "limit": 100,
+      "remaining": 100,
+      "remainingRatio": 1,
+      "resetAt": "2026-09-14T13:41:12.000Z",
+      "observedAt": "2026-09-14T09:02:00.682Z",
+      "stale": false
+    },
+    "codex_weekly": {
+      "id": "codex_weekly",
+      "provider": "codex",
+      "scope": "weekly",
+      "used": 78,
+      "limit": 100,
+      "remaining": 22,
+      "remainingRatio": 0.22,
+      "resetAt": "2026-09-19T08:39:48.000Z",
+      "observedAt": "2026-09-14T09:02:00.682Z",
+      "stale": false
+    }
+  },
+  "records": [
+    {
+      "index": 1,
+      "label": "routine_json_to_csv",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 2,
+      "label": "routine_uppercase",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 3,
+      "label": "routine_markdown_table",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 4,
+      "label": "routine_yaml_to_json",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 5,
+      "label": "routine_extract_urls",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 6,
+      "label": "routine_csv_parse",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 7,
+      "label": "routine_sort_list",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 8,
+      "label": "routine_trim_whitespace",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 9,
+      "label": "routine_slugify",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 10,
+      "label": "routine_date_format",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 11,
+      "label": "coding_debounce",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 12,
+      "label": "coding_retry",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 13,
+      "label": "coding_lru_cache",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 14,
+      "label": "coding_fastapi_endpoint",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 15,
+      "label": "coding_sql_pagination",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 16,
+      "label": "coding_binary_search",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 17,
+      "label": "coding_regex_email",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 18,
+      "label": "coding_merge_intervals",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 19,
+      "label": "coding_jwt_verify",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 20,
+      "label": "coding_tree_traversal",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 21,
+      "label": "concurrency_ring_buffer",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 22,
+      "label": "concurrency_raft_leader",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 23,
+      "label": "concurrency_deadlock_detect",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 24,
+      "label": "concurrency_work_stealing",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 25,
+      "label": "concurrency_actor_mailbox",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 26,
+      "label": "concurrency_hazard_pointers",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 27,
+      "label": "concurrency_rwlock",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 28,
+      "label": "concurrency_rate_limiter",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 29,
+      "label": "concurrency_event_loop",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 30,
+      "label": "concurrency_cas_counter",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 31,
+      "label": "finance_double_entry",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 32,
+      "label": "finance_fx_settlement",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 33,
+      "label": "finance_reconciliation",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 34,
+      "label": "finance_order_matching",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 35,
+      "label": "finance_idempotency",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 36,
+      "label": "finance_audit_trail",
+      "actualProfile": "gemini-flash-high",
+      "actualModel": "ag/gemini-3.8-flash-high",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-high",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 37,
+      "label": "finance_tax_calculation",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 38,
+      "label": "finance_chargeback_workflow",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 39,
+      "label": "finance_row_locking",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 40,
+      "label": "finance_pci_redaction",
+      "actualProfile": "gemini-flash-low",
+      "actualModel": "ag/gemini-3.8-flash-low",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-low",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 41,
+      "label": "review_auth_diff",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 42,
+      "label": "review_sql_injection",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 43,
+      "label": "review_memory_leak",
+      "actualProfile": "gemini-flash-medium",
+      "actualModel": "ag/gemini-3.8-flash-medium",
+      "hypotheticalProfile": "terra",
+      "hypotheticalModel": "cx/gpt-5.6-terra",
+      "wouldSwitch": true,
+      "switchReason": "quota_reserve",
+      "selectionEffect": "conserved_reserve_gemini-flash-medium",
+      "status": "reserve",
+      "remainingRatio": 0.09247579,
+      "limitingBuckets": [
+        "gemini_flash_pro",
+        "gemini_weekly"
+      ]
+    },
+    {
+      "index": 44,
+      "label": "review_concurrency_race",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 45,
+      "label": "review_error_handling",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 46,
+      "label": "review_csrf_cors",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 47,
+      "label": "review_deserialization",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 48,
+      "label": "review_proto_pollution",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 49,
+      "label": "review_secret_leak",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    },
+    {
+      "index": 50,
+      "label": "review_performance_n_plus_one",
+      "actualProfile": "luna-review",
+      "actualModel": "cx/gpt-5.6-luna-review",
+      "hypotheticalProfile": "luna-review",
+      "hypotheticalModel": "cx/gpt-5.6-luna-review",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "preserved_for_strong_task",
+      "status": "conserve",
+      "remainingRatio": 0.22,
+      "limitingBuckets": [
+        "codex_weekly"
+      ]
+    }
+  ]
+}

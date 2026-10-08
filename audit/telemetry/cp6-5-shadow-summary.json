@@ -1,0 +1,633 @@
+{
+  "checkpoint": "CP6.5",
+  "timestamp": "2026-09-14T12:30:00.000Z",
+  "policy": "shadow",
+  "requestsObserved": 50,
+  "durationSeconds": 0.16,
+  "metrics": {
+    "wouldSwitchCount": 9,
+    "wouldSwitchRate": 0.18,
+    "telemetryFailures": 0,
+    "telemetryTimeouts": 0,
+    "noEligibleCount": 0
+  },
+  "distributions": {
+    "actual": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 18,
+      "gemini-flash-high": 9,
+      "luna-review": 9
+    },
+    "hypothetical": {
+      "gemini-flash-low": 14,
+      "gemini-flash-medium": 24,
+      "gemini-flash-high": 12
+    },
+    "switchesByReason": {
+      "none": 41,
+      "quota_exhausted": 9
+    },
+    "fallbackRecommendations": {
+      "luna-review -> gemini-flash-medium (quota_exhausted)": 6,
+      "luna-review -> gemini-flash-high (quota_exhausted)": 3
+    }
+  },
+  "poolStates": {
+    "gemini": {
+      "healthy": 50
+    },
+    "codex": {
+      "exhausted": 50
+    }
+  },
+  "accountSelectionCounts": {
+    "account_1": 0,
+    "account_2": 0
+  },
+  "accountQuotaObservations": {
+    "starting": {
+      "account_1": {
+        "status": "reserve",
+        "effectiveRemainingRatio": 0.023230767
+      },
+      "account_2": {
+        "status": "healthy",
+        "effectiveRemainingRatio": 0.9899833
+      }
+    },
+    "ending": {
+      "account_1": {
+        "status": "reserve",
+        "effectiveRemainingRatio": 0.023230767,
+        "resetAt": "2026-09-18T07:36:38.000Z"
+      },
+      "account_2": {
+        "status": "healthy",
+        "effectiveRemainingRatio": 0.9899833,
+        "resetAt": "2026-09-21T12:19:00.000Z"
+      }
+    }
+  },
+  "invariantsVerified": {
+    "solDisabled": true,
+    "astraDisabled": true,
+    "codexExhaustionRespected": true,
+    "terraDoomedAvoided": true,
+    "reviewFallbackAvoidedExhaustedLuna": true,
+    "noSpecialistLeakageOnGeneral": true,
+    "account2ServingTraffic": false,
+    "account1ReserveConserved": true
+  },
+  "detailedRecords": [
+    {
+      "index": 1,
+      "label": "routine_json_to_csv",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 2,
+      "label": "routine_uppercase",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 3,
+      "label": "routine_markdown_table",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 4,
+      "label": "routine_yaml_to_json",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 5,
+      "label": "routine_extract_urls",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 6,
+      "label": "routine_csv_parse",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 7,
+      "label": "routine_sort_list",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 8,
+      "label": "routine_trim_whitespace",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 9,
+      "label": "routine_slugify",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 10,
+      "label": "routine_date_format",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 11,
+      "label": "coding_debounce",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 12,
+      "label": "coding_retry",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 13,
+      "label": "coding_lru_cache",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 14,
+      "label": "coding_fastapi_endpoint",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 15,
+      "label": "coding_sql_pagination",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 16,
+      "label": "coding_binary_search",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 17,
+      "label": "coding_regex_email",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 18,
+      "label": "coding_merge_intervals",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 19,
+      "label": "coding_jwt_verify",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 20,
+      "label": "coding_tree_traversal",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 21,
+      "label": "concurrency_ring_buffer",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 22,
+      "label": "concurrency_raft_leader",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 23,
+      "label": "concurrency_deadlock_detect",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 24,
+      "label": "concurrency_work_stealing",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 25,
+      "label": "concurrency_actor_mailbox",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 26,
+      "label": "concurrency_hazard_pointers",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 27,
+      "label": "concurrency_rwlock",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 28,
+      "label": "concurrency_rate_limiter",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 29,
+      "label": "concurrency_event_loop",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 30,
+      "label": "concurrency_cas_counter",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 31,
+      "label": "finance_double_entry",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 32,
+      "label": "finance_fx_settlement",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 33,
+      "label": "finance_reconciliation",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 34,
+      "label": "finance_order_matching",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 35,
+      "label": "finance_idempotency",
+      "actualProfile": "gemini-flash-high",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 36,
+      "label": "finance_audit_trail",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 37,
+      "label": "finance_tax_calculation",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 38,
+      "label": "finance_chargeback_workflow",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 39,
+      "label": "finance_row_locking",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 40,
+      "label": "finance_pci_redaction",
+      "actualProfile": "gemini-flash-low",
+      "hypotheticalProfile": "gemini-flash-low",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 41,
+      "label": "review_auth_diff",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 42,
+      "label": "review_sql_injection",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 43,
+      "label": "review_memory_leak",
+      "actualProfile": "gemini-flash-medium",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": false,
+      "switchReason": "none",
+      "selectionEffect": "normal",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 44,
+      "label": "review_concurrency_race",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 45,
+      "label": "review_error_handling",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 46,
+      "label": "review_csrf_cors",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-high",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 47,
+      "label": "review_deserialization",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 48,
+      "label": "review_proto_pollution",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 49,
+      "label": "review_secret_leak",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    },
+    {
+      "index": 50,
+      "label": "review_performance_n_plus_one",
+      "actualProfile": "luna-review",
+      "hypotheticalProfile": "gemini-flash-medium",
+      "wouldSwitch": true,
+      "switchReason": "quota_exhausted",
+      "selectionEffect": "avoided_exhausted_luna-review",
+      "geminiPoolStatus": "healthy",
+      "codexPoolStatus": "exhausted"
+    }
+  ]
+}

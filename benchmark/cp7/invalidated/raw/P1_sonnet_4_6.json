@@ -1,0 +1,35 @@
+{
+  "caseId": "P1",
+  "track": "prd",
+  "name": "Financial Operations SaaS Product Requirements Document",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:20:53.868Z",
+  "ttfbMs": 1409,
+  "totalLatencyMs": 50731,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2322,
+    "completion": 3000
+  },
+  "outputSnippet": "# Product Requirements Document (PRD)\n## Automated Financial Reconciliation & Approval Platform\n\n---\n\n**Document Metadata**\n\n| Field | Value |\n|---|---|\n| Version | 1.0.0 |\n| Status | Draft — Pending Stakeholder Review |\n| Author | Platform Architecture Team |\n| Last Updated | 2025-01-01 |\n| Reviewe",
+  "evaluation": {
+    "score": 20,
+    "maxScore": 20,
+    "scoreRatio": 1,
+    "dimensions": {
+      "problem_clarity_and_opportunity": 2,
+      "persona_and_jtbd_depth": 2,
+      "functional_requirements_moscow": 2,
+      "nfr_completeness": 2,
+      "workflow_state_machine": 2,
+      "edge_case_coverage": 2,
+      "acceptance_criteria_quality": 2,
+      "success_metrics_and_kpis": 2,
+      "non_goals_discipline": 2,
+      "implementation_handoff_readiness": 2
+    },
+    "passed": true
+  }
+}

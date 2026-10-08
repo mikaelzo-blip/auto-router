@@ -1,0 +1,244 @@
+[
+  {
+    "caseId": "case-a1",
+    "category": "A. SIMPLE / TRANSFORMATION",
+    "name": "Rewrite git commit message",
+    "expectedFloor": "cheap",
+    "prompt": "Rewrite this verbose commit message into a concise conventional commit with imperative mood and no preamble:\n\n'In this commit I went ahead and changed the timeout variable so that when the upstream connection hangs we do not wait indefinitely, I changed it to 30 seconds.'",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["fix", "timeout"],
+      "keyCriteria": ["Imperative mood", "Concise", "Mentions timeout value or fix"],
+      "maxWords": 30
+    }
+  },
+  {
+    "caseId": "case-a2",
+    "category": "A. SIMPLE / TRANSFORMATION",
+    "name": "Summarize server log error",
+    "expectedFloor": "cheap",
+    "prompt": "Summarize the root cause and operational impact from this log snippet in two bullet points:\n\n2026-09-12T04:10:02.102Z [ERROR] UpstreamGateway: connect ETIMEDOUT 127.0.0.1:20128\n2026-09-12T04:10:02.105Z [WARN] FallbackHandler: secondary model pool exhausted\n2026-09-12T04:10:02.110Z [ERROR] HTTP 502 returned to client req_9912",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["connect", "502"],
+      "keyCriteria": ["Identifies connection timeout to upstream", "Identifies HTTP 502 / failure to client"]
+    }
+  },
+  {
+    "caseId": "case-b1",
+    "category": "B. SIMPLE CODE",
+    "name": "Fix TypeScript optional parameter null check",
+    "expectedFloor": "cheap",
+    "prompt": "Fix this TypeScript function so it safely returns undefined when id is undefined or empty string, without throwing or returning invalid profiles. Return only the corrected TypeScript function code:\n\nfunction getUserProfile(users: Map<string, { name: string }>, id?: string) {\n  return users.get(id).name;\n}",
+    "rubric": {
+      "type": "code_execution",
+      "mustContain": ["get", "id"],
+      "mustNotContain": ["users.get(id).name;"],
+      "keyCriteria": ["Safely checks id truthiness before get", "Uses optional chaining or conditional guard"]
+    }
+  },
+  {
+    "caseId": "case-b2",
+    "category": "B. SIMPLE CODE",
+    "name": "Validate ISO 8601 UTC timestamp helper",
+    "expectedFloor": "cheap",
+    "prompt": "Write a TypeScript function `isValidUtcIsoString(str: string): boolean` that verifies if a string is a valid ISO 8601 UTC timestamp ending in 'Z' (e.g. '2026-09-12T04:00:00.000Z') and represents a real calendar date. Provide only the implementation.",
+    "rubric": {
+      "type": "code_execution",
+      "mustContain": ["isValidUtcIsoString", "boolean", "Date"],
+      "keyCriteria": ["Verifies ending in Z", "Parses with Date", "Checks NaN or re-stringified match"]
+    }
+  },
+  {
+    "caseId": "case-c1",
+    "category": "C. REPOSITORY EXPLORATION",
+    "name": "Locate timeout configurations in repository",
+    "expectedFloor": "balanced",
+    "prompt": "In an agent proxy codebase with `src/app.ts`, `src/config.ts`, and `src/reliability.ts`, explain what environment variables and config fields govern upstream connect, header, and stream idle timeouts, and how they protect against hanging sockets.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["connect", "header", "idle"],
+      "keyCriteria": ["Mentions connectTimeout, headerTimeout, streamIdleTimeout", "Explains stream stall vs header timeout protection"]
+    }
+  },
+  {
+    "caseId": "case-c2",
+    "category": "C. REPOSITORY EXPLORATION",
+    "name": "Trace routing fallback path",
+    "expectedFloor": "balanced",
+    "prompt": "Explain how a semantic router chooses an alternate upstream model when the primary model fails with HTTP 502 or network error before any stream chunk is sent. What fields and functions should govern this decision?",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["fallback", "stream", "pre-stream"],
+      "keyCriteria": ["Distinguishes pre-stream vs mid-stream", "Explains priority list or fallback model selection", "Forbids replay after partial stream"]
+    }
+  },
+  {
+    "caseId": "case-d1",
+    "category": "D. NORMAL IMPLEMENTATION",
+    "name": "Token bucket rate limiter in TypeScript",
+    "expectedFloor": "balanced",
+    "prompt": "Implement a self-contained TypeScript class `TokenBucketRateLimiter` with constructor `(capacity: number, refillRatePerSecond: number)` and method `tryConsume(tokens = 1): boolean`. Include time-delta token refilling and do not allow tokens to exceed capacity or go below zero.",
+    "rubric": {
+      "type": "code_execution",
+      "mustContain": ["class TokenBucketRateLimiter", "tryConsume", "refillRatePerSecond"],
+      "keyCriteria": ["Calculates elapsed time", "Refills tokens proportionally up to capacity", "Deducts tokens atomically if sufficient"]
+    }
+  },
+  {
+    "caseId": "case-d2",
+    "category": "D. NORMAL IMPLEMENTATION",
+    "name": "TTL bounded Map cache in TypeScript",
+    "expectedFloor": "balanced",
+    "prompt": "Implement a TypeScript class `TtlCache<K, V>` with constructor `(maxEntries: number, defaultTtlMs: number)` providing `set(key: K, value: V, ttlMs?: number): void`, `get(key: K): V | undefined`, and `size(): number`. Ensure expired entries are evicted on get and oldest entries are evicted when maxEntries is reached.",
+    "rubric": {
+      "type": "code_execution",
+      "mustContain": ["class TtlCache", "set", "get", "maxEntries"],
+      "keyCriteria": ["Checks expiration timestamp on get", "Evicts expired or oldest entries when capacity is exceeded", "Tracks size correctly"]
+    }
+  },
+  {
+    "caseId": "case-e1",
+    "category": "E. MULTI-FILE REFACTOR",
+    "name": "Structured logger abstraction refactor",
+    "expectedFloor": "balanced",
+    "prompt": "Design a clean refactor plan and TypeScript definitions to convert a legacy global function `log(level: string, message: string)` into an extensible `Logger` interface with `ConsoleLogger` and `JsonLogger` implementations, while preserving 100% backward compatibility for existing callers of `log()`.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["interface Logger", "ConsoleLogger", "JsonLogger", "export function log"],
+      "keyCriteria": ["Defines Logger interface with log methods", "Provides ConsoleLogger and JsonLogger", "Preserves legacy log() delegating to default logger instance"]
+    }
+  },
+  {
+    "caseId": "case-e2",
+    "category": "E. MULTI-FILE REFACTOR",
+    "name": "Extract routing configuration validation",
+    "expectedFloor": "balanced",
+    "prompt": "Given a config loader that directly parses routes and model capabilities, write a modular validator module `validateRoutingConfig(raw: unknown): RoutingValidationResult` in TypeScript that validates virtual models, fallback routes, priority lists, and capability maps, returning structured errors rather than crashing abruptly.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["validateRoutingConfig", "valid", "errors"],
+      "keyCriteria": ["Checks unknown input type safely", "Validates routes and priority lists", "Returns structured error array or success flag"]
+    }
+  },
+  {
+    "caseId": "case-f1",
+    "category": "F. DEBUGGING",
+    "name": "Diagnose unhandled client disconnect in SSE stream",
+    "expectedFloor": "balanced",
+    "prompt": "Diagnose why a Node.js Fastify SSE proxy crashes or leaks sockets when a client closes the browser tab mid-stream. What event listeners are missing on `request.raw` and `reply.raw`, and what is the exact fix to abort the upstream fetch cleanly?",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["close", "AbortController", "abort"],
+      "keyCriteria": ["Identifies client disconnect / close event", "Connects client close to AbortController signal", "Aborts upstream fetch and cleans up listeners"]
+    }
+  },
+  {
+    "caseId": "case-f2",
+    "category": "F. DEBUGGING",
+    "name": "Diagnose vitest hanging test suite",
+    "expectedFloor": "balanced",
+    "prompt": "In a Vitest test suite testing an HTTP streaming server, tests pass but the test runner hangs indefinitely before exiting. Analyze 3 distinct root causes (e.g. unclosed timers, open server sockets, hanging keep-alive agents) and specify how to fix each in `afterEach`/`afterAll`.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["server.close", "keep-alive", "timer"],
+      "keyCriteria": ["Identifies open HTTP server listen socket without close()", "Identifies unclosed timers or intervals", "Identifies undici/fetch keep-alive connection pool"]
+    }
+  },
+  {
+    "caseId": "case-g1",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "PostgreSQL transfer deadlock prevention",
+    "expectedFloor": "strong",
+    "prompt": "In a PostgreSQL financial database, concurrent transactions transfer balances between accounts. Transfer 1 moves $50 from Account 10 to Account 20. Transfer 2 moves $30 from Account 20 to Account 10.\n1. Explain step-by-step how a database deadlock occurs under concurrent execution.\n2. Write the exact SQL transaction pattern and lock-acquisition strategy that mathematically guarantees deadlocks cannot occur regardless of concurrency.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["deadlock", "FOR UPDATE", "order"],
+      "keyCriteria": ["Explains circular lock dependency (T1 holds A10 wants A20, T2 holds A20 wants A10)", "Enforces global lock ordering: lock accounts in ascending order of ID (LEAST, GREATEST or ORDER BY id)", "Uses SELECT ... FOR UPDATE"]
+    }
+  },
+  {
+    "caseId": "case-g2",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Distributed webhook idempotency & retry semantics",
+    "expectedFloor": "strong",
+    "prompt": "Design a resilient, idempotent webhook ingestion system in PostgreSQL. The upstream payment processor sends webhook delivery attempts with at-least-once delivery, potential duplicates, network retries, and out-of-order delivery. Detail the database schema, unique constraints, transactional state transitions, and how side effects (e.g. merchant payout) are guarded.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["idempotency", "ON CONFLICT", "unique"],
+      "keyCriteria": ["Unique constraint on event_id or (provider, idempotency_key)", "Atomic insert/check with ON CONFLICT or transactional lock", "Separates event receipt from side-effect execution (outbox pattern or state machine)"]
+    }
+  },
+  {
+    "caseId": "case-g3",
+    "category": "G. HARD SOFTWARE REASONING",
+    "name": "Sequence allocation race condition in invoice generator",
+    "expectedFloor": "strong",
+    "prompt": "An accounting service generates human-readable invoice numbers in the format 'INV-2026-0001'. The developer wrote: `SELECT MAX(num) FROM invoices WHERE year = 2026; num = num + 1; INSERT INTO invoices ...`. Under high concurrent load, duplicate key errors occur.\n1. Explain why standard read committed transaction isolation fails to prevent duplicates here.\n2. Provide two robust PostgreSQL solutions: one using native sequences and one using a dedicated counter row with row-level locking.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["concurrency", "FOR UPDATE", "sequence"],
+      "keyCriteria": ["Explains race window where two transactions read same MAX before either commits", "Solution 1: dedicated counter table with SELECT ... FOR UPDATE or UPDATE ... RETURNING", "Solution 2: PostgreSQL SEQUENCE"]
+    }
+  },
+  {
+    "caseId": "case-h1",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "name": "Security and safety review of streaming proxy",
+    "expectedFloor": "strong",
+    "prompt": "Perform a rigorous senior architecture review of an AI model streaming reverse proxy. Identify 4 critical architectural hazards in:\n1. Mid-stream replay during partial token delivery\n2. Unbounded in-memory buffering during slow client connections\n3. Credential leakage in error diagnostics and headers\n4. Upstream socket exhaustion under traffic bursts\nFor each hazard, provide the concrete mitigation invariant.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["replay", "buffer", "backpressure", "leak"],
+      "keyCriteria": ["Prohibits replaying after first byte/tool event sent", "Addresses backpressure / stream piping without memory accumulation", "Mandates redaction of auth headers / tokens from errors and logs", "Applies connection pooling and timeouts"]
+    }
+  },
+  {
+    "caseId": "case-h2",
+    "category": "H. ARCHITECTURE / REVIEW",
+    "name": "Architecture trade-off: SQLite WAL vs Redis for local router state",
+    "expectedFloor": "strong",
+    "prompt": "Evaluate the architectural trade-offs between SQLite in WAL mode versus an external Redis instance for tracking session stickiness and sliding-window rate metrics in a local-first AI agent router (serving 1-10 local agent instances). Analyze deployment complexity, operational failure modes, crash recovery, and latency overhead.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["SQLite", "WAL", "Redis"],
+      "keyCriteria": ["Zero external process dependency for SQLite vs operational burden of Redis", "Evaluates in-process memory / disk latency vs network roundtrip", "Analyzes WAL concurrency (concurrent readers, single writer) vs Redis single-thread event loop"]
+    }
+  },
+  {
+    "caseId": "case-i1",
+    "category": "I. ANALYSIS",
+    "name": "Financial reconciliation of transaction logs",
+    "expectedFloor": "strong",
+    "prompt": "Reconcile these two daily settlement logs (Payment Processor vs Internal Ledger) and identify: (a) matched transactions, (b) missing/unmatched records, (c) fee discrepancies, and (d) potential duplicate charges.\n\nProcessor Log:\n- TXN_101: $100.00 gross, $2.50 fee, net $97.50, order_id=ORD_A\n- TXN_102: $250.00 gross, $6.25 fee, net $243.75, order_id=ORD_B\n- TXN_103: $50.00 gross, $1.25 fee, net $48.75, order_id=ORD_C\n- TXN_104: $100.00 gross, $2.50 fee, net $97.50, order_id=ORD_A (timestamp +2s)\n- TXN_105: $75.00 gross, $1.88 fee, net $73.12, order_id=ORD_D\n\nInternal Ledger Log:\n- ORD_A: $100.00 expected, fee estimate $2.50\n- ORD_B: $250.00 expected, fee estimate $5.00\n- ORD_C: $50.00 expected, fee estimate $1.25\n- ORD_E: $120.00 expected, fee estimate $3.00",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["ORD_A", "ORD_B", "ORD_D", "ORD_E"],
+      "keyCriteria": ["Identifies TXN_104 as duplicate charge for ORD_A", "Identifies ORD_B fee discrepancy ($6.25 actual vs $5.00 expected)", "Identifies TXN_105 (ORD_D) missing in internal ledger", "Identifies ORD_E missing in processor log"]
+    }
+  },
+  {
+    "caseId": "case-i2",
+    "category": "I. ANALYSIS",
+    "name": "Contractual SLA downtime calculation & penalty tiers",
+    "expectedFloor": "strong",
+    "prompt": "Given a 30-day month (43,200 total minutes) and the following incident log:\n- Incident 1: 45 minutes unscheduled API outage\n- Incident 2: 120 minutes pre-announced scheduled maintenance within agreed maintenance window\n- Incident 3: 75 minutes unscheduled database degradation\nSLA Terms:\n- Scheduled maintenance during maintenance windows is excluded from downtime.\n- Tier 1: Uptime >= 99.9% -> 0% credit\n- Tier 2: 99.0% <= Uptime < 99.9% -> 10% credit\n- Tier 3: Uptime < 99.0% -> 25% credit\nCalculate: 1. Total billable downtime minutes, 2. Exact uptime percentage (to 3 decimal places), 3. Applicable penalty credit tier.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["120", "99.722%", "Tier 2", "10%"],
+      "keyCriteria": ["Excludes 120 minutes of scheduled maintenance", "Total downtime = 45 + 75 = 120 minutes", "Uptime = (43200 - 120) / 43200 = 43080 / 43200 = 99.722%", "Matches Tier 2 (10% credit)"]
+    }
+  },
+  {
+    "caseId": "case-j1",
+    "category": "J. RESEARCH / SYNTHESIS",
+    "name": "Streaming protocols comparison for LLM agent clients",
+    "expectedFloor": "strong",
+    "prompt": "Synthesize a comparative technical analysis of Server-Sent Events (SSE), WebSockets, and gRPC-Web for streaming LLM tokens and tool calls to client applications. Compare across: 1. Connection setup & transport overhead, 2. Proxy and corporate firewall traversal (chunked transfer buffering), 3. Reconnection and backpressure handling, 4. Bi-directional vs uni-directional fitness for agent loops.",
+    "rubric": {
+      "type": "deterministic",
+      "mustContain": ["SSE", "WebSocket", "gRPC", "buffering"],
+      "keyCriteria": ["Explains SSE simplicity over HTTP/1.1 and HTTP/2", "Discusses proxy buffering / Nginx buffering issues with chunked responses", "Analyzes WebSockets full-duplex vs SSE half-duplex", "Evaluates automatic reconnection in SSE vs manual in WebSockets"]
+    }
+  }
+]

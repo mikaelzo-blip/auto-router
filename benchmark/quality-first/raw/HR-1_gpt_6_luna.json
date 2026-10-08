@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-1",
+  "category": "HARD_REASONING",
+  "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:13:52.095Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 6772,
+  "ttfbMs": 1873,
+  "usage": {
+    "promptTokens": 2772,
+    "completionTokens": 195,
+    "reasoningTokens": 0,
+    "totalTokens": 2967
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "1. **T2 commits successfully.** PostgreSQL `REPEATABLE READ` uses snapshot isolation. Each transaction reads from its fixed snapshot, and each updates a different row. PostgreSQL’s concurrent-update check therefore finds no write-write conflict; it does not detect that the transactions’ reads jointly constrain the disjoint rows they update. No `40001` is raised.\n\n2. **The invariant is violated.** "
+}

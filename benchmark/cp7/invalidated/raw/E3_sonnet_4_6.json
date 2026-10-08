@@ -1,0 +1,25 @@
+{
+  "caseId": "E3",
+  "track": "agentic",
+  "name": "Failure Recovery (Cache Manager Eviction Defect)",
+  "candidate": "sonnet_4_6",
+  "modelId": "ag/claude-sonnet-4-6",
+  "timestamp": "2026-09-14T15:58:04.387Z",
+  "ttfbMs": 3028,
+  "totalLatencyMs": 38270,
+  "httpStatus": 200,
+  "success": false,
+  "failureClass": "TEST_FAILURE",
+  "agenticDetails": {
+    "iterations": 8,
+    "toolCalls": 8,
+    "failedToolCalls": 1,
+    "filesChanged": [
+      "src/cache-manager.ts"
+    ],
+    "testsPassed": true,
+    "hiddenTestsPassed": false,
+    "publicTestOutput": "✔ CacheManager - basic set and get (0.8459ms)\n✔ CacheManager - TTL expiration (0.1287ms)\n✔ CacheManager - LRU eviction respects access order (0.1104ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.3815\n",
+    "hiddenTestOutput": "✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2184ms)\nℹ tests 1\nℹ suites 0\nℹ pass 0\nℹ fail 1\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.2445\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:111\n✖ Hidden: continuous sequential LRU eviction with 5 keys (1.2184ms)\n  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n  \n  true !== false\n  \n      at TestContext.<anonymous> (C:\\Projects\\router\\auto-router-v2\\tmp\\cp7-agentic\\E3-sonnet_4_6\\test-hidden\\hi"
+  }
+}

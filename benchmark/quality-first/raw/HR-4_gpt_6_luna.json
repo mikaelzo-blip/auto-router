@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-4",
+  "category": "HARD_REASONING",
+  "taskName": "Multi-Tenant Quota & Capacity Optimization",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:17:12.039Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 5163,
+  "ttfbMs": 1348,
+  "usage": {
+    "promptTokens": 2677,
+    "completionTokens": 177,
+    "reasoningTokens": 0,
+    "totalTokens": 2854
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "Beta cannot satisfy the SLA: its latency is 800 ms. Alpha and Gamma both meet it, so at least 90 requests must go to them.\n\nPer-request costs, given 2,000 tokens each:\n- Alpha: $0.004\n- Beta: $0.002\n- Gamma: $0.010\n\nTo minimize cost, use Alpha to its 60-request capacity, then route the remaining SLA-required 30 requests to Gamma. Send the remaining 10 requests to cheaper Beta.\n\n1. **Allocation:** "
+}

@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-1",
+  "category": "HARD_REASONING",
+  "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:13:59.587Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 7491,
+  "ttfbMs": 1877,
+  "usage": {
+    "promptTokens": 2772,
+    "completionTokens": 204,
+    "reasoningTokens": 0,
+    "totalTokens": 2976
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "1. **T2 commits successfully.** PostgreSQL’s `REPEATABLE READ` uses snapshot isolation. Both transactions read a snapshot with total balance 200, then update *different rows*. PostgreSQL detects concurrent updates to the same row and can raise SQLSTATE `40001` for that conflict, but there is no same-row update conflict here. `REPEATABLE READ` does not reject the conflict between each transaction’s"
+}

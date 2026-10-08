@@ -1,0 +1,65 @@
+{
+  "totalPersistedRuns": 48,
+  "timestamp": "2026-09-15T04:49:47.310Z",
+  "byTrack": {
+    "architecture": {
+      "total": 12,
+      "geminiRuns": 4,
+      "geminiPassed": 0,
+      "sonnetRuns": 4,
+      "sonnetPassed": 0,
+      "solRuns": 4,
+      "solPassed": 0
+    },
+    "prd": {
+      "total": 12,
+      "geminiRuns": 4,
+      "geminiPassed": 0,
+      "sonnetRuns": 4,
+      "sonnetPassed": 0,
+      "solRuns": 4,
+      "solPassed": 0
+    },
+    "reasoning": {
+      "total": 12,
+      "geminiRuns": 4,
+      "geminiPassed": 0,
+      "sonnetRuns": 4,
+      "sonnetPassed": 0,
+      "solRuns": 4,
+      "solPassed": 0
+    },
+    "agentic": {
+      "total": 12,
+      "geminiRuns": 4,
+      "geminiPassed": 1,
+      "sonnetRuns": 4,
+      "sonnetPassed": 2,
+      "solRuns": 4,
+      "solPassed": 1
+    }
+  },
+  "byCandidate": {
+    "gemini_high": {
+      "runs": 16,
+      "passed": 1,
+      "passRate": "6%",
+      "avgLatencyMs": 75464,
+      "avgTtfbMs": 12608
+    },
+    "sonnet_4_6": {
+      "runs": 16,
+      "passed": 2,
+      "passRate": "13%",
+      "avgLatencyMs": 52760,
+      "avgTtfbMs": 1880
+    },
+    "sol_high": {
+      "runs": 16,
+      "passed": 1,
+      "passRate": "6%",
+      "avgLatencyMs": 154259,
+      "avgTtfbMs": 100640
+    }
+  }
+}

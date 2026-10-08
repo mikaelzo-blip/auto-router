@@ -1,0 +1,24 @@
+{
+  "taskId": "AG-08",
+  "category": "AGENTIC",
+  "taskName": "Retry policy hidden contract",
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T10:44:07.435Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "finalTestsGreen": true,
+  "hiddenTestsGreen": true,
+  "iterations": 6,
+  "toolCalls": 7,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "elapsedMs": 28105,
+  "ttfbMs": 2165,
+  "score": 1,
+  "filesChanged": [
+    "src/resilience/retry-policy.ts"
+  ],
+  "publicOutputSnippet": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4063ms)\n✔ RetryPolicy - retries on transient failure and recovers (7.0471ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 106.4345\n",
+  "hiddenOutputSnippet": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6483ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (20.2741ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 142.866\n"
+}

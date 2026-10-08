@@ -61,3 +61,13 @@ npm run dev
 ```
 
 Prompt bodies, tools, functions, and authorization headers are redacted from logs. Upstream errors are bounded and credential-like values are redacted before returning them to clients.
+
+## Layout
+
+- `src/` — router source; `test/` — vitest suites
+- `scripts/` — launchers (`start-*`, `reload-production.ps1`, `setup.sh`, `health-check.sh`) stay at the root
+  - `scripts/benchmark/` — benchmark runners and legacy-vs-v2 comparison
+  - `scripts/shadow/` — shadow/canary soaks and routing simulations
+  - `scripts/verify/` — dispatch checks, smoke tests, model probes
+- `benchmark/` — corpora, fixtures and results per checkpoint (`cp7`, `cp7-2`, `quality-first`, ...)
+- `audit/` — telemetry and checkpoint reports; `config/` — routing config; `tmp/` — scratch (git-ignored)

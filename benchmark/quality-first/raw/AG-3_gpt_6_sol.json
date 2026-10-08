@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-3",
+  "category": "AGENTIC",
+  "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:39:48.256Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 34297,
+  "ttfbMs": 2655,
+  "iterations": 6,
+  "toolCalls": 6,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/resilience/retry-policy.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4327ms)\n✔ RetryPolicy - retries on transient failure and recovers (15.8983ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 118.0844\n",
+    "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6698ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (20.4085ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 157.9156\n"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "caseId": "P2",
+  "track": "prd",
+  "name": "Offline-Capable Field Operations App Product Brief",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:33:36.198Z",
+  "ttfbMs": 6632,
+  "totalLatencyMs": 87040,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2208,
+    "completion": 17733,
+    "reasoning": 4700
+  },
+  "outputSnippet": "# High-Voltage Substation Field Inspection Mobile Platform\n## System Architecture & Product Requirements Document (PRD)\n\n---\n\n## 1. Core User Workflows\n\n```\n  ┌─────────────────┐\n  │ Asset Selection │\n  └────────┬────────┘\n           │\n           ▼\n  ┌────────────────────────────────────────────────",
+  "evaluation": {
+    "score": 19,
+    "maxScore": 20,
+    "scoreRatio": 0.95,
+    "dimensions": {
+      "workflow_completeness": 2,
+      "offline_first_storage_model": 2,
+      "sync_and_conflict_resolution": 2,
+      "permission_and_signature_integrity": 2,
+      "media_handling_and_compression": 2,
+      "regulatory_auditability": 2,
+      "edge_case_resilience": 2,
+      "acceptance_criteria": 2,
+      "prioritization_and_tradeoffs": 1,
+      "engineering_handoff_quality": 2
+    },
+    "passed": true
+  }
+}

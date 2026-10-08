@@ -1,0 +1,31 @@
+{
+  "taskId": "NC-1",
+  "category": "NORMAL_CODING",
+  "taskName": "Token Bucket with Fractional Burst Refill",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-medium",
+  "modelAlias": "gemini_medium",
+  "timestamp": "2026-09-24T09:09:35.085Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 6118,
+  "ttfbMs": 4143,
+  "usage": {
+    "promptTokens": 2644,
+    "completionTokens": 1551,
+    "reasoningTokens": 1224,
+    "totalTokens": 4195
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicPassed": true,
+    "hiddenPassed": true,
+    "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.5737ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0816ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0563ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.624\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.5109ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.081ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0539ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.3876\n\n"
+  },
+  "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private readonly capacity: number;\n  private readonly refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | null = null;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    this.capacity = capacity;\n    this.refillRatePerSec = refillRatePerSec;\n    this.tokens = capacity;\n  }\n\n  private refill(nowMs: number): vo"
+}

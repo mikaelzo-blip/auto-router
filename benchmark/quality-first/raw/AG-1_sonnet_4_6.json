@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-1",
+  "category": "AGENTIC",
+  "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "ag/claude-sonnet-4-6",
+  "modelAlias": "sonnet_4_6",
+  "timestamp": "2026-09-24T09:32:42.245Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 18573,
+  "ttfbMs": 3163,
+  "iterations": 5,
+  "toolCalls": 6,
+  "failedToolCalls": 1,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/rate-limiter.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.6906ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.1065ms)\n✔ RateLimiter - allows new requests after window expires (0.0798ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 108.4228\n",
+    "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.422ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.0655ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0792ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 126.1208\n"
+  }
+}

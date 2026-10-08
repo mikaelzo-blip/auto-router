@@ -1,0 +1,172 @@
+{
+  "checkpoint": "CP5",
+  "status": "release-candidate-verified",
+  "branch": "hermes/autorouter-v2-cp5-auto-reasoning",
+  "startingHead": "fa7d29122ed50d08ca32f070f6923e0eb249fedf",
+  "timestamp": "2026-09-14T07:45:00.000Z",
+  "stableRouter": "127.0.0.1:20200",
+  "canaryRouter": "127.0.0.1:20201",
+  "canaryRouterMode": "v2",
+  "reasoningPolicy": "auto",
+  "clientFacingModel": "auto",
+  "canonicalEffortLevels": [
+    "minimal",
+    "low",
+    "medium",
+    "high",
+    "max"
+  ],
+  "reasoningPolicies": {
+    "passthrough": "client effort preserved and clamped to profile physical support",
+    "shadow": "client effort forwarded to upstream, AutoRouter reasoning decision observed in telemetry and headers",
+    "auto": "AutoRouter dynamic reasoning decision authoritative; client fixed-high cannot silently override Auto mode"
+  },
+  "timeoutSemantics": {
+    "variable": "UPSTREAM_CONNECT_TIMEOUT_MS",
+    "configuredValueMs": 30000,
+    "semantics": "In Node.js fetch(), response headers must arrive before the promise resolves; connectTimer functions as a response-header / response-start deadline concurrently with headerTimeoutMs rather than a pure TCP socket connection timer. The 30,000ms value is preserved to allow reasoning models sufficient time to generate internal reasoning tokens before emitting headers."
+  },
+  "modelPolicy": {
+    "active": [
+      "ag/gemini-3.8-flash-low",
+      "ag/gemini-3.8-flash-medium",
+      "ag/gemini-3.8-flash-high",
+      "cx/gpt-5.6-terra"
+    ],
+    "specialist": [
+      "cx/gpt-5.6-luna-review"
+    ],
+    "disabled": [
+      "cx/gpt-5.6-sol",
+      "cx/gpt-6-astra",
+      "ag/claude-sonnet-4-6",
+      "ag/claude-opus-4-6-thinking"
+    ],
+    "frontier": "none required (all candidate frontier models disabled)"
+  },
+  "capabilityMap": {
+    "gemini-flash-low": {
+      "model": "ag/gemini-3.8-flash-low",
+      "tier": "cheap",
+      "supportedEfforts": ["minimal", "low"],
+      "defaultEffort": "low",
+      "maximumEffort": "low",
+      "enabled": true
+    },
+    "gemini-flash-medium": {
+      "model": "ag/gemini-3.8-flash-medium",
+      "tier": "balanced",
+      "supportedEfforts": ["low", "medium", "high"],
+      "defaultEffort": "medium",
+      "maximumEffort": "high",
+      "enabled": true
+    },
+    "gemini-flash-high": {
+      "model": "ag/gemini-3.8-flash-high",
+      "tier": "strong",
+      "supportedEfforts": ["low", "medium", "high"],
+      "defaultEffort": "high",
+      "maximumEffort": "high",
+      "enabled": true
+    },
+    "terra": {
+      "model": "cx/gpt-5.6-terra",
+      "tier": "strong",
+      "supportedEfforts": ["low", "medium", "high"],
+      "defaultEffort": "medium",
+      "maximumEffort": "high",
+      "enabled": true
+    },
+    "sol": {
+      "model": "cx/gpt-5.6-sol",
+      "tier": "frontier",
+      "supportedEfforts": ["medium", "high", "max"],
+      "defaultEffort": "high",
+      "maximumEffort": "max",
+      "enabled": false
+    },
+    "luna-review": {
+      "model": "cx/gpt-5.6-luna-review",
+      "tier": "specialist",
+      "supportedEfforts": ["medium", "high"],
+      "defaultEffort": "high",
+      "maximumEffort": "high",
+      "enabled": true
+    }
+  },
+  "deEscalationReconciliation": {
+    "liveCanaryResult": {
+      "caseId": "case-8-documentation",
+      "prompt": "Generate clean markdown documentation comments for the verified rate limiter functions.",
+      "complexity": "medium",
+      "complexityReason": "prompt keyword 'functions' triggered medium complexity baseline",
+      "context": { "recentTestOutcome": "passed" },
+      "desiredEffort": "medium",
+      "effectiveEffort": "medium",
+      "model": "ag/gemini-3.8-flash-medium",
+      "observation": "De-escalation prevented escalation above baseline, successfully stepping down from preceding high-reasoning cases (4-7) to medium effort on gemini-flash-medium without model flapping."
+    },
+    "deterministicMultiTurnTest": {
+      "testRef": "test/auto-reasoning.test.ts (Turn 3 / Shadow Case 8)",
+      "prompt": "add JSDoc comments to webhook handler functions",
+      "complexity": "low",
+      "context": { "recentTestOutcome": "passed" },
+      "desiredEffort": "low",
+      "effectiveEffort": "low",
+      "model": "ag/gemini-3.8-flash-medium",
+      "observation": "When the post-pass task is evaluated under low complexity, desired and effective reasoning effort de-escalate cleanly to low."
+    }
+  },
+  "rootCauseAnalysis": {
+    "port20201Issue": "The canary script executes sequentially and shuts down upon completion, leaving sockets in TIME_WAIT. Upstream LLM calls for complex reasoning took 12-18 seconds, whereas connectTimeoutMs was defaulted to 10,000ms, causing premature connection_timeout aborts. Resolved by adding bounded /health polling, setting connectTimeoutMs to 30,000ms, handling signals gracefully, and ensuring clean teardown.",
+    "concurrencyRouting": "PostgreSQL concurrency prompt triggers complexity=high (via 'race condition'/'concurr'), risk=medium, routing to strong tier (ag/gemini-3.8-flash-high). Auto-reasoning evaluates desired=high, clamped=false, effective=high. Payload is serializable with duplicate reasoning fields stripped.",
+    "isolationOfInfraFailures": "Infrastructure failures (HTTP 429, HTTP 5xx, network timeouts, upstream unavailable) are isolated from quality failures: complexity and minimum quality tier are prevented from escalating on infra failures, preserving baseline reasoning effort."
+  },
+  "canaryMetrics": {
+    "autoSuccessRate": "100%",
+    "fixedHighSuccessRate": "75%",
+    "casesEvaluated": 8,
+    "routineLatencyMs": 5841,
+    "normalCodingLatencyMs": 11472,
+    "concurrencyLatencyMs": 18113,
+    "financialLatencyMs": 17831,
+    "securityLatencyMs": 17159,
+    "qualityEscalationLatencyMs": 16293,
+    "deEscalationLatencyMs": 11397,
+    "qualityRegressionDetected": false
+  },
+  "readinessGates": {
+    "gateA_concurrencyRegression": { "status": "PASS", "description": "Targeted PostgreSQL concurrency regression test passes and produces strong tier ag/gemini-3.8-flash-high with effective reasoning effort high" },
+    "gateB_infraVsQualityIsolation": { "status": "PASS", "description": "Quality failures escalate reasoning effort; HTTP 429, 5xx, timeout, and infra errors leave reasoning unescalated" },
+    "gateC_deEscalation": { "status": "PASS", "description": "Post-pass routine/documentation tasks de-escalate reasoning effort cleanly without model flapping" },
+    "gateD_capabilityClamping": { "status": "PASS", "description": "Effort levels are strictly clamped to profile-supported capabilities; no unsupported levels emitted" },
+    "gateE_streamIntegrity": { "status": "PASS", "description": "Stream safety invariants, headers, and pre-stream decision rules fully preserved across CP1 regression suite" },
+    "gateF_productionPortUntouched": { "status": "PASS", "description": "Stable port 20200 untouched throughout all canary experiments; development port 20201 verified and cleanly released" }
+  },
+  "tests": {
+    "command": "npm test",
+    "testFiles": 12,
+    "testCount": 163,
+    "passed": 163,
+    "failed": 0,
+    "status": "PASS"
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0,
+    "status": "PASS"
+  },
+  "streamSafety": {
+    "suite": "test/reliability.test.ts",
+    "testsPassed": 6,
+    "testsFailed": 0,
+    "status": "PASS"
+  },
+  "recommendedProductionConfiguration": {
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "upstreamConnectTimeoutMs": 30000,
+    "productionCutoverExecuted": false,
+    "port20200Status": "untouched"
+  }
+}

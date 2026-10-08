@@ -1,0 +1,20 @@
+{
+  "timestamp": "2026-09-12T10:55:35+07:00",
+  "stableProject": "C:/Projects/router/auto-router",
+  "developmentProject": "C:/Projects/router/auto-router-v2-cp1",
+  "stableEnvPresence": true,
+  "developmentEnvPresence": false,
+  "stableRequiredVariablesPresent": ["UPSTREAM_API_KEY", "UPSTREAM_BASE_URL"],
+  "developmentRequiredVariablesPresent": [],
+  "modelsEndpoint": "PASS: authenticated request returned 39 model IDs",
+  "prior401RootCause": "The development V2 worktree had no local .env, so its launcher did not receive UPSTREAM_API_KEY or UPSTREAM_BASE_URL. The earlier /v1/models versus completion discrepancy was caused by comparing a reachable models endpoint with unauthenticated completion probes.",
+  "secureConfigurationStep": "Run the corrected V2 process from a worktree-local .env populated through the existing local secure configuration mechanism, or export UPSTREAM_API_KEY and UPSTREAM_BASE_URL in the process environment. Do not commit either value.",
+  "authenticatedMinimalProbe": {
+    "port": 20201,
+    "request": "POST /v1/chat/completions with model=auto, non-streaming, max_tokens=8, synthetic request text",
+    "result": "PASS: HTTP 200 with choices",
+    "credentialsRecorded": false
+  },
+  "v2CanaryStopped": true,
+  "stablePortTouched": false
+}

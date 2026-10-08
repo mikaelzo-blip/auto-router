@@ -1,0 +1,32 @@
+{
+  "taskId": "AR-2",
+  "category": "ARCHITECTURE",
+  "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "ag/gemini-3.8-flash-high",
+  "modelAlias": "gemini_high",
+  "timestamp": "2026-09-24T09:22:33.466Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 0.8,
+  "elapsedMs": 15744,
+  "ttfbMs": 3879,
+  "usage": {
+    "promptTokens": 2624,
+    "completionTokens": 3260,
+    "reasoningTokens": 1411,
+    "totalTokens": 5884
+  },
+  "reasoningErrors": [
+    "Missing per-tenant connection reservations or fair queueing"
+  ],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "checklistScore": 4,
+    "maxPoints": 5
+  },
+  "rawOutputSnippet": "### 1. Root Causes of Shared FIFO Pool Failure\n\n* **Head-of-Line Blocking**: Standard pools (HikariCP) use a single Fair/FIFO queue for threads awaiting connections. When Tenant 1 submits 100 concurrent requests, those requests claim all active connections and backfill the wait queue. Fast, lightweight queries from the other 499 tenants queue behind long-running queries.\n* **Holding Time Asymmetry"
+}

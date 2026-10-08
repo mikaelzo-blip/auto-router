@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-3",
+  "category": "AGENTIC",
+  "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:39:13.958Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 31099,
+  "ttfbMs": 1912,
+  "iterations": 7,
+  "toolCalls": 6,
+  "failedToolCalls": 0,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/resilience/retry-policy.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4253ms)\n✔ RetryPolicy - retries on transient failure and recovers (9.3605ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.9397\n",
+    "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6517ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (4.9182ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.958\n"
+  }
+}

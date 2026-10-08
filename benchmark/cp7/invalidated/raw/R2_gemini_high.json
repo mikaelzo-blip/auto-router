@@ -1,0 +1,57 @@
+{
+  "caseId": "R2",
+  "track": "reasoning",
+  "name": "Distributed Idempotency & Webhook Retry Correctness",
+  "candidate": "gemini_high",
+  "modelId": "ag/gemini-3.8-flash-high",
+  "timestamp": "2026-09-14T15:39:00.801Z",
+  "ttfbMs": 5686,
+  "totalLatencyMs": 36948,
+  "httpStatus": 200,
+  "success": true,
+  "tokens": {
+    "prompt": 2208,
+    "completion": 8959,
+    "reasoning": 2946
+  },
+  "outputSnippet": "### 1. Exact Idempotency Protocol for Stripe Webhooks\n\nStripe guarantees **at-least-once delivery**. A robust idempotency protocol must decouple the transport-level acknowledgment from domain-level side effects using a multi-phase verification, deduplication, and atomic state-transition lifecycle.\n\n",
+  "evaluation": {
+    "satisfiedInvariants": 3,
+    "totalInvariants": 4,
+    "avoidedTraps": 3,
+    "totalTraps": 3,
+    "invariantResults": [
+      {
+        "text": "Idempotency record must be stored atomically within the same database transaction as the state mutation (or via outbox)",
+        "satisfied": true
+      },
+      {
+        "text": "Identifies Redis-only deduplication failure modes (cache eviction, unpersisted writes, race window)",
+        "satisfied": true
+      },
+      {
+        "text": "Handles concurrent in-flight duplicates via unique constraint violation with proper retry or 409/200 response",
+        "satisfied": true
+      },
+      {
+        "text": "Distinguishes between retryable transient failure and terminal duplicate replay",
+        "satisfied": false
+      }
+    ],
+    "trapResults": [
+      {
+        "text": "Storing idempotency key in Redis without database transactional synchronization",
+        "avoided": true
+      },
+      {
+        "text": "Returning HTTP 500 on duplicate webhook instead of HTTP 200 acknowledging receipt",
+        "avoided": true
+      },
+      {
+        "text": "Fulfilling order before durable commit of event processing record",
+        "avoided": true
+      }
+    ],
+    "passed": true
+  }
+}

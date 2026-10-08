@@ -1,0 +1,27 @@
+{
+  "taskId": "ST-02",
+  "category": "STRONG",
+  "taskName": "Debug a PostgreSQL oversell incident",
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T10:26:46.251Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Omitted atomic conditional UPDATE with available/stock predicate",
+    "Omitted SELECT FOR UPDATE locking remediation"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.6,
+  "elapsedMs": 10827,
+  "ttfbMs": 1845,
+  "usage": {
+    "promptTokens": 2535,
+    "completionTokens": 465,
+    "reasoningTokens": 0,
+    "totalTokens": 3000
+  },
+  "rawResponse": "Both requests read `available = 10` before either updates the row. Each then increments `reserved` by 7. PostgreSQL serializes the two `UPDATE`s on the row, but neither update rechecks availability, so both can succeed. The final reserved increase is 14, leaving available stock at −4. This is a check-then-act race, not a lost update.\n\n**Atomic SQL remediation:** Put the capacity check in the same statement as the increment. If `available` is stored separately and must remain synchronized with `reserved`:\n\n```sql\nUPDATE inventory\nSET available = available - $2,\n    reserved  = reserved + $2\nWHERE sku = $1\n  AND available >= $2\nRETURNING available, reserved;\n```\n\nRequire `$2 > 0`. Treat zero returned rows as insufficient stock or an unknown SKU. Under `READ COMMITTED`, a concurrent updater waits, then PostgreSQL reevaluates the `WHERE` condition against the updated row; only one quantity-7 request succeeds. Add `CHECK (available >= 0)` as a database backstop. If `available` is derived from total stock and `reserved`, update only `reserved` and predicate on the derived availability instead.\n\n**Locking remediation:** Use one transaction, lock the inventory row before checking it, and keep the lock through the update:\n\n```sql\nBEGIN;\nSELECT available\nFROM inventory\nWHERE sku = $1\nFOR UPDATE;\n\n-- If absent or available < $2: ROLLBACK.\nUPDATE inventory\nSET available = available - $2,\n    reserved  = reserved + $2\nWHERE sku = $1;\nCOMMIT;\n```\n\nRequire `$2 > 0` and retain the database `CHECK`. The second transaction waits for the first, then reads the committed availability and rejects the reservation.\n\n**Retries:** Retry the *entire transaction*, not a failed statement, on deadlock (`40P01`) or serialization failure (`40001`), with a bounded attempt count and backoff. A lock timeout (`55P03`) may also be retried if policy permits. Do not retry an insufficient-stock result as a concurrency error. Use a reservation idempotency key so a retry after an uncertain commit cannot reserve stock twice."
+}

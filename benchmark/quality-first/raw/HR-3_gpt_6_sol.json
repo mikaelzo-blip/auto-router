@@ -1,0 +1,30 @@
+{
+  "taskId": "HR-3",
+  "category": "HARD_REASONING",
+  "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+  "isTrap": true,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-sol",
+  "modelAlias": "gpt_6_sol",
+  "timestamp": "2026-09-24T09:15:35.750Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 3458,
+  "ttfbMs": 1569,
+  "usage": {
+    "promptTokens": 2598,
+    "completionTokens": 72,
+    "reasoningTokens": 0,
+    "totalTokens": 2670
+  },
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "criteriaMet": 4,
+    "maxPoints": 4
+  },
+  "rawOutputSnippet": "No valid topological order exists. The dependencies contain the cycle **T2 → T3 → T4 → T5 → T2**. Each task in that cycle must wait for another task in the same cycle, so none can start. T1 and T6 can run, but the pipeline cannot complete on any number of workers."
+}

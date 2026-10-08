@@ -1,0 +1,2474 @@
+{
+  "version": "qfirst-1.0.0",
+  "updatedAt": "2026-09-24T09:54:14.704Z",
+  "records": [
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:32:23.670Z",
+      "operationalSuccess": false,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 71048,
+      "ttfbMs": 6368,
+      "iterations": 3,
+      "toolCalls": 2,
+      "failedToolCalls": 1,
+      "reasoningErrors": [
+        "Network/timeout error: The operation was aborted due to timeout"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "error": "The operation was aborted due to timeout"
+      }
+    },
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:31:12.621Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0.5,
+      "elapsedMs": 58284,
+      "ttfbMs": 5627,
+      "iterations": 6,
+      "toolCalls": 5,
+      "failedToolCalls": 1,
+      "prematureSuccess": false,
+      "reasoningErrors": [
+        "Hidden acceptance test suite failed"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": false,
+        "filesChanged": [
+          "src/rate-limiter.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4436ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0792ms)\n✔ RateLimiter - allows new requests after window expires (0.0559ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 92.4266\n",
+        "hiddenTestOutput": "✖ Hidden: RateLimiter - exact window boundary condition (1.4236ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.099ms)\n✖ Hidden: RateLimiter - token count calculation accuracy (0.1877ms)\nℹ tests 3\nℹ suites 0\nℹ pass 1\nℹ fail 2\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.7042\n\n✖ failing tests:\n\ntest at test-hidden\\hidden.test.ts:1:122\n✖ Hidden: RateLimiter - exact window boundary conditio"
+      }
+    },
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:29:53.343Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 23434,
+      "ttfbMs": 3665,
+      "iterations": 7,
+      "toolCalls": 7,
+      "failedToolCalls": 2,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/rate-limiter.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4235ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0797ms)\n✔ RateLimiter - allows new requests after window expires (0.0546ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 102.6613\n",
+        "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.4396ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.1837ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.1544ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.3156\n"
+      }
+    },
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:30:14.336Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 20992,
+      "ttfbMs": 3404,
+      "iterations": 6,
+      "toolCalls": 6,
+      "failedToolCalls": 1,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/rate-limiter.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4251ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0771ms)\n✔ RateLimiter - allows new requests after window expires (0.055ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 98.4428\n",
+        "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.6378ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.1101ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.1261ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 93.5949\n"
+      }
+    },
+    {
+      "taskId": "AG-1",
+      "category": "AGENTIC",
+      "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:32:42.245Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 18573,
+      "ttfbMs": 3163,
+      "iterations": 5,
+      "toolCalls": 6,
+      "failedToolCalls": 1,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/rate-limiter.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.6906ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.1065ms)\n✔ RateLimiter - allows new requests after window expires (0.0798ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 108.4228\n",
+        "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.422ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.0655ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.0792ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 126.1208\n"
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:38:08.816Z",
+      "operationalSuccess": false,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 182197,
+      "ttfbMs": 3707,
+      "iterations": 12,
+      "toolCalls": 11,
+      "failedToolCalls": 3,
+      "reasoningErrors": [
+        "Network/timeout error: The operation was aborted due to timeout"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "error": "The operation was aborted due to timeout"
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:35:06.617Z",
+      "operationalSuccess": false,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 85084,
+      "ttfbMs": 5232,
+      "iterations": 8,
+      "toolCalls": 7,
+      "failedToolCalls": 1,
+      "reasoningErrors": [
+        "Network/timeout error: The operation was aborted due to timeout"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "error": "The operation was aborted due to timeout"
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:33:07.579Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 19376,
+      "ttfbMs": 3449,
+      "iterations": 5,
+      "toolCalls": 6,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/events/dispatcher.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ EventBus - exact topic subscription (0.8348ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1008ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.0827ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 90.6933\n",
+        "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.5089ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.3892ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.7188\n"
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:33:41.532Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 33952,
+      "ttfbMs": 3792,
+      "iterations": 6,
+      "toolCalls": 8,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/events/dispatcher.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ EventBus - exact topic subscription (0.7444ms)\n✔ EventBus - single-level wildcard subscription (*) (0.1015ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.0868ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 108.9973\n",
+        "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4993ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.3886ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 137.8994\n"
+      }
+    },
+    {
+      "taskId": "AG-2",
+      "category": "AGENTIC",
+      "taskName": "B1 - Wildcard Event Bus Multi-Segment Matching",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:38:34.830Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 26012,
+      "ttfbMs": 2003,
+      "iterations": 6,
+      "toolCalls": 9,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/events/dispatcher.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ EventBus - exact topic subscription (0.7719ms)\n✔ EventBus - single-level wildcard subscription (*) (0.0937ms)\n✔ EventBus - multi-level wildcard subscription (#) (0.1956ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.0937\n",
+        "hiddenTestOutput": "✔ Hidden: EventBus - wildcard unsubscribe only removes target listener (0.4909ms)\n✔ Hidden: EventBus - single wildcard does not cross multiple segments (0.4057ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.6219\n"
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:43:11.156Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0.5,
+      "elapsedMs": 155157,
+      "ttfbMs": 2677,
+      "iterations": 20,
+      "toolCalls": 20,
+      "failedToolCalls": 5,
+      "prematureSuccess": false,
+      "reasoningErrors": [
+        "Hidden acceptance test suite failed"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": false,
+        "filesChanged": [
+          "src/resilience/retry-policy.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "PARENT_DIR: [\n  'agentic-AG-1-gemini_high',\n  'agentic-AG-1-gemini_medium',\n  'agentic-AG-1-gpt_6_luna',\n  'agentic-AG-1-gpt_6_sol',\n  'agentic-AG-1-sonnet_4_6',\n  'agentic-AG-2-gemini_high',\n  'agentic-AG-2-gemini_medium',\n  'agentic-AG-2-gpt_6_luna',\n  'agentic-AG-2-gpt_6_sol',\n  'agentic-AG-2-sonnet_4_6',\n  'agentic-AG-3-gemini_high',\n  'agentic-AG-3-gemini_medium',\n  'agentic-AG-3-gpt_6_luna',",
+        "hiddenTestOutput": "PARENT_DIR: [\n  'agentic-AG-1-gemini_high',\n  'agentic-AG-1-gemini_medium',\n  'agentic-AG-1-gpt_6_luna',\n  'agentic-AG-1-gpt_6_sol',\n  'agentic-AG-1-sonnet_4_6',\n  'agentic-AG-2-gemini_high',\n  'agentic-AG-2-gemini_medium',\n  'agentic-AG-2-gpt_6_luna',\n  'agentic-AG-2-gpt_6_sol',\n  'agentic-AG-2-sonnet_4_6',\n  'agentic-AG-3-gemini_high',\n  'agentic-AG-3-gemini_medium',\n  'agentic-AG-3-gpt_6_luna',"
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:40:35.998Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 47741,
+      "ttfbMs": 3927,
+      "iterations": 14,
+      "toolCalls": 13,
+      "failedToolCalls": 1,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/resilience/retry-policy.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4244ms)\n✔ RetryPolicy - retries on transient failure and recovers (17.9835ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 115.999\n",
+        "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (1.0487ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (10.2463ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 140.6127\n"
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:39:13.958Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 31099,
+      "ttfbMs": 1912,
+      "iterations": 7,
+      "toolCalls": 6,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/resilience/retry-policy.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4253ms)\n✔ RetryPolicy - retries on transient failure and recovers (9.3605ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 105.9397\n",
+        "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6517ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (4.9182ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.958\n"
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:39:48.256Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 34297,
+      "ttfbMs": 2655,
+      "iterations": 6,
+      "toolCalls": 6,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/resilience/retry-policy.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ RetryPolicy - succeeds on first attempt without retrying (0.4327ms)\n✔ RetryPolicy - retries on transient failure and recovers (15.8983ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 118.0844\n",
+        "hiddenTestOutput": "✔ Hidden: RetryPolicy - fails fast on unretryable 4xx client errors without retry loop (0.6698ms)\n✔ Hidden: RetryPolicy - retries 429 quota errors (20.4085ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 157.9156\n"
+      }
+    },
+    {
+      "taskId": "AG-3",
+      "category": "AGENTIC",
+      "taskName": "D2 - Resilience: Exponential Backoff & Jitter Retry Policy",
+      "isTrap": false,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:44:21.154Z",
+      "operationalSuccess": false,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 69997,
+      "ttfbMs": 3216,
+      "iterations": 5,
+      "toolCalls": 6,
+      "failedToolCalls": 0,
+      "reasoningErrors": [
+        "Network/timeout error: The operation was aborted due to timeout"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "error": "The operation was aborted due to timeout"
+      }
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:19:58.418Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 26100,
+      "ttfbMs": 9476,
+      "usage": {
+        "promptTokens": 2610,
+        "completionTokens": 4706,
+        "reasoningTokens": 2468,
+        "totalTokens": 7316
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### Architecture Overview\n\n```\n[Payment Provider]\n       │\n       ▼ (10k req/s HTTPS)\n[Ingress Gateway (Stateless Go/Rust)]\n       │\n       ├─ Verify HMAC Signature\n       ├─ Format-validate payload\n       ▼\n[Kafka Cluster: topic `webhook-raw`]\n       │ (Partitioned by provider:payment_id)\n       ▼\n[Webhook Processor Workers]\n       │\n       ├─ Tier 1: Per-Key In-Memory / Partition Serialization\n "
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:19:32.317Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 16840,
+      "ttfbMs": 4240,
+      "usage": {
+        "promptTokens": 2610,
+        "completionTokens": 3464,
+        "reasoningTokens": 977,
+        "totalTokens": 6074
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### System Overview\n\n```\n                      +---------------------------------------+\n                      |   External Providers (Stripe/Adyen)   |\n                      +---------------------------------------+\n                                          |\n                                    [HTTP POST]\n                                          v\n+----------------------------------------------"
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:18:42.309Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 38110,
+      "ttfbMs": 1694,
+      "usage": {
+        "promptTokens": 2595,
+        "completionTokens": 1391,
+        "reasoningTokens": 0,
+        "totalTokens": 3986
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## Architecture\n\n```text\nPayment providers\n  → regional webhook gateways\n  → durable ingress log\n  → partitioned event processors\n  → transactional ledger + event inbox/outbox\n  → downstream consumers\n```\n\nReturn `2xx` only after the event is durably recorded. Never wait for ledger processing before acknowledging. Use a replicated log or durable queue with configured replication, retention, and ca"
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:19:15.476Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 33166,
+      "ttfbMs": 1506,
+      "usage": {
+        "promptTokens": 2595,
+        "completionTokens": 1072,
+        "reasoningTokens": 0,
+        "totalTokens": 3667
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## Core invariant\n\nA valid webhook is acknowledged only after its raw payload is durably stored. A financial effect is committed only in the same database transaction that records its unique ledger effect ID. Delivery, processing, and retries remain at-least-once; **the ledger mutation is exactly once**.\n\n## Ingestion path\n\n`Provider → stateless webhook gateway → durable inbox → keyed processing q"
+    },
+    {
+      "taskId": "AR-1",
+      "category": "ARCHITECTURE",
+      "taskName": "High-Throughput Idempotent Webhook Processing Engine",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:20:52.615Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 54196,
+      "ttfbMs": 1571,
+      "usage": {
+        "promptTokens": 2669,
+        "completionTokens": 3000,
+        "reasoningTokens": 0,
+        "totalTokens": 5669
+      },
+      "reasoningErrors": [
+        "Missing atomic state transition on duplicate concurrent delivery"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "# Webhook Ingestion Engine: 10K Events/Sec Payment Processor Design\n\n## System Overview\n\n```\n┌─────────────────────────────────────────────────────────────────────┐\n│                        Ingestion Tier                               │\n│  Stripe/Adyen ──► ALB ──► Receiver Fleet (stateless, k8s pods)     │\n│                              │                                       │\n│                  "
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:22:33.466Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 15744,
+      "ttfbMs": 3879,
+      "usage": {
+        "promptTokens": 2624,
+        "completionTokens": 3260,
+        "reasoningTokens": 1411,
+        "totalTokens": 5884
+      },
+      "reasoningErrors": [
+        "Missing per-tenant connection reservations or fair queueing"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Root Causes of Shared FIFO Pool Failure\n\n* **Head-of-Line Blocking**: Standard pools (HikariCP) use a single Fair/FIFO queue for threads awaiting connections. When Tenant 1 submits 100 concurrent requests, those requests claim all active connections and backfill the wait queue. Fast, lightweight queries from the other 499 tenants queue behind long-running queries.\n* **Holding Time Asymmetry"
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:22:17.721Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 23223,
+      "ttfbMs": 10619,
+      "usage": {
+        "promptTokens": 2624,
+        "completionTokens": 3113,
+        "reasoningTokens": 1136,
+        "totalTokens": 5737
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Root Cause Analysis: Standard Shared Connection Pool Failure\n\nA standard shared connection pool (e.g., default HikariCP) operates a single bounded FIFO queue backed by an array of active connections. This design fails under multi-tenant variance:\n\n*   **Head-of-Line (HoL) Blocking:** The pool does not inspect the `tenant_id` context of incoming lease requests. When Tenant 1 initiates 100 co"
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapAvoided": false,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:21:25.744Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0.4,
+      "elapsedMs": 33128,
+      "ttfbMs": 1420,
+      "usage": {
+        "promptTokens": 2610,
+        "completionTokens": 1149,
+        "reasoningTokens": 0,
+        "totalTokens": 3759
+      },
+      "reasoningErrors": [
+        "Fell for trap: did not reject naive unpartitioned shared pool"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 2,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## 1. Why a single shared pool fails\n\nA global pool limits total connections, but it does not allocate them fairly.\n\n- Tenant 1’s 100 requests can occupy most or all available pool slots. Other tenants then wait behind Tenant 1’s work in the FIFO queue.\n- FIFO ordering preserves arrival order, not tenant fairness. A burst from one tenant can monopolize both active connections and queue capacity.\n-"
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:21:54.497Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 28752,
+      "ttfbMs": 2013,
+      "usage": {
+        "promptTokens": 2610,
+        "completionTokens": 934,
+        "reasoningTokens": 0,
+        "totalTokens": 3544
+      },
+      "reasoningErrors": [
+        "Missing per-tenant connection reservations or fair queueing"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## 1. Why one shared FIFO pool fails\n\nA shared pool caps total connections, not each tenant’s share. Tenant 1 can occupy every pooled connection with 100 slow reports. Requests from the other 499 tenants then wait behind it or time out. FIFO admission also lets a Tenant 1 burst fill the queue before other tenants arrive.\n\nIncreasing the pool size does not fix isolation. PostgreSQL has `max_connect"
+    },
+    {
+      "taskId": "AR-2",
+      "category": "ARCHITECTURE",
+      "taskName": "Multi-Tenant Connection Pooling & Noisy Neighbor Isolation",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:23:26.647Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 53179,
+      "ttfbMs": 1317,
+      "usage": {
+        "promptTokens": 2686,
+        "completionTokens": 3000,
+        "reasoningTokens": 0,
+        "totalTokens": 5686
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "# Multi-Tenant PostgreSQL Connection Management\n\n## 1. Why Standard Shared FIFO Pool Fails\n\n**Root cause:** A single FIFO queue with a global connection ceiling has no tenant identity. Connection acquisition is first-come-first-served across all 499 tenants.\n\n**Concrete failure cascade:**\n\nTenant 1 fires 100 concurrent report queries. Each waits in queue and holds a connection for the duration of "
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:24:59.166Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 21203,
+      "ttfbMs": 6230,
+      "usage": {
+        "promptTokens": 2632,
+        "completionTokens": 3721,
+        "reasoningTokens": 1667,
+        "totalTokens": 6353
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Dual-Write Problem Architecture\n\nDual-write vulnerability occurs when writing to a local database and publishing to an event broker in uncoordinated operations. A crash between these actions produces state divergence.\n\nImplement the Transactional Outbox Pattern combined with Change Data Capture (CDC).\n\n```\n[Service Context]\nClient Request \n      │\n      ▼\n┌──────────────────────────────────"
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:24:37.962Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 9152,
+      "ttfbMs": 3449,
+      "usage": {
+        "promptTokens": 2632,
+        "completionTokens": 1933,
+        "reasoningTokens": 487,
+        "totalTokens": 4565
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Dual-Write Problem: Transactional Outbox Pattern\n\nServices cannot commit to a local database and publish to a message broker atomically without 2PC. Solve this via the Transactional Outbox Pattern with Change Data Capture (CDC).\n\n```\n[Service Logic]\n       │\n       ▼ (Single ACID Transaction)\n┌────────────────────────────────────────┐\n│ Relational Database                    │\n│  ├── Domain"
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:24:00.584Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0.6,
+      "elapsedMs": 33935,
+      "ttfbMs": 4903,
+      "usage": {
+        "promptTokens": 2630,
+        "completionTokens": 1031,
+        "reasoningTokens": 0,
+        "totalTokens": 3661
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [
+        "Missing persistent saga coordinator state",
+        "Missing timeout / network partition handling during compensation"
+      ],
+      "details": {
+        "checklistScore": 3,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## Architecture\n\nUse an **orchestrated Saga**. Order Service owns the checkout workflow; Payment Service and Inventory Service own their data and operations. A durable message broker transports commands and events, but the broker is not the source of Saga truth.\n\n```text\nClient\n  │\n  ▼\nOrder Service + Saga DB\n  │ commands/events via transactional outbox\n  ▼\nMessage broker\n  ├── Payment Service + l"
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:24:28.809Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 28224,
+      "ttfbMs": 1727,
+      "usage": {
+        "promptTokens": 2630,
+        "completionTokens": 860,
+        "reasoningTokens": 0,
+        "totalTokens": 3490
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [
+        "Missing persistent saga coordinator state"
+      ],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "## Architecture\n\nUse an **orchestrated Saga** owned by Order Service. Order Service persists checkout state and decides each next step; Payment and Inventory execute commands and report outcomes. This keeps the compensation decision in one place rather than distributing it across event handlers.\n\nEach service owns its database and uses a **transactional outbox**. A local transaction commits the bu"
+    },
+    {
+      "taskId": "AR-3",
+      "category": "ARCHITECTURE",
+      "taskName": "Distributed Saga Orchestrator with Dual-Write Mitigation",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:26:19.244Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 46217,
+      "ttfbMs": 1149,
+      "usage": {
+        "promptTokens": 2706,
+        "completionTokens": 3000,
+        "reasoningTokens": 0,
+        "totalTokens": 5706
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [
+        "Missing timeout / network partition handling during compensation"
+      ],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "# E-Commerce Checkout Saga Architecture\n\n## Architectural Decisions Up Front\n\n**Orchestrated Saga** over choreographed. Reason: compensating transaction chains have strict ordering dependencies (Inventory rollback must precede Payment refund in some flows); a central orchestrator gives a single authoritative state machine queryable for debugging, replay, and SLA enforcement. Choreography scatters "
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:28:28.359Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 14658,
+      "ttfbMs": 4350,
+      "usage": {
+        "promptTokens": 2626,
+        "completionTokens": 3205,
+        "reasoningTokens": 1180,
+        "totalTokens": 5831
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Root Causes of Naive DDL Downtime\n\nA naive `ALTER TABLE` statement triggers an immediate operational outage through three mechanisms:\n\n*   **Lock Queuing and Connection Pool Starvation:** The statement requires an `ACCESS EXCLUSIVE` lock on `journal_entries` and all underlying child partitions. While waiting for existing read/write transactions to clear, the DDL blocks every subsequent read"
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:28:13.698Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 12092,
+      "ttfbMs": 3431,
+      "usage": {
+        "promptTokens": 2626,
+        "completionTokens": 2734,
+        "reasoningTokens": 794,
+        "totalTokens": 5360
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "### 1. Naive Migration Failure Modes\n\n1. **Lock Queue Starvation**:\n   `ALTER TABLE journal_entries ADD COLUMN ...` acquires an `ACCESS EXCLUSIVE` lock on the partitioned table and propagates it to every child partition. Any long-running read query blocks the `ALTER TABLE`. Subsequent reads and writes queue behind the `ACCESS EXCLUSIVE` request, exhausting the connection pool within seconds.\n\n2. *"
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:27:02.161Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 42915,
+      "ttfbMs": 1777,
+      "usage": {
+        "promptTokens": 2611,
+        "completionTokens": 1853,
+        "reasoningTokens": 0,
+        "totalTokens": 4464
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [
+        "Omitted CREATE INDEX CONCURRENTLY"
+      ],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "A zero-blocking PostgreSQL migration is not possible: every `ALTER TABLE` needs a brief table lock. The goal is to keep those locks short, fail fast if they cannot be acquired, and move scans and row updates outside long-running DDL transactions. Test the exact sequence on the production PostgreSQL major version and partition layout.\n\n## 1. Why the naive `ALTER TABLE` causes downtime\n\n`ADD COLUMN "
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:28:01.603Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 0.8,
+      "elapsedMs": 59441,
+      "ttfbMs": 25194,
+      "usage": {
+        "promptTokens": 2611,
+        "completionTokens": 1809,
+        "reasoningTokens": 0,
+        "totalTokens": 4420
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [
+        "Omitted CREATE INDEX CONCURRENTLY"
+      ],
+      "details": {
+        "checklistScore": 4,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "A computed historical value needs a defined mapping. Assume `compute_reconciliation_id(journal_entries)` deterministically returns the batch UUID for a row, and every returned UUID exists in `reconciliation_batches` before that row is updated. If the mapping depends on mutable data, materialize it first; a retry must produce the same UUID.\n\n## 1. Why the one-step `ALTER TABLE` causes downtime\n\n`AD"
+    },
+    {
+      "taskId": "AR-4",
+      "category": "ARCHITECTURE",
+      "taskName": "Zero-Downtime Schema Migration on a High-Velocity Financial Ledger",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:29:20.376Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 52016,
+      "ttfbMs": 1455,
+      "usage": {
+        "promptTokens": 2684,
+        "completionTokens": 3000,
+        "reasoningTokens": 0,
+        "totalTokens": 5684
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "checklistScore": 5,
+        "maxPoints": 5
+      },
+      "rawOutputSnippet": "# Zero-Downtime NOT NULL FK Column Migration: `journal_entries`\n\n## 1. Why Naive ALTER TABLE Causes Downtime\n\n**`ALTER TABLE journal_entries ADD COLUMN reconciliation_id UUID NOT NULL DEFAULT ... REFERENCES reconciliation_batches(id);`** acquires `AccessExclusiveLock` on `journal_entries`.\n\nThree independent failure paths:\n\n**A. Lock acquisition itself**\nPostgreSQL lock acquisition queues behind a"
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:14:16.741Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 8928,
+      "ttfbMs": 6241,
+      "usage": {
+        "promptTokens": 2813,
+        "completionTokens": 1569,
+        "reasoningTokens": 1278,
+        "totalTokens": 4382
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **T2 succeeds in committing.** It does not fail with SQLSTATE 40001.\nPostgreSQL implements `REPEATABLE READ` via Snapshot Isolation without tracking predicate dependencies. Serialization failures (SQLSTATE 40001) under this level occur only when a transaction attempts to update, delete, or lock a row that has already been modified and committed by a concurrent transaction since the snapshot was"
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:14:07.812Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 8223,
+      "ttfbMs": 6283,
+      "usage": {
+        "promptTokens": 2813,
+        "completionTokens": 1217,
+        "reasoningTokens": 807,
+        "totalTokens": 4030
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "### 1. Commit Outcome and Mechanism\n\nT2 succeeds in committing. It does not fail with SQLSTATE 40001.\n\n**PostgreSQL REPEATABLE READ Mechanism:**\nPostgreSQL implements `REPEATABLE READ` via Snapshot Isolation (SI), not Serializable Snapshot Isolation (SSI). Under SI:\n* A transaction sees a snapshot of data committed before its first non-transaction-control query.\n* Write conflicts are checked stric"
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:13:52.095Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6772,
+      "ttfbMs": 1873,
+      "usage": {
+        "promptTokens": 2772,
+        "completionTokens": 195,
+        "reasoningTokens": 0,
+        "totalTokens": 2967
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **T2 commits successfully.** PostgreSQL `REPEATABLE READ` uses snapshot isolation. Each transaction reads from its fixed snapshot, and each updates a different row. PostgreSQL’s concurrent-update check therefore finds no write-write conflict; it does not detect that the transactions’ reads jointly constrain the disjoint rows they update. No `40001` is raised.\n\n2. **The invariant is violated.** "
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:13:59.587Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 7491,
+      "ttfbMs": 1877,
+      "usage": {
+        "promptTokens": 2772,
+        "completionTokens": 204,
+        "reasoningTokens": 0,
+        "totalTokens": 2976
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **T2 commits successfully.** PostgreSQL’s `REPEATABLE READ` uses snapshot isolation. Both transactions read a snapshot with total balance 200, then update *different rows*. PostgreSQL detects concurrent updates to the same row and can raise SQLSTATE `40001` for that conflict, but there is no same-row update conflict here. `REPEATABLE READ` does not reject the conflict between each transaction’s"
+    },
+    {
+      "taskId": "HR-1",
+      "category": "HARD_REASONING",
+      "taskName": "PostgreSQL Concurrency & Write-Skew Anomaly Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:14:34.738Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 17995,
+      "ttfbMs": 1403,
+      "usage": {
+        "promptTokens": 2871,
+        "completionTokens": 789,
+        "reasoningTokens": 0,
+        "totalTokens": 3660
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "## Answer\n\n---\n\n### 1. Does T2 commit or fail with SQLSTATE 40001?\n\n**T2 commits successfully.**\n\nPostgreSQL's REPEATABLE READ uses MVCC with snapshot isolation. The write-conflict detection rule for REPEATABLE READ is:\n\n> If T2 attempts to UPDATE a row whose latest committed version was written by a transaction that committed *after* T2's snapshot was taken, T2 is aborted with SQLSTATE 40001 (\"co"
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:15:06.238Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 10585,
+      "ttfbMs": 5937,
+      "usage": {
+        "promptTokens": 2758,
+        "completionTokens": 2355,
+        "reasoningTokens": 1885,
+        "totalTokens": 5113
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "### 1. Causal Relationship\nConcurrent ($X\\text{='v2'} \\parallel X\\text{='v3'}$).\n\n**Reason:** \nVector clock comparison requires all elements to be greater than or equal to establish precedence. \n* $v2[A] = 1 > v3[A] = 0$\n* $v2[B] = 1 > v3[B] = 0$\n* $v2[C] = 0 < v3[C] = 1$\n\nNeither vector clock dominates the other.\n\n---\n\n### 2. Naive LWW Winner and Anomaly\n**Winning value:** $X = \\text{'v3'}$ (phys"
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:14:55.652Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6576,
+      "ttfbMs": 4185,
+      "usage": {
+        "promptTokens": 2758,
+        "completionTokens": 1428,
+        "reasoningTokens": 880,
+        "totalTokens": 4186
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "### 1. Causal Relationship\nThe versions are concurrent ($v2 \\parallel v3$). \n\nNeither vector clock dominates the other:\n* $v2$ has $[1, 1, 0]$\n* $v3$ has $[0, 0, 1]$\n\n$v2$ dominates on indices $A$ and $B$, but $v3$ dominates on index $C$. Because neither $\\text{VC}(v2) \\le \\text{VC}(v3)$ nor $\\text{VC}(v3) \\le \\text{VC}(v2)$ holds, neither update happened before the other.\n\n---\n\n### 2. Naive LWW O"
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:14:42.671Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 7932,
+      "ttfbMs": 1673,
+      "usage": {
+        "promptTokens": 2738,
+        "completionTokens": 223,
+        "reasoningTokens": 0,
+        "totalTokens": 2961
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **Concurrent.** `[1, 1, 0]` and `[0, 0, 1]` are incomparable: each has a component greater than the other in at least one position. Neither update causally follows the other.\n\n2. **LWW selects `v3`**, because its physical timestamp, `10:00:05`, is later than `v2`’s `10:00:00`. The anomaly is that wall-clock ordering can discard a concurrent update—and clock drift can make that ordering disagree"
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:14:49.073Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6399,
+      "ttfbMs": 1727,
+      "usage": {
+        "promptTokens": 2738,
+        "completionTokens": 238,
+        "reasoningTokens": 0,
+        "totalTokens": 2976
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **`v2` and `v3` are concurrent.** Neither `[1, 1, 0]` nor `[0, 0, 1]` is component-wise less than or equal to the other. `v2` causally follows `v1`, but `v3` does not follow either write.\n\n2. **Naive wall-clock LWW selects `v3`** because 10:00:05 is later than 10:00:00. The anomaly is that it silently discards the concurrent `v2` write based on timestamps that do not represent causal order. B’s"
+    },
+    {
+      "taskId": "HR-2",
+      "category": "HARD_REASONING",
+      "taskName": "Distributed Partition & Vector Clock Conflict Analysis",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:15:29.847Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 23608,
+      "ttfbMs": 1420,
+      "usage": {
+        "promptTokens": 2809,
+        "completionTokens": 1132,
+        "reasoningTokens": 0,
+        "totalTokens": 3941
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "## Analysis\n\n---\n\n### 1. Causal Relationship Between v2 and v3\n\nVector clocks:\n- v2: [1, 1, 0]\n- v3: [0, 0, 1]\n\nTwo versions are causally ordered if one dominates the other component-wise. Two versions are concurrent if neither dominates.\n\nCheck v2 ≤ v3: requires 1≤0 at vA — **false**.\nCheck v3 ≤ v2: requires 1≤0 at vC — **false**.\n\nNeither dominates. **v2 and v3 are concurrent** (`v2 ∥ v3`).\n\nv2 "
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:15:45.155Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6767,
+      "ttfbMs": 6267,
+      "usage": {
+        "promptTokens": 2607,
+        "completionTokens": 861,
+        "reasoningTokens": 733,
+        "totalTokens": 3468
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "A valid schedule is impossible. The dependency graph contains a directed cycle.\n\nExact cycle:\n`T2 -> T3 -> T4 -> T5 -> T2`\n\nReason:\nTopological sorting requires a Directed Acyclic Graph (DAG). T2 requires T5 to complete, while T5 transitively requires T2 to complete via the path `T2 -> T3 -> T4 -> T5`. This dependency loop creates an unresolvable deadlock.\n\nNext step:\nBreak the cycle by removing t"
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:15:38.387Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 2636,
+      "ttfbMs": 2302,
+      "usage": {
+        "promptTokens": 2607,
+        "completionTokens": 375,
+        "reasoningTokens": 263,
+        "totalTokens": 2982
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "A valid schedule is impossible. The dependency graph contains a directed cycle, which violates the DAG requirement for topological sorting.\n\nExact cycle:\n`T2 -> T3 -> T4 -> T5 -> T2`\n\nTasks `T2`, `T3`, `T4`, and `T5` form a cyclic deadlock where each task directly or indirectly waits for itself to finish. Break the dependency edge `T5 -> T2` or remove the chain `T2 -> T3 -> T4 -> T5` to make sched"
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:15:32.290Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 2442,
+      "ttfbMs": 1608,
+      "usage": {
+        "promptTokens": 2598,
+        "completionTokens": 48,
+        "reasoningTokens": 0,
+        "totalTokens": 2646
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "No valid schedule exists. The dependencies form the cycle **T2 → T3 → T4 → T5 → T2**, so no topological ordering is possible. T1 and T6 cannot resolve this cycle."
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:15:35.750Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 3458,
+      "ttfbMs": 1569,
+      "usage": {
+        "promptTokens": 2598,
+        "completionTokens": 72,
+        "reasoningTokens": 0,
+        "totalTokens": 2670
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "No valid topological order exists. The dependencies contain the cycle **T2 → T3 → T4 → T5 → T2**. Each task in that cycle must wait for another task in the same cycle, so none can start. T1 and T6 can run, but the pipeline cannot complete on any number of workers."
+    },
+    {
+      "taskId": "HR-3",
+      "category": "HARD_REASONING",
+      "taskName": "Build Pipeline Task Scheduling with Circular Dependency",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:15:53.761Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 8605,
+      "ttfbMs": 838,
+      "usage": {
+        "promptTokens": 2670,
+        "completionTokens": 409,
+        "reasoningTokens": 0,
+        "totalTokens": 3079
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "## Analysis\n\n### Dependency Graph\n\n```\nT1 → T2 → T3 → T4 → T5 → T2  (cycle)\nT6 (isolated)\n```\n\n### Cycle Detection\n\nTrace the directed edges:\n\n```\nT2 → T3 → T4 → T5 → T2\n```\n\nT2 depends on T5. T5 depends on T4. T4 depends on T3. T3 depends on T2. T2 depends on T3 — completing the cycle.\n\n**Exact cycle:** `T2 → T3 → T4 → T5 → T2`\n\n### Verdict\n\n**A valid schedule is impossible.**\n\nTopological orderi"
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "taskName": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:17:30.348Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 7024,
+      "ttfbMs": 4864,
+      "usage": {
+        "promptTokens": 2723,
+        "completionTokens": 1648,
+        "reasoningTokens": 1224,
+        "totalTokens": 4371
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "### 1. Request Allocation\n\n* **Provider Alpha:** 60 requests\n* **Provider Beta:** 10 requests\n* **Provider Gamma:** 30 requests\n\n**Justification:** Beta is cheapest ($0.002/req) but exceeds the 600ms latency threshold (800ms), capping its volume at 10 to maintain the 90% SLA. Alpha is the next cheapest ($0.004/req) and meets the SLA (400ms), saturated at its 60 request limit. Gamma handles the rem"
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "taskName": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:17:23.323Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 4345,
+      "ttfbMs": 3352,
+      "usage": {
+        "promptTokens": 2723,
+        "completionTokens": 1112,
+        "reasoningTokens": 849,
+        "totalTokens": 3835
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "### 1. Optimal Request Allocation\n\n* **Provider Alpha:** 60 requests\n* **Provider Beta:** 10 requests\n* **Provider Gamma:** 30 requests\n\n### 2. Total Dollar Cost\n\n* **Provider Alpha:** 60 requests × 2,000 tokens × ($0.002 / 1,000 tokens) = $0.24\n* **Provider Beta:** 10 requests × 2,000 tokens × ($0.001 / 1,000 tokens) = $0.02\n* **Provider Gamma:** 30 requests × 2,000 tokens × ($0.005 / 1,000 token"
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "taskName": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:17:12.039Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 5163,
+      "ttfbMs": 1348,
+      "usage": {
+        "promptTokens": 2677,
+        "completionTokens": 177,
+        "reasoningTokens": 0,
+        "totalTokens": 2854
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "Beta cannot satisfy the SLA: its latency is 800 ms. Alpha and Gamma both meet it, so at least 90 requests must go to them.\n\nPer-request costs, given 2,000 tokens each:\n- Alpha: $0.004\n- Beta: $0.002\n- Gamma: $0.010\n\nTo minimize cost, use Alpha to its 60-request capacity, then route the remaining SLA-required 30 requests to Gamma. Send the remaining 10 requests to cheaper Beta.\n\n1. **Allocation:** "
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "taskName": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:17:18.976Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6936,
+      "ttfbMs": 5614,
+      "usage": {
+        "promptTokens": 2677,
+        "completionTokens": 186,
+        "reasoningTokens": 0,
+        "totalTokens": 2863
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "1. **Allocation:** Alpha 60, Beta 10, Gamma 30.\n2. **Total cost:** \\(60(0.004)+10(0.002)+30(0.010)=\\boxed{\\$0.56}\\).\n3. **Requests meeting the latency SLA:** Alpha and Gamma serve 90 requests at or below 600 ms, so **90%** meet the SLA.\n\nThis is the minimum-cost allocation: Beta is cheapest but its 800 ms latency limits it to 10 requests; Alpha is cheaper than Gamma and is used to its 60-request c"
+    },
+    {
+      "taskId": "HR-4",
+      "category": "HARD_REASONING",
+      "taskName": "Multi-Tenant Quota & Capacity Optimization",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:17:45.165Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 14815,
+      "ttfbMs": 1569,
+      "usage": {
+        "promptTokens": 2764,
+        "completionTokens": 744,
+        "reasoningTokens": 0,
+        "totalTokens": 3508
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "criteriaMet": 4,
+        "maxPoints": 4
+      },
+      "rawOutputSnippet": "## Analysis\n\n**SLA constraint first:** Requests meeting ≤ 600ms latency are those sent to Alpha (400ms) or Gamma (200ms). Beta at 800ms fails the SLA. So the number of requests routed to Beta is capped at 10 (since ≥ 90 must meet SLA, at most 10 can miss it).\n\n**Cost per request at 2,000 tokens:**\n- Alpha: $0.002/1K × 2K = **$0.004/request**\n- Beta: $0.001/1K × 2K = **$0.002/request**\n- Gamma: $0."
+    },
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "taskName": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:09:48.761Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 13279,
+      "ttfbMs": 5302,
+      "usage": {
+        "promptTokens": 2644,
+        "completionTokens": 3339,
+        "reasoningTokens": 2985,
+        "totalTokens": 5983
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.4164ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0612ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.054ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 152.2046\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.5194ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0602ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0512ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.2461\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private readonly capacity: number;\n  private readonly refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | null = null;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    this.capacity = capacity;\n    this.refillRatePerSec = refillRatePerSec;\n    this.tokens = capacity;\n  }\n\n  private refill(nowMs: number): vo"
+    },
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "taskName": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:09:35.085Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 6118,
+      "ttfbMs": 4143,
+      "usage": {
+        "promptTokens": 2644,
+        "completionTokens": 1551,
+        "reasoningTokens": 1224,
+        "totalTokens": 4195
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.5737ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0816ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0563ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.624\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.5109ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.081ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0539ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.3876\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private readonly capacity: number;\n  private readonly refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | null = null;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    this.capacity = capacity;\n    this.refillRatePerSec = refillRatePerSec;\n    this.tokens = capacity;\n  }\n\n  private refill(nowMs: number): vo"
+    },
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "taskName": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:09:16.630Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 12202,
+      "ttfbMs": 3092,
+      "usage": {
+        "promptTokens": 2631,
+        "completionTokens": 383,
+        "reasoningTokens": 0,
+        "totalTokens": 3014
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.43ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0641ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0534ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 137.6318\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.4417ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0608ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0543ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 144.4963\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private tokens: number;\n  private lastRefillTimeMs: number;\n\n  constructor(\n    private readonly capacity: number,\n    private readonly refillRatePerSec: number,\n  ) {\n    if (!Number.isFinite(capacity) || capacity < 0) {\n      throw new RangeError(\"capacity must be a finite non-negative number\");\n    }\n    if (!Number.isFinite(refillRatePerSec) || refill"
+    },
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "taskName": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:09:28.581Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 11596,
+      "ttfbMs": 7588,
+      "usage": {
+        "promptTokens": 2631,
+        "completionTokens": 479,
+        "reasoningTokens": 0,
+        "totalTokens": 3110
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (0.4358ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.0642ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0595ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 150.3055\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.468ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0731ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.0534ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 91.8957\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private readonly capacity: number;\n  private readonly refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | undefined;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    if (!Number.isFinite(capacity) || capacity < 0) {\n      throw new RangeError(\"capacity must be a finite, non-negative number\");\n    }\n    if ("
+    },
+    {
+      "taskId": "NC-1",
+      "category": "NORMAL_CODING",
+      "taskName": "Token Bucket with Fractional Burst Refill",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:09:54.240Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 5026,
+      "ttfbMs": 1488,
+      "usage": {
+        "promptTokens": 2705,
+        "completionTokens": 395,
+        "reasoningTokens": 0,
+        "totalTokens": 3100
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ TokenBucket - basic consumption within capacity (1.2007ms)\n✔ TokenBucket - rejects consumption when exceeding available tokens (0.1122ms)\n✔ TokenBucket - refills tokens based on elapsed time (0.0901ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 203.5546\n\nHIDDEN TESTS:\n✔ Hidden: TokenBucket - fractional accumulation precision (0.4153ms)\n✔ Hidden: TokenBucket - capacity ceiling enforcement (0.0644ms)\n✔ Hidden: TokenBucket - clock skew / non-monotonic timestamps (0.054ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 123.6424\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class TokenBucket {\n  private capacity: number;\n  private refillRatePerSec: number;\n  private tokens: number;\n  private lastRefillMs: number | null;\n\n  constructor(capacity: number, refillRatePerSec: number) {\n    this.capacity = capacity;\n    this.refillRatePerSec = refillRatePerSec;\n    this.tokens = capacity;\n    this.lastRefillMs = null;\n  }\n\n  private refill(nowMs: number"
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:10:39.742Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 9501,
+      "ttfbMs": 4768,
+      "usage": {
+        "promptTokens": 2702,
+        "completionTokens": 2619,
+        "reasoningTokens": 2162,
+        "totalTokens": 5321
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (1.2496ms)\n✔ MoneyAllocator - basic proportional division (0.1091ms)\n✔ MoneyAllocator - zero total cents (0.0568ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 150.6687\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7625ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0875ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0587ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2666ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 137.5175\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (totalCents < 0) {\n    throw new Error('totalCents must be non-negative');\n  }\n  if (ratios.length === 0) {\n    throw new Error('ratios must not be empty');\n  }\n\n  let totalRatio = 0;\n  for (const ratio of ratios) {\n    if (ratio < 0) {\n      throw new Error('ratios must be non-negative');\n    }\n    "
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:10:29.844Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 7098,
+      "ttfbMs": 3679,
+      "usage": {
+        "promptTokens": 2702,
+        "completionTokens": 1869,
+        "reasoningTokens": 1429,
+        "totalTokens": 4571
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (0.7301ms)\n✔ MoneyAllocator - basic proportional division (0.8455ms)\n✔ MoneyAllocator - zero total cents (0.0859ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 153.8565\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7562ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0813ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0543ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2727ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 128.0616\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (totalCents < 0) {\n    throw new Error('totalCents must be non-negative');\n  }\n\n  if (ratios.length === 0) {\n    throw new Error('ratios array cannot be empty');\n  }\n\n  let sumRatios = 0;\n  for (const ratio of ratios) {\n    if (ratio < 0) {\n      throw new Error('ratio values must be non-negative');\n"
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:10:04.179Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 9534,
+      "ttfbMs": 2298,
+      "usage": {
+        "promptTokens": 2690,
+        "completionTokens": 400,
+        "reasoningTokens": 0,
+        "totalTokens": 3090
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (0.7793ms)\n✔ MoneyAllocator - basic proportional division (0.0794ms)\n✔ MoneyAllocator - zero total cents (0.0531ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 156.6729\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7757ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0881ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0617ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.269ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 131.168\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (!Number.isSafeInteger(totalCents)) {\n    throw new Error(\"totalCents must be a safe integer\");\n  }\n  if (totalCents < 0) {\n    throw new Error(\"totalCents must be non-negative\");\n  }\n  if (ratios.length === 0) {\n    throw new Error(\"ratios must not be empty\");\n  }\n  if (ratios.some((ratio) => !Numbe"
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:10:22.354Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 17785,
+      "ttfbMs": 13412,
+      "usage": {
+        "promptTokens": 2690,
+        "completionTokens": 769,
+        "reasoningTokens": 0,
+        "totalTokens": 3459
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (1.2921ms)\n✔ MoneyAllocator - basic proportional division (0.1365ms)\n✔ MoneyAllocator - zero total cents (0.1159ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 147.6184\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (1.1258ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.13ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0773ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2848ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.0316\n\n"
+      },
+      "rawOutputSnippet": "```typescript\n// src/money-allocator.ts\n\nfunction scaledRatio(value: number): bigint {\n  const buffer = new ArrayBuffer(8);\n  const view = new DataView(buffer);\n  view.setFloat64(0, value);\n\n  const high = view.getUint32(0);\n  const low = view.getUint32(4);\n  const exponent = (high >>> 20) & 0x7ff;\n  const fraction = (BigInt(high & 0xfffff) << 32n) | BigInt(low);\n\n  if (exponent === 0) {\n    retur"
+    },
+    {
+      "taskId": "NC-2",
+      "category": "NORMAL_CODING",
+      "taskName": "Precision Money Allocator (Hare-Niemeyer)",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:10:45.786Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 5645,
+      "ttfbMs": 1437,
+      "usage": {
+        "promptTokens": 2765,
+        "completionTokens": 387,
+        "reasoningTokens": 0,
+        "totalTokens": 3152
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ MoneyAllocator - basic even division (1.0263ms)\n✔ MoneyAllocator - basic proportional division (0.0807ms)\n✔ MoneyAllocator - zero total cents (0.0539ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.7251\n\nHIDDEN TESTS:\n✔ Hidden: MoneyAllocator - exact penny conservation with repeating fractions (0.7561ms)\n✔ Hidden: MoneyAllocator - single penny distributed to highest remainder (0.0803ms)\n✔ Hidden: MoneyAllocator - asymmetric remainder allocation (0.0591ms)\n✔ Hidden: MoneyAllocator - validates input constraints (0.2572ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 139.7713\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport function allocateMoney(totalCents: number, ratios: number[]): number[] {\n  if (totalCents < 0) {\n    throw new Error('non-negative');\n  }\n  if (ratios.length === 0) {\n    throw new Error('empty');\n  }\n  if (ratios.some(r => r < 0)) {\n    throw new Error('non-negative');\n  }\n  const sumRatios = ratios.reduce((a, b) => a + b, 0);\n  if (sumRatios <= 0) {\n    throw new Error('posi"
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "taskName": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:11:59.967Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 29000,
+      "ttfbMs": 5839,
+      "usage": {
+        "promptTokens": 2697,
+        "completionTokens": 8230,
+        "reasoningTokens": 7677,
+        "totalTokens": 10927
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.6583ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.1158ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 150.3781\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.4948ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.2083ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.1122ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 133.9347\n\n"
+      },
+      "rawOutputSnippet": "```typescript\ninterface CacheEntry<V> {\n  value: V;\n  createdAt: number;\n}\n\nexport class LRUCacheWithTTL<K, V> {\n  private readonly capacity: number;\n  private readonly ttlMs: number;\n  private readonly cache: Map<K, CacheEntry<V>>;\n\n  constructor(capacity: number, ttlMs: number) {\n    this.capacity = capacity;\n    this.ttlMs = ttlMs;\n    this.cache = new Map<K, CacheEntry<V>>();\n  }\n\n  get(key: K"
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "taskName": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:11:30.573Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 12271,
+      "ttfbMs": 4521,
+      "usage": {
+        "promptTokens": 2697,
+        "completionTokens": 3237,
+        "reasoningTokens": 2639,
+        "totalTokens": 5934
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.4374ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.203ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 154.4798\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.654ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.0857ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.0537ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 141.4112\n\n"
+      },
+      "rawOutputSnippet": "```typescript\ninterface CacheEntry<V> {\n  value: V;\n  createdAt: number;\n}\n\nexport class LRUCacheWithTTL<K, V> {\n  private readonly capacity: number;\n  private readonly ttlMs: number;\n  private readonly cache: Map<K, CacheEntry<V>>;\n\n  constructor(capacity: number, ttlMs: number) {\n    if (capacity <= 0 || !Number.isInteger(capacity)) {\n      throw new RangeError(\"Capacity must be a positive integ"
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "taskName": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:10:57.740Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 11563,
+      "ttfbMs": 2405,
+      "usage": {
+        "promptTokens": 2684,
+        "completionTokens": 489,
+        "reasoningTokens": 0,
+        "totalTokens": 3173
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.826ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.1053ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 142.8807\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.8088ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.1145ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.0766ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.3465\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class LRUCacheWithTTL<K, V> {\n  private readonly capacity: number;\n  private readonly ttlMs: number;\n  private readonly entries = new Map<K, { value: V; createdAt: number }>();\n\n  constructor(capacity: number, ttlMs: number) {\n    if (!Number.isInteger(capacity) || capacity < 0) {\n      throw new RangeError(\"capacity must be a non-negative integer\");\n    }\n    if (!Number.isFi"
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "taskName": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:11:17.898Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 19779,
+      "ttfbMs": 8384,
+      "usage": {
+        "promptTokens": 2684,
+        "completionTokens": 513,
+        "reasoningTokens": 0,
+        "totalTokens": 3197
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.4241ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.0842ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 140.449\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.4586ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.1351ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.097ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 124.9203\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class LRUCacheWithTTL<K, V> {\n  private readonly entries = new Map<K, { value: V; createdAt: number }>();\n\n  constructor(\n    private readonly capacity: number,\n    private readonly ttlMs: number,\n  ) {\n    if (!Number.isSafeInteger(capacity) || capacity <= 0) {\n      throw new RangeError(\"capacity must be a positive safe integer\");\n    }\n    if (!Number.isFinite(ttlMs) || ttl"
+    },
+    {
+      "taskId": "NC-3",
+      "category": "NORMAL_CODING",
+      "taskName": "LRU Cache with TTL Eviction Priority",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:12:20.296Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 12573,
+      "ttfbMs": 874,
+      "usage": {
+        "promptTokens": 2760,
+        "completionTokens": 1195,
+        "reasoningTokens": 0,
+        "totalTokens": 3955
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ LRUCacheWithTTL - basic get and put (0.4517ms)\n✔ LRUCacheWithTTL - evicts least recently used on capacity overflow (0.0851ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.347\n\nHIDDEN TESTS:\n✔ Hidden: LRUCacheWithTTL - expired entry returns undefined and purges (0.471ms)\n✔ Hidden: LRUCacheWithTTL - evicts expired item before evicting valid LRU item (0.0813ms)\n✔ Hidden: LRUCacheWithTTL - updating existing key resets TTL and updates value (0.06ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 125.7808\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport class LRUCacheWithTTL<K, V> {\n  private capacity: number;\n  private ttlMs: number;\n\n  // Doubly linked list node\n  private head: Node<K, V>; // dummy head (most recent end)\n  private tail: Node<K, V>; // dummy tail (least recent end)\n  private map: Map<K, Node<K, V>>;\n\n  constructor(capacity: number, ttlMs: number) {\n    this.capacity = capacity;\n    this.ttlMs = ttlMs;\n    th"
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:13:21.732Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 13921,
+      "ttfbMs": 5201,
+      "reasoningErrors": [
+        "Failed public unit tests",
+        "Failed hidden acceptance / edge-case tests"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": false,
+        "hiddenPassed": false,
+        "testOutputSnippet": "PUBLIC TESTS FAILED:\nnode:internal/modules/run_main:107\n    triggerUncaughtException(\n    ^\n\nError: Transform failed with 1 error:\nC:\\Projects\\router\\auto-router-v2\\tmp\\qfirst-eval\\nc-NC-4-gemini_high\\src\\semver.ts:14:21: ERROR: Expected \";\" but found \"invalid\"\n    at failureErrorWithLog (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:1752:15)\n    at C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:1019:50\n    at responseCallbacks.<computed> (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:886:9)\n    at handleIncomingPacket (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:941:12)\n    at Socket.readFromStdout (C:\\Projects\\router\\auto-router-v2\\node_modules\\esbuild\\lib\\main.js:864:7)\n    at Socket.emit (node:events:509:28)\n    at addChunk (node:internal/streams/readable:563:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:514:3)\n    at Readable.push (node:internal/streams/readable:394:5)\n  "
+      },
+      "rawOutputSnippet": "```typescript\nconst SEMVER_REGEX =\n  /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/;\n\ninterface ParsedSemver {\n  major: bigint;\n  minor: bigint;\n  patch: bigint;\n  prerelease: string[] | null;\n}\n\nfunction parseSemver(version: string): ParsedSemver {\n  if (typeof ve"
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:13:07.430Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 16194,
+      "ttfbMs": 9400,
+      "usage": {
+        "promptTokens": 2751,
+        "completionTokens": 2595,
+        "reasoningTokens": 1723,
+        "totalTokens": 5346
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (0.5672ms)\n✔ Semver - pre-release has lower precedence than normal version (0.118ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 126.3856\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (0.61ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.1301ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.055ms)\n✔ Hidden: Semver - invalid semver string throws error (0.2432ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 129.2138\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nconst SEMVER_REGEX =\n  /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$/;\n\ninterface ParsedSemVer {\n  major: bigint;\n  minor: bigint;\n  patch: bigint;\n  prerelease: string[] | null;\n}\n\nfunction parseSemver(v: string): ParsedSemVer {\n  const match = SEMVE"
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:12:35.751Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 15064,
+      "ttfbMs": 1888,
+      "usage": {
+        "promptTokens": 2737,
+        "completionTokens": 710,
+        "reasoningTokens": 0,
+        "totalTokens": 3447
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (0.5755ms)\n✔ Semver - pre-release has lower precedence than normal version (0.1652ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 151.2912\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (0.6161ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.1463ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.052ms)\n✔ Hidden: Semver - invalid semver string throws error (0.2389ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.492\n\n"
+      },
+      "rawOutputSnippet": "```typescript\ntype ParsedVersion = {\n  major: bigint;\n  minor: bigint;\n  patch: bigint;\n  prerelease: string[] | null;\n};\n\nconst VERSION_PATTERN =\n  /^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$/;\n\nfunction parseVersion(version: string): ParsedVersion {\n  const match = VERSION_PATTERN.exec(version);\n  if (!match) {\n  "
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:12:50.891Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 14747,
+      "ttfbMs": 6356,
+      "usage": {
+        "promptTokens": 2737,
+        "completionTokens": 667,
+        "reasoningTokens": 0,
+        "totalTokens": 3404
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (0.5402ms)\n✔ Semver - pre-release has lower precedence than normal version (0.0897ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 156.1686\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (1.0791ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.1718ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.0703ms)\n✔ Hidden: Semver - invalid semver string throws error (0.3255ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 127.8445\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nconst SEMVER_PATTERN =\n  /^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\\+([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*))?$/;\n\nfunction compareText(a: string, b: string): -1 | 0 | 1 {\n  return a < b ? -1 : a > b ? 1 : 0;\n}\n\nfunction compareNumeric(a: string, b: string)"
+    },
+    {
+      "taskId": "NC-4",
+      "category": "NORMAL_CODING",
+      "taskName": "Semantic Version 2.0.0 Precedence Comparator",
+      "isTrap": false,
+      "trapAvoided": true,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:13:38.022Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 15898,
+      "ttfbMs": 1957,
+      "usage": {
+        "promptTokens": 2828,
+        "completionTokens": 1357,
+        "reasoningTokens": 0,
+        "totalTokens": 4185
+      },
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicPassed": true,
+        "hiddenPassed": true,
+        "testOutputSnippet": "PUBLIC TESTS:\n✔ Semver - basic major, minor, patch comparisons (1.1646ms)\n✔ Semver - pre-release has lower precedence than normal version (0.177ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 148.8149\n\nHIDDEN TESTS:\n✔ Hidden: Semver - numeric pre-release comparison is numerical not lexicographical (0.6239ms)\n✔ Hidden: Semver - full semver spec 2.0.0 precedence chain (0.2782ms)\n✔ Hidden: Semver - build metadata is ignored in precedence (0.0844ms)\n✔ Hidden: Semver - invalid semver string throws error (0.3206ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 135.9616\n\n"
+      },
+      "rawOutputSnippet": "```typescript\nexport function compareSemver(v1: string, v2: string): -1 | 0 | 1 {\n  const parsed1 = parse(v1);\n  const parsed2 = parse(v2);\n\n  // Compare major, minor, patch\n  for (const key of ['major', 'minor', 'patch'] as const) {\n    if (parsed1[key] < parsed2[key]) return -1;\n    if (parsed1[key] > parsed2[key]) return 1;\n  }\n\n  // Same major.minor.patch: compare pre-release\n  const pre1 = pa"
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-luna",
+      "modelAlias": "gpt_6_luna",
+      "timestamp": "2026-09-24T09:45:09.505Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 36551,
+      "ttfbMs": 2056,
+      "iterations": 6,
+      "toolCalls": 5,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/concurrency/reservation-lock.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ ReservationLock - basic sequential reservation (23.3498ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (30.5562ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 143.236\n",
+        "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (10.3049ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (156.4572ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 297.4651\n"
+      }
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "cx/gpt-6-sol",
+      "modelAlias": "gpt_6_sol",
+      "timestamp": "2026-09-24T09:45:35.873Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 26367,
+      "ttfbMs": 3267,
+      "iterations": 4,
+      "toolCalls": 4,
+      "failedToolCalls": 0,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/concurrency/reservation-lock.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ ReservationLock - basic sequential reservation (0.4281ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (0.096ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 97.6379\n",
+        "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (0.5106ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (0.1296ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 132.4586\n"
+      }
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "trapAvoided": true,
+      "modelId": "ag/gemini-3.8-flash-medium",
+      "modelAlias": "gemini_medium",
+      "timestamp": "2026-09-24T09:47:53.110Z",
+      "operationalSuccess": true,
+      "qualitySuccess": true,
+      "passed": true,
+      "score": 1,
+      "elapsedMs": 137236,
+      "ttfbMs": 3394,
+      "iterations": 17,
+      "toolCalls": 16,
+      "failedToolCalls": 5,
+      "prematureSuccess": false,
+      "reasoningErrors": [],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": true,
+        "hiddenTestsPassed": true,
+        "filesChanged": [
+          "src/concurrency/reservation-lock.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "✔ ReservationLock - basic sequential reservation (22.4805ms)\n✔ ReservationLock - concurrent requests must not double-spend or over-allocate (30.5618ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 153.935\n",
+        "hiddenTestOutput": "✔ Hidden: ReservationLock - idempotency replay with same key returns identical reservation without extra deduction (11.0385ms)\n✔ Hidden: ReservationLock - high concurrency stress (10 concurrent requests competing for 3 slots) (156.9585ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 299.6967\n"
+      }
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "modelId": "ag/gemini-3.8-flash-high",
+      "modelAlias": "gemini_high",
+      "timestamp": "2026-09-24T09:51:09.008Z",
+      "operationalSuccess": false,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 195897,
+      "ttfbMs": 11922,
+      "iterations": 18,
+      "toolCalls": 17,
+      "failedToolCalls": 5,
+      "reasoningErrors": [
+        "Network/timeout error: The operation was aborted due to timeout"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "error": "The operation was aborted due to timeout"
+      }
+    },
+    {
+      "taskId": "AG-4",
+      "category": "AGENTIC",
+      "taskName": "E2 - Concurrency Reservation Lock with Fencing Token Verification",
+      "isTrap": true,
+      "trapAvoided": false,
+      "modelId": "ag/claude-sonnet-4-6",
+      "modelAlias": "sonnet_4_6",
+      "timestamp": "2026-09-24T09:54:14.700Z",
+      "operationalSuccess": true,
+      "qualitySuccess": false,
+      "passed": false,
+      "score": 0,
+      "elapsedMs": 185690,
+      "ttfbMs": 2632,
+      "iterations": 20,
+      "toolCalls": 22,
+      "failedToolCalls": 4,
+      "prematureSuccess": false,
+      "reasoningErrors": [
+        "Public test suite failed",
+        "Hidden acceptance test suite failed"
+      ],
+      "unsupportedClaims": [],
+      "constraintsMissed": [],
+      "details": {
+        "publicTestsPassed": false,
+        "hiddenTestsPassed": false,
+        "filesChanged": [
+          "src/concurrency/reservation-lock.ts"
+        ],
+        "prohibitedFilesChanged": [],
+        "publicTestOutput": "\n",
+        "hiddenTestOutput": "\n"
+      }
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "checkpoint": "PRODUCTION_CUTOVER",
+  "status": "production-cutover-successful",
+  "branch": "hermes/autorouter-v2-cp5-auto-reasoning",
+  "releaseCandidateHead": "401d07048642bc4b95ec81414ed39a567ea93ed5",
+  "previousProductionHead": "a21c81cab6b6fb2f9264abeb8550203b144cf3ef",
+  "newProductionHead": "401d07048642bc4b95ec81414ed39a567ea93ed5",
+  "cutoverTimestamp": "2026-09-14T07:54:10.000Z",
+  "observationTimestamp": "2026-09-14T07:58:00.000Z",
+  "productionEndpoint": "127.0.0.1:20200",
+  "productionProcess": {
+    "pid": 20072,
+    "workingDirectory": "C:\\Projects\\router\\auto-router-v2-green",
+    "commandLine": "node dist/index.js",
+    "gitHead": "401d07048642bc4b95ec81414ed39a567ea93ed5"
+  },
+  "preCutoverHealth": {
+    "status": "ok",
+    "service": "auto-router",
+    "httpStatus": 200
+  },
+  "greenHealth": {
+    "status": "ok",
+    "service": "auto-router",
+    "httpStatus": 200
+  },
+  "postCutoverHealth": {
+    "status": "ok",
+    "service": "auto-router",
+    "httpStatus": 200
+  },
+  "testsRun": 163,
+  "unitTestFailures": 0,
+  "productionMode": "v2",
+  "reasoningPolicy": "auto",
+  "clientFacingModel": "auto",
+  "profilesVerified": {
+    "routineProfileVerified": true,
+    "balancedProfileVerified": true,
+    "strongProfileVerified": true,
+    "terraFallbackVerified": true,
+    "solDisabledVerified": true,
+    "astraDisabledVerified": true,
+    "lunaReviewOptionalVerified": true
+  },
+  "streamSafetyVerified": true,
+  "rollbackVerified": true,
+  "v1Retained": true,
+  "v1State": {
+    "directory": "C:\\Projects\\router\\auto-router",
+    "commit": "a21c81cab6b6fb2f9264abeb8550203b144cf3ef",
+    "branch": "main",
+    "launchScript": "scripts\\start-ready.ps1",
+    "status": "preserved"
+  },
+  "cutoverExecution": {
+    "method": "graceful-process-swap",
+    "downtimeSeconds": 1.038,
+    "greenPort": 20202,
+    "productionPort": 20200
+  },
+  "observationMetrics": {
+    "initialRequestsObserved": 14,
+    "httpFailures": 0,
+    "timeouts": 0,
+    "routingFailures": 0,
+    "reasoningErrors": 0,
+    "unexpectedDisabledActivations": 0,
+    "streamFailures": 0,
+    "solActivations": 0,
+    "astraActivations": 0,
+    "memoryStability": "nominal"
+  },
+  "recommendedGitMerge": {
+    "sourceBranch": "hermes/autorouter-v2-cp5-auto-reasoning",
+    "targetBranch": "main",
+    "releaseCommit": "401d07048642bc4b95ec81414ed39a567ea93ed5",
+    "recommendedCommand": "git checkout main && git merge --ff-only hermes/autorouter-v2-cp5-auto-reasoning",
+    "status": "pending-user-authorization"
+  },
+  "finalVerdict": "PRODUCTION CUTOVER SUCCESSFUL"
+}

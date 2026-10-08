@@ -1,0 +1,85 @@
+{
+  "checkpoint": "CP7.1 CORRECTED MODEL CHALLENGER EXECUTION — RESUMED",
+  "status": "completed-resumed",
+  "branch": "hermes/autorouter-v2-cp7-model-challengers",
+  "startingHead": "b1f8b82",
+  "lastReconciledAt": "2026-09-15T04:50:00.000Z",
+  "scope": "Offline challenger-benchmark harness and model execution; production routing and account configuration unchanged.",
+  "production": {
+    "port": 20200,
+    "lastObservedHealth": "HTTP 200 OK; auto-router",
+    "changedByCheckpoint": false,
+    "routerMode": "v2",
+    "reasoningPolicy": "auto",
+    "quotaPolicy": "auto",
+    "challengersDisabled": true
+  },
+  "inventory": {
+    "gemini": "ag/gemini-3.8-flash-high",
+    "sonnet": "ag/claude-sonnet-4-6",
+    "sol": "cx/gpt-5.6-sol",
+    "solAgyAvailable": false,
+    "solMaxStatus": "NOT RUN — QUOTA CONSERVATION"
+  },
+  "quotaPreflight": {
+    "geminiUsablePercentage": 82.6,
+    "sonnetUsablePercentage": 81.8,
+    "solUsablePercentage": 97.0,
+    "safetyGatePassed": true
+  },
+  "benchmarkMatrix": {
+    "expectedRuns": 48,
+    "preexistingRuns": 30,
+    "newRunsExecuted": 18,
+    "finalValidRuns": 48,
+    "duplicateCount": 0,
+    "corruptRuns": 0,
+    "invalidatedExcluded": 32,
+    "byTrack": {
+      "architecture": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "prd": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "reasoning": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      },
+      "agentic": {
+        "total": 12,
+        "gemini": 4,
+        "sonnet": 4,
+        "sol": 4
+      }
+    }
+  },
+  "trackResults": {
+    "architectureWinner": "gemini_high",
+    "prdWinner": "gemini_high",
+    "hardReasoningWinner": "gemini_high",
+    "agenticWinner": "sonnet_4_6"
+  },
+  "roleDecisions": {
+    "gpt56Sol": "KEEP_DISABLED",
+    "claudeSonnet46": "PROMOTE_TO_AGENTIC_EXECUTOR",
+    "geminiHigh": "KEEP_STRONG_DEFAULT"
+  },
+  "verification": {
+    "focusedHarnessTests": "npx vitest run test/benchmark-cp7.test.ts: passed (25 tests)",
+    "fullRegression": "npm test: passed (20 files, 335 tests)",
+    "build": "npm run build: passed",
+    "diffCheck": "git diff --check: passed",
+    "productionHealth": "GET http://127.0.0.1:20200/health: passed",
+    "independentReview": "passed (verified resume correctness, manifest integrity, tool parity, rubric fairness, production isolation)"
+  },
+  "verdict": "CP7 ROLE RECOMMENDATION READY"
+}

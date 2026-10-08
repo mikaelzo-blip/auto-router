@@ -1,0 +1,33 @@
+{
+  "taskId": "AG-1",
+  "category": "AGENTIC",
+  "taskName": "A1 - Rate Limiter Filter Inversion Defect Repair",
+  "isTrap": false,
+  "trapAvoided": true,
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T09:29:53.343Z",
+  "operationalSuccess": true,
+  "qualitySuccess": true,
+  "passed": true,
+  "score": 1,
+  "elapsedMs": 23434,
+  "ttfbMs": 3665,
+  "iterations": 7,
+  "toolCalls": 7,
+  "failedToolCalls": 2,
+  "prematureSuccess": false,
+  "reasoningErrors": [],
+  "unsupportedClaims": [],
+  "constraintsMissed": [],
+  "details": {
+    "publicTestsPassed": true,
+    "hiddenTestsPassed": true,
+    "filesChanged": [
+      "src/rate-limiter.ts"
+    ],
+    "prohibitedFilesChanged": [],
+    "publicTestOutput": "✔ RateLimiter - allows requests within capacity (0.4235ms)\n✔ RateLimiter - blocks requests exceeding capacity within same window (0.0797ms)\n✔ RateLimiter - allows new requests after window expires (0.0546ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 102.6613\n",
+    "hiddenTestOutput": "✔ Hidden: RateLimiter - exact window boundary condition (0.4396ms)\n✔ Hidden: RateLimiter - multi-key isolation (0.1837ms)\n✔ Hidden: RateLimiter - token count calculation accuracy (0.1544ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 130.3156\n"
+  }
+}

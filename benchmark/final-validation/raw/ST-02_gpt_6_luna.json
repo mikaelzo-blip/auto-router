@@ -1,0 +1,27 @@
+{
+  "taskId": "ST-02",
+  "category": "STRONG",
+  "taskName": "Debug a PostgreSQL oversell incident",
+  "modelId": "cx/gpt-6-luna",
+  "modelAlias": "gpt_6_luna",
+  "timestamp": "2026-09-24T10:26:54.063Z",
+  "operationalSuccess": true,
+  "qualitySuccess": false,
+  "correct": false,
+  "criticalOmissions": [
+    "Failed to identify lost update / check-then-act race under READ COMMITTED",
+    "Omitted atomic conditional UPDATE with available/stock predicate"
+  ],
+  "hallucinations": [],
+  "constraintFailures": [],
+  "score": 0.6,
+  "elapsedMs": 7811,
+  "ttfbMs": 1932,
+  "usage": {
+    "promptTokens": 2535,
+    "completionTokens": 290,
+    "reasoningTokens": 0,
+    "totalTokens": 2825
+  },
+  "rawResponse": "Race: both transactions read `available = 10` before either updates. Under `READ COMMITTED`, the reads do not lock the row. Each then adds 7 to `reserved`, so both succeed and `reserved` can exceed stock; the availability check and update are not one atomic operation.\n\nAtomic remediation—make the stock condition part of the update:\n\n```sql\nUPDATE inventory\nSET reserved = reserved + $2\nWHERE sku = $1\n  AND available - reserved >= $2\nRETURNING available - reserved AS available;\n```\n\nTreat zero returned rows as a failed reservation. Concurrent updates to the same row serialize; PostgreSQL rechecks the `WHERE` condition against the updated row before applying the update.\n\nLocking remediation: in one transaction, select the row `FOR UPDATE`, verify `available - reserved >= $2`, then update `reserved`. The lock must be held through the check and update.\n\nEnforce the invariant in the database as well:\n\n```sql\nALTER TABLE inventory\nADD CONSTRAINT inventory_reserved_within_available\nCHECK (reserved >= 0 AND reserved <= available);\n```\n\nRetry `40P01` deadlocks with bounded backoff by retrying the whole transaction. Retry `40001` serialization failures the same way; they are not normally expected at `READ COMMITTED`, but can occur if isolation or transaction behavior changes. Do not retry insufficient-stock results as lock failures."
+}
